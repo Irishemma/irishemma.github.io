@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="阅读目录：  主机安装 集群搭建 API 操作 API 说明和 etcdctl 命令说明">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker 搭建 etcd 集群">
+<meta property="og:url" content="http://yoursite.com/2019/04/22/2019-04-23/Docker-搭建-etcd-集群/index.html">
+<meta property="og:site_name" content="Beluga">
+<meta property="og:description" content="阅读目录：  主机安装 集群搭建 API 操作 API 说明和 etcdctl 命令说明">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/435188/201712/435188-20171225173221197-831704411.png">
+<meta property="og:updated_time" content="2019-04-23T13:14:00.950Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker 搭建 etcd 集群">
+<meta name="twitter:description" content="阅读目录：  主机安装 集群搭建 API 操作 API 说明和 etcdctl 命令说明">
+<meta name="twitter:image" content="https://images2018.cnblogs.com/blog/435188/201712/435188-20171225173221197-831704411.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/04/22/2019-04-23/Docker-搭建-etcd-集群/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Docker 搭建 etcd 集群 | Beluga</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Beluga</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/22/2019-04-23/Docker-搭建-etcd-集群/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Irishemma">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Beluga">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Docker 搭建 etcd 集群
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-22 23:01:18" itemprop="dateCreated datePublished" datetime="2019-04-22T23:01:18+08:00">2019-04-22</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-23 21:14:00" itemprop="dateModified" datetime="2019-04-23T21:14:00+08:00">2019-04-23</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>阅读目录：</p>
+<ul>
+<li><strong>主机安装</strong></li>
+<li><strong>集群搭建</strong></li>
+<li><strong>API 操作</strong></li>
+<li><strong>API 说明和 etcdctl 命令说明</strong><a id="more"></a>
+</li>
+</ul>
+<p><a href="https://github.com/coreos/etcd" target="_blank" rel="noopener">etcd</a> 是 CoreOS 团队发起的一个开源项目（Go 语言，其实很多这类项目都是 Go 语言实现的，只能说很强大），实现了<strong>分布式键值存储</strong>和<strong>服务发现</strong>，etcd 和 ZooKeeper/Consul 非常相似，都提供了类似的功能，以及 REST API 的访问操作，具有以下特点：</p>
+<ul>
+<li>简单：安装和使用简单，提供了 REST API 进行操作交互</li>
+<li>安全：支持 HTTPS SSL 证书</li>
+<li>快速：支持并发 10 k/s 的读写操作</li>
+<li>可靠：采用 raft 算法，实现分布式系统数据的可用性和一致性</li>
+</ul>
+<p>etcd 可以单个实例使用，也可以进行集群配置，因为很多项目都是以 etcd 作为服务发现，比如 CoreOS 和 Kubernetes，所以，下面我们使用 Docker 简单搭建一下 etcd 集群。</p>
+<p><img src="https://images2018.cnblogs.com/blog/435188/201712/435188-20171225173221197-831704411.png" alt="img"></p>
+<h2 id="1-主机安装"><a href="#1-主机安装" class="headerlink" title="1. 主机安装"></a>1. 主机安装</h2><p>如果不使用 Docker 的话，etcd 在主机上安装，也非常简单。</p>
+<p>Linux 安装命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ curl -L  https://github.com/coreos/etcd/releases/download/v3.3.0-rc.0/etcd-v3.3.0-rc.0-linux-amd64.tar.gz -o etcd-v3.3.0-rc.0-linux-amd64.tar.gz &amp;&amp; </span><br><span class="line">sudo tar xzvf etcd-v3.3.0-rc.0-linux-amd64.tar.gz &amp;&amp; </span><br><span class="line">cd etcd-v3.3.0-rc.0-linux-amd64 &amp;&amp; </span><br><span class="line">sudo cp etcd* /usr/local/bin/</span><br></pre></td></tr></table></figure>
+<p>其实就是将编译后的二进制文件，拷贝到<code>/usr/local/bin/</code>目录，各个版本的二进制文件，可以从 <a href="https://github.com/coreos/etcd/releases/" target="_blank" rel="noopener">https://github.com/coreos/etcd/releases/</a> 中查找下载。</p>
+<p>Mac OS 安装命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot; &lt; /dev/null 2&gt; /dev/null</span><br><span class="line">$ brew install etcd</span><br></pre></td></tr></table></figure>
+<p>执行下面命令，查看 etcd 是否安装成功：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ etcd --version</span><br><span class="line">etcd Version: 3.2.12</span><br><span class="line">Git SHA: GitNotFound</span><br><span class="line">Go Version: go1.9.2</span><br><span class="line">Go OS/Arch: darwin/amd64</span><br></pre></td></tr></table></figure>
+<h2 id="2-集群搭建"><a href="#2-集群搭建" class="headerlink" title="2. 集群搭建"></a>2. 集群搭建</h2><p>搭建 etcd 集群，需要借助下 Docker Machine 创建三个 Docker 主机，命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ docker-machine create -d virtualbox manager1 &amp;&amp; </span><br><span class="line">docker-machine create -d virtualbox worker1 &amp;&amp; </span><br><span class="line">docker-machine create -d virtualbox worker2</span><br><span class="line"></span><br><span class="line">$ docker-machine ls</span><br><span class="line">NAME       ACTIVE   DRIVER       STATE     URL                         SWARM   DOCKER        ERRORS</span><br><span class="line">manager1   -        virtualbox   Running   tcp://192.168.99.100:2376           v17.11.0-ce   </span><br><span class="line">worker1    -        virtualbox   Running   tcp://192.168.99.101:2376           v17.11.0-ce   </span><br><span class="line">worker2    -        virtualbox   Running   tcp://192.168.99.102:2376           v17.11.0-ce</span><br></pre></td></tr></table></figure>
+<p>为防止 Docker 主机中垃取官方镜像，速度慢的问题，我们还需要将 etcd 镜像打包推送到私有仓库中，命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker tag quay.io/coreos/etcd 192.168.99.1:5000/quay.io/coreos/etcd:latest &amp;&amp; </span><br><span class="line">docker push 192.168.99.1:5000/quay.io/coreos/etcd:latest &amp;&amp; </span><br><span class="line">docker pull 192.168.99.1:5000/quay.io/coreos/etcd:latest</span><br></pre></td></tr></table></figure>
+<p>另外，还需要将私有仓库地址配置在 Docker 主机中，并重启三个 Docker 主机，具体配置参考：<a href="http://www.cnblogs.com/xishuai/p/docker-swarm.html" target="_blank" rel="noopener">Docker 三剑客之 Docker Swarm</a></p>
+<hr>
+<p>Docker 主机配置好之后，我们需要使用<code>docker-machine ssh</code>命令，分别进入三个 Docker 主机中，执行 Docker etcd 配置命令。</p>
+<p>manager1 主机（<code>node1 192.168.99.100</code>）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d --name etcd \</span><br><span class="line">    -p 2379:2379 \</span><br><span class="line">    -p 2380:2380 \</span><br><span class="line">    --volume=etcd-data:/etcd-data \</span><br><span class="line">    192.168.99.1:5000/quay.io/coreos/etcd \</span><br><span class="line">    /usr/local/bin/etcd \</span><br><span class="line">    --data-dir=/etcd-data --name node1 \</span><br><span class="line">    --initial-advertise-peer-urls http://192.168.99.100:2380 --listen-peer-urls http://0.0.0.0:2380 \</span><br><span class="line">    --advertise-client-urls http://192.168.99.100:2379 --listen-client-urls http://0.0.0.0:2379 \</span><br><span class="line">    --initial-cluster-state new \</span><br><span class="line">    --initial-cluster-token docker-etcd \</span><br><span class="line">    --initial-cluster node1=http://192.168.99.100:2380,node2=http://192.168.99.101:2380,node3=http://192.168.99.102:2380</span><br></pre></td></tr></table></figure>
+<p>worker1 主机（<code>node2 192.168.99.101</code>）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d --name etcd \</span><br><span class="line">    -p 2379:2379 \</span><br><span class="line">    -p 2380:2380 \</span><br><span class="line">    --volume=etcd-data:/etcd-data \</span><br><span class="line">    192.168.99.1:5000/quay.io/coreos/etcd \</span><br><span class="line">    /usr/local/bin/etcd \</span><br><span class="line">    --data-dir=/etcd-data --name node2 \</span><br><span class="line">    --initial-advertise-peer-urls http://192.168.99.101:2380 --listen-peer-urls http://0.0.0.0:2380 \</span><br><span class="line">    --advertise-client-urls http://192.168.99.101:2379 --listen-client-urls http://0.0.0.0:2379 \</span><br><span class="line">    --initial-cluster-state new \</span><br><span class="line">    --initial-cluster-token docker-etcd \</span><br><span class="line">    --initial-cluster node1=http://192.168.99.100:2380,node2=http://192.168.99.101:2380,node3=http://192.168.99.102:2380</span><br></pre></td></tr></table></figure>
+<p>worker2 主机（<code>node1 192.168.99.102</code>）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d --name etcd \</span><br><span class="line">    -p 2379:2379 \</span><br><span class="line">    -p 2380:2380 \</span><br><span class="line">    --volume=etcd-data:/etcd-data \</span><br><span class="line">    192.168.99.1:5000/quay.io/coreos/etcd \</span><br><span class="line">    /usr/local/bin/etcd \</span><br><span class="line">    --data-dir=/etcd-data --name node3 \</span><br><span class="line">    --initial-advertise-peer-urls http://192.168.99.102:2380 --listen-peer-urls http://0.0.0.0:2380 \</span><br><span class="line">    --advertise-client-urls http://192.168.99.102:2379 --listen-client-urls http://0.0.0.0:2379 \</span><br><span class="line">    --initial-cluster-state existing \</span><br><span class="line">    --initial-cluster-token docker-etcd \</span><br><span class="line">    --initial-cluster node1=http://192.168.99.100:2380,node2=http://192.168.99.101:2380,node3=http://192.168.99.102:2380</span><br></pre></td></tr></table></figure>
+<p>先来说明下 etcd 各个配置参数的意思（参考自 <a href="http://cizixs.com/2016/08/02/intro-to-etcd" target="_blank" rel="noopener">etcd 使用入门</a>）：</p>
+<ul>
+<li><code>--name</code>：节点名称，默认为 default。</li>
+<li><code>--data-dir</code>：服务运行数据保存的路径，默认为<code>${name}.etcd</code>。</li>
+<li><code>--snapshot-count</code>：指定有多少事务（transaction）被提交时，触发截取快照保存到磁盘。</li>
+<li><code>--heartbeat-interval</code>：leader 多久发送一次心跳到 followers。默认值是 100ms。</li>
+<li><code>--eletion-timeout</code>：重新投票的超时时间，如果 follow 在该时间间隔没有收到心跳包，会触发重新投票，默认为 1000 ms。</li>
+<li><code>--listen-peer-urls</code>：和同伴通信的地址，比如<code>http://ip:2380</code>，如果有多个，使用逗号分隔。需要所有节点都能够访问，所以不要使用 localhost！</li>
+<li><code>--listen-client-urls</code>：对外提供服务的地址：比如<code>http://ip:2379,http://127.0.0.1:2379</code>，客户端会连接到这里和 etcd 交互。</li>
+<li><code>--advertise-client-urls</code>：对外公告的该节点客户端监听地址，这个值会告诉集群中其他节点。</li>
+<li><code>--initial-advertise-peer-urls</code>：该节点同伴监听地址，这个值会告诉集群中其他节点。</li>
+<li><code>--initial-cluster</code>：集群中所有节点的信息，格式为<code>node1=http://ip1:2380,node2=http://ip2:2380,…</code>，注意：这里的 node1 是节点的 –name 指定的名字；后面的 ip1:2380 是 –initial-advertise-peer-urls 指定的值。</li>
+<li><code>--initial-cluster-state</code>：新建集群的时候，这个值为 new；假如已经存在的集群，这个值为 existing。</li>
+<li><code>--initial-cluster-token</code>：创建集群的 token，这个值每个集群保持唯一。这样的话，如果你要重新创建集群，即使配置和之前一样，也会再次生成新的集群和节点 uuid；否则会导致多个集群之间的冲突，造成未知的错误。</li>
+</ul>
+<p>上述配置也可以设置配置文件，默认为<code>/etc/etcd/etcd.conf</code>。</p>
+<p>我们可以使用<code>docker ps</code>，查看 Docker etcd 是否配置成功：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker ps</span><br><span class="line">CONTAINER ID        IMAGE                                   COMMAND                  CREATED             STATUS              PORTS                              NAMES</span><br><span class="line">463380d23dfe        192.168.99.1:5000/quay.io/coreos/etcd   &quot;/usr/local/bin/et...&quot;   2 hours ago         Up 2 hours          0.0.0.0:2379-2380-&gt;2379-2380/tcp   etcd</span><br></pre></td></tr></table></figure>
+<p>然后进入其中一个 Docker 主机：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker exec -it etcd bin/sh</span><br></pre></td></tr></table></figure>
+<p>执行下面命令（查看集群成员）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ etcdctl member list</span><br><span class="line">773d30c9fc6640b4: name=node2 peerURLs=http://192.168.99.101:2380 clientURLs=http://192.168.99.101:2379 isLeader=true</span><br><span class="line">b2b0bca2e0cfcc19: name=node3 peerURLs=http://192.168.99.102:2380 clientURLs=http://192.168.99.102:2379 isLeader=false</span><br><span class="line">c88e2cccbb287a01: name=node1 peerURLs=http://192.168.99.100:2380 clientURLs=http://192.168.99.100:2379 isLeader=false</span><br></pre></td></tr></table></figure>
+<p>可以看到，集群里面有三个成员，并且<code>node2</code>为管理员，<code>node1</code>和<code>node3</code>为普通成员。</p>
+<p>etcdctl 是 ectd 的客户端命令工具（也是 go 语言实现），里面封装了 etcd 的 REST API 执行命令，方便我们进行操作 etcd，后面再列出 etcdctl 的命令详细说明。</p>
+<p>上面命令的 etcd API 版本为 2.0，我们可以手动设置版本为 3.0，命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ export ETCDCTL_API=3 &amp;&amp; /usr/local/bin/etcdctl put foo bar</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p>部分命令和执行结果还是和 2.0 版本，有很多不同的，比如同是查看集群成员，3.0 版本的执行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ etcdctl member list</span><br><span class="line">773d30c9fc6640b4, started, node2, http://192.168.99.101:2380, http://192.168.99.101:2379</span><br><span class="line">b2b0bca2e0cfcc19, started, node3, http://192.168.99.102:2380, http://192.168.99.102:2379</span><br><span class="line">c88e2cccbb287a01, started, node1, http://192.168.99.100:2380, http://192.168.99.100:2379</span><br></pre></td></tr></table></figure>
+<hr>
+<p>好了，我们现在再演示一种情况，就是从集群中移除一个节点，然后再把它添加到集群中，为演示 etcd 中使用 Raft 算法，我们将<code>node2</code>管理节点，作为操作对象。</p>
+<p>我们在随便一个主机 etcd 容器中（<code>node2</code>除外），执行成员移除集群命令（必须使用 ID，使用别名会报错）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ etcdctl member remove 773d30c9fc6640b4</span><br><span class="line">Member 773d30c9fc6640b4 removed from cluster f84185fa5f91bdf6</span><br></pre></td></tr></table></figure>
+<p>我们再执行下查看集群成员命令（v2 版本）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ etcdctl member list</span><br><span class="line">b2b0bca2e0cfcc19: name=node3 peerURLs=http://192.168.99.102:2380 clientURLs=http://192.168.99.102:2379 isLeader=true</span><br><span class="line">c88e2cccbb287a01: name=node1 peerURLs=http://192.168.99.100:2380 clientURLs=http://192.168.99.100:2379 isLeader=false</span><br></pre></td></tr></table></figure>
+<p>会发现<code>node2</code>管理节点被移除集群了，并且通过 Raft 算法，<code>node3</code>被推举为管理节点。</p>
+<p>在将<code>node2</code>节点重新加入集群之前，我们需要执行下面命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ etcdctl member add node2 --peer-urls=&quot;http://192.168.99.101:2380&quot;</span><br><span class="line">Member 22b0de6ffcd98f00 added to cluster f84185fa5f91bdf6</span><br><span class="line"></span><br><span class="line">ETCD_NAME=&quot;node2&quot;</span><br><span class="line">ETCD_INITIAL_CLUSTER=&quot;node2=http://192.168.99.101:2380,node3=http://192.168.99.102:2380,node1=http://192.168.99.100:2380&quot;</span><br><span class="line">ETCD_INITIAL_CLUSTER_STATE=&quot;existing&quot;</span><br></pre></td></tr></table></figure>
+<p>可以看到，ETCD_INITIAL_CLUSTER_STATE 值为<code>existing</code>，也就是我们配置的<code>--initial-cluster-state</code>参数。</p>
+<p>我们再执行下查看集群成员命令（v2 版本）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ etcdctl member list</span><br><span class="line">22b0de6ffcd98f00[unstarted]: peerURLs=http://192.168.99.101:2380</span><br><span class="line">b2b0bca2e0cfcc19: name=node3 peerURLs=http://192.168.99.102:2380 clientURLs=http://192.168.99.102:2379 isLeader=true</span><br><span class="line">c88e2cccbb287a01: name=node1 peerURLs=http://192.168.99.100:2380 clientURLs=http://192.168.99.100:2379 isLeader=false</span><br></pre></td></tr></table></figure>
+<p>会发现<code>22b0de6ffcd98f00</code>成员状态变为了<code>unstarted</code>。</p>
+<p>我们在<code>node2</code>节点，执行 Docker etcd 集群配置命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d --name etcd \</span><br><span class="line">    -p 2379:2379 \</span><br><span class="line">    -p 2380:2380 \</span><br><span class="line">    --volume=etcd-data:/etcd-data \</span><br><span class="line">    192.168.99.1:5000/quay.io/coreos/etcd \</span><br><span class="line">    /usr/local/bin/etcd \</span><br><span class="line">    --data-dir=/etcd-data --name node2 \</span><br><span class="line">    --initial-advertise-peer-urls http://192.168.99.101:2380 --listen-peer-urls http://0.0.0.0:2380 \</span><br><span class="line">    --advertise-client-urls http://192.168.99.101:2379 --listen-client-urls http://0.0.0.0:2379 \</span><br><span class="line">    --initial-cluster-state existing \</span><br><span class="line">    --initial-cluster-token docker-etcd \</span><br><span class="line">    --initial-cluster node1=http://192.168.99.100:2380,node2=http://192.168.99.101:2380,node3=http://192.168.99.102:2380</span><br></pre></td></tr></table></figure>
+<p>结果并不像我们想要的那样成功，执行查看日志：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line">$ docker logs etcd</span><br><span class="line">2017-12-25 08:19:30.160967 I | etcdmain: etcd Version: 3.2.12</span><br><span class="line">2017-12-25 08:19:30.161062 I | etcdmain: Git SHA: b19dae0</span><br><span class="line">2017-12-25 08:19:30.161082 I | etcdmain: Go Version: go1.8.5</span><br><span class="line">2017-12-25 08:19:30.161092 I | etcdmain: Go OS/Arch: linux/amd64</span><br><span class="line">2017-12-25 08:19:30.161105 I | etcdmain: setting maximum number of CPUs to 1, total number of available CPUs is 1</span><br><span class="line">2017-12-25 08:19:30.161144 N | etcdmain: the server is already initialized as member before, starting as etcd member...</span><br><span class="line">2017-12-25 08:19:30.161195 I | embed: listening for peers on http://0.0.0.0:2380</span><br><span class="line">2017-12-25 08:19:30.161232 I | embed: listening for client requests on 0.0.0.0:2379</span><br><span class="line">2017-12-25 08:19:30.165269 I | etcdserver: name = node2</span><br><span class="line">2017-12-25 08:19:30.165317 I | etcdserver: data dir = /etcd-data</span><br><span class="line">2017-12-25 08:19:30.165335 I | etcdserver: member dir = /etcd-data/member</span><br><span class="line">2017-12-25 08:19:30.165347 I | etcdserver: heartbeat = 100ms</span><br><span class="line">2017-12-25 08:19:30.165358 I | etcdserver: election = 1000ms</span><br><span class="line">2017-12-25 08:19:30.165369 I | etcdserver: snapshot count = 100000</span><br><span class="line">2017-12-25 08:19:30.165385 I | etcdserver: advertise client URLs = http://192.168.99.101:2379</span><br><span class="line">2017-12-25 08:19:30.165593 I | etcdserver: restarting member 773d30c9fc6640b4 in cluster f84185fa5f91bdf6 at commit index 14</span><br><span class="line">2017-12-25 08:19:30.165627 I | raft: 773d30c9fc6640b4 became follower at term 11</span><br><span class="line">2017-12-25 08:19:30.165647 I | raft: newRaft 773d30c9fc6640b4 [peers: [], term: 11, commit: 14, applied: 0, lastindex: 14, lastterm: 11]</span><br><span class="line">2017-12-25 08:19:30.169277 W | auth: simple token is not cryptographically signed</span><br><span class="line">2017-12-25 08:19:30.170424 I | etcdserver: starting server... [version: 3.2.12, cluster version: to_be_decided]</span><br><span class="line">2017-12-25 08:19:30.171732 I | etcdserver/membership: added member 773d30c9fc6640b4 [http://192.168.99.101:2380] to cluster f84185fa5f91bdf6</span><br><span class="line">2017-12-25 08:19:30.171845 I | etcdserver/membership: added member c88e2cccbb287a01 [http://192.168.99.100:2380] to cluster f84185fa5f91bdf6</span><br><span class="line">2017-12-25 08:19:30.171877 I | rafthttp: starting peer c88e2cccbb287a01...</span><br><span class="line">2017-12-25 08:19:30.171902 I | rafthttp: started HTTP pipelining with peer c88e2cccbb287a01</span><br><span class="line">2017-12-25 08:19:30.175264 I | rafthttp: started peer c88e2cccbb287a01</span><br><span class="line">2017-12-25 08:19:30.175339 I | rafthttp: added peer c88e2cccbb287a01</span><br><span class="line">2017-12-25 08:19:30.178326 I | etcdserver/membership: added member cbd7fa8d01297113 [http://192.168.99.102:2380] to cluster f84185fa5f91bdf6</span><br><span class="line">2017-12-25 08:19:30.178383 I | rafthttp: starting peer cbd7fa8d01297113...</span><br><span class="line">2017-12-25 08:19:30.178410 I | rafthttp: started HTTP pipelining with peer cbd7fa8d01297113</span><br><span class="line">2017-12-25 08:19:30.179794 I | rafthttp: started peer cbd7fa8d01297113</span><br><span class="line">2017-12-25 08:19:30.179835 I | rafthttp: added peer cbd7fa8d01297113</span><br><span class="line">2017-12-25 08:19:30.180062 N | etcdserver/membership: set the initial cluster version to 3.0</span><br><span class="line">2017-12-25 08:19:30.180132 I | etcdserver/api: enabled capabilities for version 3.0</span><br><span class="line">2017-12-25 08:19:30.180255 N | etcdserver/membership: updated the cluster version from 3.0 to 3.2</span><br><span class="line">2017-12-25 08:19:30.180430 I | etcdserver/api: enabled capabilities for version 3.2</span><br><span class="line">2017-12-25 08:19:30.183979 I | rafthttp: started streaming with peer c88e2cccbb287a01 (writer)</span><br><span class="line">2017-12-25 08:19:30.184139 I | rafthttp: started streaming with peer c88e2cccbb287a01 (writer)</span><br><span class="line">2017-12-25 08:19:30.184232 I | rafthttp: started streaming with peer c88e2cccbb287a01 (stream MsgApp v2 reader)</span><br><span class="line">2017-12-25 08:19:30.185142 I | rafthttp: started streaming with peer c88e2cccbb287a01 (stream Message reader)</span><br><span class="line">2017-12-25 08:19:30.186518 I | etcdserver/membership: removed member cbd7fa8d01297113 from cluster f84185fa5f91bdf6</span><br><span class="line">2017-12-25 08:19:30.186573 I | rafthttp: stopping peer cbd7fa8d01297113...</span><br><span class="line">2017-12-25 08:19:30.186614 I | rafthttp: started streaming with peer cbd7fa8d01297113 (writer)</span><br><span class="line">2017-12-25 08:19:30.186786 I | rafthttp: stopped streaming with peer cbd7fa8d01297113 (writer)</span><br><span class="line">2017-12-25 08:19:30.186815 I | rafthttp: started streaming with peer cbd7fa8d01297113 (writer)</span><br><span class="line">2017-12-25 08:19:30.186831 I | rafthttp: stopped streaming with peer cbd7fa8d01297113 (writer)</span><br><span class="line">2017-12-25 08:19:30.186876 I | rafthttp: started streaming with peer cbd7fa8d01297113 (stream MsgApp v2 reader)</span><br><span class="line">2017-12-25 08:19:30.187224 I | rafthttp: started streaming with peer cbd7fa8d01297113 (stream Message reader)</span><br><span class="line">2017-12-25 08:19:30.187647 I | rafthttp: stopped HTTP pipelining with peer cbd7fa8d01297113</span><br><span class="line">2017-12-25 08:19:30.187682 I | rafthttp: stopped streaming with peer cbd7fa8d01297113 (stream MsgApp v2 reader)</span><br><span class="line">2017-12-25 08:19:30.187873 I | rafthttp: stopped streaming with peer cbd7fa8d01297113 (stream Message reader)</span><br><span class="line">2017-12-25 08:19:30.187895 I | rafthttp: stopped peer cbd7fa8d01297113</span><br><span class="line">2017-12-25 08:19:30.187911 I | rafthttp: removed peer cbd7fa8d01297113</span><br><span class="line">2017-12-25 08:19:30.188034 I | etcdserver/membership: added member b2b0bca2e0cfcc19 [http://192.168.99.102:2380] to cluster f84185fa5f91bdf6</span><br><span class="line">2017-12-25 08:19:30.188059 I | rafthttp: starting peer b2b0bca2e0cfcc19...</span><br><span class="line">2017-12-25 08:19:30.188075 I | rafthttp: started HTTP pipelining with peer b2b0bca2e0cfcc19</span><br><span class="line">2017-12-25 08:19:30.188510 I | rafthttp: started peer b2b0bca2e0cfcc19</span><br><span class="line">2017-12-25 08:19:30.188533 I | rafthttp: added peer b2b0bca2e0cfcc19</span><br><span class="line">2017-12-25 08:19:30.188795 I | etcdserver/membership: removed member 773d30c9fc6640b4 from cluster f84185fa5f91bdf6</span><br><span class="line">2017-12-25 08:19:30.193643 I | rafthttp: started streaming with peer b2b0bca2e0cfcc19 (writer)</span><br><span class="line">2017-12-25 08:19:30.193730 I | rafthttp: started streaming with peer b2b0bca2e0cfcc19 (writer)</span><br><span class="line">2017-12-25 08:19:30.193797 I | rafthttp: started streaming with peer b2b0bca2e0cfcc19 (stream MsgApp v2 reader)</span><br><span class="line">2017-12-25 08:19:30.194782 I | rafthttp: started streaming with peer b2b0bca2e0cfcc19 (stream Message reader)</span><br><span class="line">2017-12-25 08:19:30.195663 I | raft: 773d30c9fc6640b4 [term: 11] received a MsgHeartbeat message with higher term from b2b0bca2e0cfcc19 [term: 12]</span><br><span class="line">2017-12-25 08:19:30.195716 I | raft: 773d30c9fc6640b4 became follower at term 12</span><br><span class="line">2017-12-25 08:19:30.195736 I | raft: raft.node: 773d30c9fc6640b4 elected leader b2b0bca2e0cfcc19 at term 12</span><br><span class="line">2017-12-25 08:19:30.196617 E | rafthttp: streaming request ignored (ID mismatch got 22b0de6ffcd98f00 want 773d30c9fc6640b4)</span><br><span class="line">2017-12-25 08:19:30.197064 E | rafthttp: streaming request ignored (ID mismatch got 22b0de6ffcd98f00 want 773d30c9fc6640b4)</span><br><span class="line">2017-12-25 08:19:30.197846 E | rafthttp: streaming request ignored (ID mismatch got 22b0de6ffcd98f00 want 773d30c9fc6640b4)</span><br><span class="line">2017-12-25 08:19:30.198242 E | rafthttp: streaming request ignored (ID mismatch got 22b0de6ffcd98f00 want 773d30c9fc6640b4)</span><br><span class="line">2017-12-25 08:19:30.201771 E | etcdserver: the member has been permanently removed from the cluster</span><br><span class="line">2017-12-25 08:19:30.202060 I | etcdserver: the data-dir used by this member must be removed.</span><br><span class="line">2017-12-25 08:19:30.202307 E | etcdserver: publish error: etcdserver: request cancelled</span><br><span class="line">2017-12-25 08:19:30.202338 I | etcdserver: aborting publish because server is stopped</span><br><span class="line">2017-12-25 08:19:30.202364 I | rafthttp: stopping peer b2b0bca2e0cfcc19...</span><br><span class="line">2017-12-25 08:19:30.202482 I | rafthttp: stopped streaming with peer b2b0bca2e0cfcc19 (writer)</span><br><span class="line">2017-12-25 08:19:30.202504 I | rafthttp: stopped streaming with peer b2b0bca2e0cfcc19 (writer)</span><br><span class="line">2017-12-25 08:19:30.204143 I | rafthttp: stopped HTTP pipelining with peer b2b0bca2e0cfcc19</span><br><span class="line">2017-12-25 08:19:30.204186 I | rafthttp: stopped streaming with peer b2b0bca2e0cfcc19 (stream MsgApp v2 reader)</span><br><span class="line">2017-12-25 08:19:30.204205 I | rafthttp: stopped streaming with peer b2b0bca2e0cfcc19 (stream Message reader)</span><br><span class="line">2017-12-25 08:19:30.204217 I | rafthttp: stopped peer b2b0bca2e0cfcc19</span><br><span class="line">2017-12-25 08:19:30.204228 I | rafthttp: stopping peer c88e2cccbb287a01...</span><br><span class="line">2017-12-25 08:19:30.204241 I | rafthttp: stopped streaming with peer c88e2cccbb287a01 (writer)</span><br><span class="line">2017-12-25 08:19:30.204255 I | rafthttp: stopped streaming with peer c88e2cccbb287a01 (writer)</span><br><span class="line">2017-12-25 08:19:30.204824 I | rafthttp: stopped HTTP pipelining with peer c88e2cccbb287a01</span><br><span class="line">2017-12-25 08:19:30.204860 I | rafthttp: stopped streaming with peer c88e2cccbb287a01 (stream MsgApp v2 reader)</span><br><span class="line">2017-12-25 08:19:30.204878 I | rafthttp: stopped streaming with peer c88e2cccbb287a01 (stream Message reader)</span><br><span class="line">2017-12-25 08:19:30.204891 I | rafthttp: stopped peer c88e2cccbb287a01</span><br></pre></td></tr></table></figure>
+<p>这么长的日志，说明啥问题呢，就是说我们虽然重新执行的 etcd 创建命令，但因为读取之前配置文件的关系，etcd 会恢复之前的集群成员，但之前的集群节点已经被移除了，所以集群节点就一直处于停止状态。</p>
+<p>怎么解决呢？很简单，就是将我们之前创建的<code>etcd-data</code>数据卷轴删掉，命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ docker volume ls</span><br><span class="line">DRIVER              VOLUME NAME</span><br><span class="line">local               etcd-data</span><br><span class="line"></span><br><span class="line">$ docker volume rm etcd-data</span><br><span class="line">etcd-data</span><br></pre></td></tr></table></figure>
+<p>然后，再在<code>node2</code>节点，重新执行 Docker etcd 集群配置命令（上面），会发现执行是成功的。</p>
+<p>我们再执行下查看集群成员命令（v2 版本）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ etcdctl member list</span><br><span class="line">22b0de6ffcd98f00: name=node2 peerURLs=http://192.168.99.101:2380 clientURLs=http://192.168.99.101:2379 isLeader=false</span><br><span class="line">b2b0bca2e0cfcc19: name=node3 peerURLs=http://192.168.99.102:2380 clientURLs=http://192.168.99.102:2379 isLeader=true</span><br><span class="line">c88e2cccbb287a01: name=node1 peerURLs=http://192.168.99.100:2380 clientURLs=http://192.168.99.100:2379 isLeader=false</span><br></pre></td></tr></table></figure>
+<h2 id="3-API-操作"><a href="#3-API-操作" class="headerlink" title="3. API 操作"></a>3. API 操作</h2><p>etcd REST API 被用于键值操作和集群成员操作，这边就简单说几个，详细的 API 查看附录说明。</p>
+<h3 id="1-键值管理"><a href="#1-键值管理" class="headerlink" title="1. 键值管理"></a>1. 键值管理</h3><p>设置键值命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://127.0.0.1:2379/v2/keys/hello -XPUT -d value=&quot;hello world&quot;</span><br><span class="line">&#123;&quot;action&quot;:&quot;set&quot;,&quot;node&quot;:&#123;&quot;key&quot;:&quot;/hello&quot;,&quot;value&quot;:&quot;hello world&quot;,&quot;modifiedIndex&quot;:17,&quot;createdIndex&quot;:17&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>查看键值命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://127.0.0.1:2379/v2/keys/hello</span><br><span class="line">&#123;&quot;action&quot;:&quot;get&quot;,&quot;node&quot;:&#123;&quot;key&quot;:&quot;/hello&quot;,&quot;value&quot;:&quot;hello world&quot;,&quot;modifiedIndex&quot;:17,&quot;createdIndex&quot;:17&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>删除键值命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://127.0.0.1:2379/v2/keys/hello -XDELETE</span><br><span class="line">&#123;&quot;action&quot;:&quot;delete&quot;,&quot;node&quot;:&#123;&quot;key&quot;:&quot;/hello&quot;,&quot;modifiedIndex&quot;:19,&quot;createdIndex&quot;:17&#125;,&quot;prevNode&quot;:&#123;&quot;key&quot;:&quot;/hello&quot;,&quot;value&quot;:&quot;hello world&quot;,&quot;modifiedIndex&quot;:17,&quot;createdIndex&quot;:17&#125;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-成员管理"><a href="#2-成员管理" class="headerlink" title="2. 成员管理"></a>2. 成员管理</h3><p>列出集群中的所有成员：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://127.0.0.1:2379/v2/members</span><br><span class="line">&#123;&quot;members&quot;:[&#123;&quot;id&quot;:&quot;22b0de6ffcd98f00&quot;,&quot;name&quot;:&quot;node2&quot;,&quot;peerURLs&quot;:[&quot;http://192.168.99.101:2380&quot;],&quot;clientURLs&quot;:[&quot;http://192.168.99.101:2379&quot;]&#125;,&#123;&quot;id&quot;:&quot;b2b0bca2e0cfcc19&quot;,&quot;name&quot;:&quot;node3&quot;,&quot;peerURLs&quot;:[&quot;http://192.168.99.102:2380&quot;],&quot;clientURLs&quot;:[&quot;http://192.168.99.102:2379&quot;]&#125;,&#123;&quot;id&quot;:&quot;c88e2cccbb287a01&quot;,&quot;name&quot;:&quot;node1&quot;,&quot;peerURLs&quot;:[&quot;http://192.168.99.100:2380&quot;],&quot;clientURLs&quot;:[&quot;http://192.168.99.100:2379&quot;]&#125;]&#125;</span><br></pre></td></tr></table></figure>
+<p>查看当前节点是否为管理节点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://127.0.0.1:2379/v2/stats/leader</span><br><span class="line">&#123;&quot;leader&quot;:&quot;b2b0bca2e0cfcc19&quot;,&quot;followers&quot;:&#123;&quot;22b0de6ffcd98f00&quot;:&#123;&quot;latency&quot;:&#123;&quot;current&quot;:0.001051,&quot;average&quot;:0.0029195000000000002,&quot;standardDeviation&quot;:0.001646769458667484,&quot;minimum&quot;:0.001051,&quot;maximum&quot;:0.006367&#125;,&quot;counts&quot;:&#123;&quot;fail&quot;:0,&quot;success&quot;:10&#125;&#125;,&quot;c88e2cccbb287a01&quot;:&#123;&quot;latency&quot;:&#123;&quot;current&quot;:0.000868,&quot;average&quot;:0.0022389999999999997,&quot;standardDeviation&quot;:0.0011402923601720172,&quot;minimum&quot;:0.000868,&quot;maximum&quot;:0.004725&#125;,&quot;counts&quot;:&#123;&quot;fail&quot;:0,&quot;success&quot;:12&#125;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>查看当前节点信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://127.0.0.1:2379/v2/stats/self</span><br><span class="line">&#123;&quot;name&quot;:&quot;node3&quot;,&quot;id&quot;:&quot;b2b0bca2e0cfcc19&quot;,&quot;state&quot;:&quot;StateLeader&quot;,&quot;startTime&quot;:&quot;2017-12-25T06:00:28.803429523Z&quot;,&quot;leaderInfo&quot;:&#123;&quot;leader&quot;:&quot;b2b0bca2e0cfcc19&quot;,&quot;uptime&quot;:&quot;36m45.45263851s&quot;,&quot;startTime&quot;:&quot;2017-12-25T08:13:02.103896843Z&quot;&#125;,&quot;recvAppendRequestCnt&quot;:6,&quot;sendAppendRequestCnt&quot;:22&#125;</span><br></pre></td></tr></table></figure>
+<p>查看集群状态：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://127.0.0.1:2379/v2/stats/store</span><br><span class="line">&#123;&quot;getsSuccess&quot;:9,&quot;getsFail&quot;:4,&quot;setsSuccess&quot;:9,&quot;setsFail&quot;:0,&quot;deleteSuccess&quot;:3,&quot;deleteFail&quot;:0,&quot;updateSuccess&quot;:0,&quot;updateFail&quot;:0,&quot;createSuccess&quot;:7,&quot;createFail&quot;:0,&quot;compareAndSwapSuccess&quot;:0,&quot;compareAndSwapFail&quot;:0,&quot;compareAndDeleteSuccess&quot;:0,&quot;compareAndDeleteFail&quot;:0,&quot;expireCount&quot;:0,&quot;watchers&quot;:0&#125;</span><br></pre></td></tr></table></figure>
+<p>当然也可以通过 API 添加和删除集群成员。</p>
+<h2 id="4-API-说明和-etcdctl-命令说明"><a href="#4-API-说明和-etcdctl-命令说明" class="headerlink" title="4. API 说明和 etcdctl 命令说明"></a>4. API 说明和 etcdctl 命令说明</h2><p>etcd REST API 说明（v2 版本）：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>curl -L <a href="http://127.0.0.1:2379/version" target="_blank" rel="noopener">http://127.0.0.1:2379/version</a></td>
+<td>查看版本</td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/message" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/message</a> -XPUT -d value=”Hello world”</td>
+<td>添加键值</td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/message" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/message</a></td>
+<td>获取键值</td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/message" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/message</a> -XPUT -d value=”Hello etcd”</td>
+<td>更新键值</td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/message" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/message</a> -XDELETE</td>
+<td>删除键值</td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/foo" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/foo</a> -XPUT -d value=bar -d ttl=5</td>
+<td>添加 TTL 键值（过期时间）</td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/foo" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/foo</a></td>
+<td>获取 TTL 键值</td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/foo" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/foo</a> -XPUT -d value=bar -d ttl= -d prevExist=true</td>
+<td>更新 TTL 键值</td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/foo?wait=true" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/foo?wait=true</a></td>
+<td></td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/foo" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/foo</a> -XPUT -d value=bar</td>
+<td></td>
+</tr>
+<tr>
+<td>curl ‘<a href="http://127.0.0.1:2379/v2/keys/foo?wait=true&amp;waitIndex=7" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/foo?wait=true&amp;waitIndex=7</a>‘</td>
+<td></td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/queue" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/queue</a> -XPOST -d value=Job1</td>
+<td></td>
+</tr>
+<tr>
+<td>curl -s ‘<a href="http://127.0.0.1:2379/v2/keys/queue?recursive=true&amp;sorted=true" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/queue?recursive=true&amp;sorted=true</a>‘</td>
+<td></td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/dir" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/dir</a> -XPUT -d ttl=30 -d dir=true</td>
+<td></td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/dir" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/dir</a> -XPUT -d ttl=30 -d dir=true -d prevExist=true</td>
+<td></td>
+</tr>
+<tr>
+<td>curl ‘<a href="http://127.0.0.1:2379/v2/keys/dir?wait=true" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/dir?wait=true</a>‘</td>
+<td></td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/dir" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/dir</a> -XPUT -d dir=true</td>
+<td>创建目录</td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/foo_dir/foo" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/foo_dir/foo</a> -XPUT -d value=bar</td>
+<td>在目录下添加键值</td>
+</tr>
+<tr>
+<td>curl <a href="http://127.0.0.1:2379/v2/keys/?recursive=true" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/?recursive=true</a></td>
+<td>获取目录下的键值</td>
+</tr>
+<tr>
+<td>curl ‘<a href="http://127.0.0.1:2379/v2/keys/foo_dir?dir=true" target="_blank" rel="noopener">http://127.0.0.1:2379/v2/keys/foo_dir?dir=true</a>‘ -XDELETE</td>
+<td>删除目录</td>
+</tr>
+<tr>
+<td>curl <a href="http://10.0.0.10:2379/v2/members" target="_blank" rel="noopener">http://10.0.0.10:2379/v2/members</a></td>
+<td>查看集群成员</td>
+</tr>
+<tr>
+<td>curl <a href="http://10.0.0.10:2379/v2/members" target="_blank" rel="noopener">http://10.0.0.10:2379/v2/members</a> -XPOST -H “Content-Type: application/json” -d ‘{“peerURLs”:[“<a href="http://10.0.0.10:2380/" target="_blank" rel="noopener">http://10.0.0.10:2380</a>“]}’</td>
+<td>添加集群成员</td>
+</tr>
+<tr>
+<td>curl <a href="http://10.0.0.10:2379/v2/members/272e204152" target="_blank" rel="noopener">http://10.0.0.10:2379/v2/members/272e204152</a> -XDELETE</td>
+<td>删除集群成员</td>
+</tr>
+<tr>
+<td>curl <a href="http://10.0.0.10:2379/v2/members/272e204152" target="_blank" rel="noopener">http://10.0.0.10:2379/v2/members/272e204152</a> -XPUT -H “Content-Type: application/json” -d ‘{“peerURLs”:[“<a href="http://10.0.0.10:2380/" target="_blank" rel="noopener">http://10.0.0.10:2380</a>“]}’</td>
+<td>更新集群成员</td>
+</tr>
+</tbody>
+</table>
+<p>更多 API 请查看：<a href="https://coreos.com/etcd/docs/latest/v2/api.html" target="_blank" rel="noopener">etcd API</a> 和 <a href="https://coreos.com/etcd/docs/latest/v2/members_api.html" target="_blank" rel="noopener">Members API</a></p>
+<p>etcdctl 命令说明：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>etcdctl set key value</td>
+<td>添加键值</td>
+</tr>
+<tr>
+<td>etcdctl get key</td>
+<td>获取键值</td>
+</tr>
+<tr>
+<td>etcdctl update key value</td>
+<td>更新键值</td>
+</tr>
+<tr>
+<td>etcdctl rm key</td>
+<td>删除键值</td>
+</tr>
+<tr>
+<td>etcdctl mkdir dirname</td>
+<td>添加目录（不存在的话创建）</td>
+</tr>
+<tr>
+<td>etcdctl setdir</td>
+<td>添加目录（都创建）</td>
+</tr>
+<tr>
+<td>etcdctl updatedir</td>
+<td>更新目录</td>
+</tr>
+<tr>
+<td>etcdctl rmdir</td>
+<td>删除目录</td>
+</tr>
+<tr>
+<td>etcdctl ls</td>
+<td>列出目录</td>
+</tr>
+<tr>
+<td>etcdctl watch</td>
+<td>监控键值</td>
+</tr>
+<tr>
+<td>etcdctl exec-watch</td>
+<td>监控键值（执行命令）</td>
+</tr>
+<tr>
+<td>etcdctl list</td>
+<td>查看集群成员</td>
+</tr>
+<tr>
+<td>etcdctl member add</td>
+<td>添加集群成员</td>
+</tr>
+<tr>
+<td>etcdctl remove</td>
+<td>移除集群成员</td>
+</tr>
+</tbody>
+</table>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://www.cnblogs.com/xishuai/p/docker-etcd.html" target="_blank" rel="noopener">https://www.cnblogs.com/xishuai/p/docker-etcd.html</a> </li>
+<li><a href="http://brewinstall.org/install-etcd-on-mac-with-brew/" target="_blank" rel="noopener">Install etcd on Mac with Brew</a></li>
+<li><a href="http://blog.yiyun.pro/linux-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2etcd%E9%9B%86%E7%BE%A4/" target="_blank" rel="noopener">linux 基于 docker 部署 etcd 集群</a></li>
+<li><a href="http://www.cnblogs.com/zhangeamon/p/6139964.html" target="_blank" rel="noopener">Docker 搭建 etcd 集群及管理</a></li>
+<li><a href="https://coolex.info/blog/481.html" target="_blank" rel="noopener">DOCKER 服务发现 - ETCD 集群</a></li>
+<li><a href="https://segmentfault.com/a/1190000005645668" target="_blank" rel="noopener">docker-machine 使用 discovery 模式搭建 etcd 集群</a></li>
+<li><a href="https://skyao.gitbooks.io/learning-etcd3/content/documentation/op-guide/container.html" target="_blank" rel="noopener">在容器内运行 etcd 集群</a></li>
+<li><a href="https://segmentfault.com/a/1190000005649865" target="_blank" rel="noopener">etcd rest api 基本操作</a></li>
+<li><a href="http://cizixs.com/2016/08/02/intro-to-etcd" target="_blank" rel="noopener">etcd 使用入门</a>(<strong>推荐</strong>)</li>
+<li><a href="https://jimmysong.io/kubernetes-handbook/practice/etcd-cluster-installation.html" target="_blank" rel="noopener">创建高可用 etcd 集群</a></li>
+<li><a href="https://tonydeng.github.io/2015/11/24/etcd-the-first-using/" target="_blank" rel="noopener">初试 ETCD</a>(<strong>推荐</strong>)</li>
+<li><a href="https://coreos.com/etcd/docs/latest/op-guide/container.html" target="_blank" rel="noopener">Run etcd clusters inside containers</a>(<strong>官方</strong>)</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/22/2019-04-22/VirtualBox-vmdk文件缩容/" rel="next" title="VirtualBox vmdk文件缩容">
+                <i class="fa fa-chevron-left"></i> VirtualBox vmdk文件缩容
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Irishemma</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-主机安装"><span class="nav-number">1.</span> <span class="nav-text">1. 主机安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-集群搭建"><span class="nav-number">2.</span> <span class="nav-text">2. 集群搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-API-操作"><span class="nav-number">3.</span> <span class="nav-text">3. API 操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-键值管理"><span class="nav-number">3.1.</span> <span class="nav-text">1. 键值管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-成员管理"><span class="nav-number">3.2.</span> <span class="nav-text">2. 成员管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-API-说明和-etcdctl-命令说明"><span class="nav-number">4.</span> <span class="nav-text">4. API 说明和 etcdctl 命令说明</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Irishemma</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

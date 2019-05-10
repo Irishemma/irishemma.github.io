@@ -103,7 +103,7 @@
 <meta property="og:site_name" content="Beluga">
 <meta property="og:description" content="“Group By”从字面意义上理解就是根据“By”指定的规则对数据进行分组，所谓的分组就是将一个“数据集”划分成若干个“小区域”，然后针对若干个“小区域”进行数据处理。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-05-09T15:01:47.895Z">
+<meta property="og:updated_time" content="2019-05-09T15:09:42.954Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Group By的使用">
 <meta name="twitter:description" content="“Group By”从字面意义上理解就是根据“By”指定的规则对数据进行分组，所谓的分组就是将一个“数据集”划分成若干个“小区域”，然后针对若干个“小区域”进行数据处理。">
@@ -366,7 +366,7 @@
                 
               
 
-              <time title="创建时间：2019-05-09 22:53:48 / 修改时间：23:01:47" itemprop="dateCreated datePublished" datetime="2019-05-09T22:53:48+08:00">2019-05-09</time>
+              <time title="创建时间：2019-05-09 22:53:48 / 修改时间：23:09:42" itemprop="dateCreated datePublished" datetime="2019-05-09T22:53:48+08:00">2019-05-09</time>
             
 
             
@@ -430,7 +430,7 @@
 <h3 id="2、Group-By-和-Order-By联合使用"><a href="#2、Group-By-和-Order-By联合使用" class="headerlink" title="2、Group By 和 Order By联合使用"></a>2、Group By 和 Order By联合使用</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 类别, <span class="keyword">sum</span>(数量) <span class="keyword">AS</span> 数量之和</span><br><span class="line"><span class="keyword">from</span> A</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> 类别</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">sum</span>(数量) <span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
 <h3 id="3、Group-By中Select指定的字段限制"><a href="#3、Group-By中Select指定的字段限制" class="headerlink" title="3、Group By中Select指定的字段限制"></a>3、Group By中Select指定的字段限制</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 类别, <span class="keyword">sum</span>(数量) <span class="keyword">as</span> 数量之和, 摘要</span><br><span class="line"><span class="keyword">from</span> A</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> 类别</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> 类别 <span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
 <p>在select指定的字段要么就要<strong>包含在Group By语句的后面，作为分组的依据；要么就要被包含在聚合函数中</strong></p>
-<h3 id="4、Group-By-All"><a href="#4、Group-By-All" class="headerlink" title="4、Group By All"></a>4、Group By All</h3><h4 id="示例4"><a href="#示例4" class="headerlink" title="示例4"></a>示例4</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 类别, 摘要, <span class="keyword">sum</span>(数量) <span class="keyword">as</span> 数量之和</span><br><span class="line"><span class="keyword">from</span> A</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">all</span> 类别, 摘要</span><br></pre></td></tr></table></figure>
+<h3 id="4、Group-By-All"><a href="#4、Group-By-All" class="headerlink" title="4、Group By All"></a>4、Group By All</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 类别, 摘要, <span class="keyword">sum</span>(数量) <span class="keyword">as</span> 数量之和</span><br><span class="line"><span class="keyword">from</span> A</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">all</span> 类别, 摘要</span><br></pre></td></tr></table></figure>
 <p>示例中指定“摘要”字段，将类别和摘要一起作为联合索引。类别字段会重复</p>
 <h3 id="5、Group-By与聚合函数"><a href="#5、Group-By与聚合函数" class="headerlink" title="5、Group By与聚合函数"></a>5、Group By与聚合函数</h3><p>在示例3中提到group by语句中select指定的字段必须是“分组依据字段”，其他字段若想出现在select中则必须包含在聚合函数中，常见的聚合函数如下表：</p>
 <table>
@@ -520,6 +520,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/05/10/他山之石/jackcooper-简书一些文章/" rel="prev" title="jackcooper 简书一些文章">
+                jackcooper 简书一些文章 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -587,7 +591,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-count">33</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -630,7 +634,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">13</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">15</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -699,7 +707,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、简单Group-By"><span class="nav-number">1.</span> <span class="nav-text">1、简单Group By</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、Group-By-和-Order-By联合使用"><span class="nav-number">2.</span> <span class="nav-text">2、Group By 和 Order By联合使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、Group-By中Select指定的字段限制"><span class="nav-number">3.</span> <span class="nav-text">3、Group By中Select指定的字段限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、Group-By-All"><span class="nav-number">4.</span> <span class="nav-text">4、Group By All</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#示例4"><span class="nav-number">4.1.</span> <span class="nav-text">示例4</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、Group-By与聚合函数"><span class="nav-number">5.</span> <span class="nav-text">5、Group By与聚合函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#参考资料"><span class="nav-number">5.0.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、简单Group-By"><span class="nav-number">1.</span> <span class="nav-text">1、简单Group By</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、Group-By-和-Order-By联合使用"><span class="nav-number">2.</span> <span class="nav-text">2、Group By 和 Order By联合使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、Group-By中Select指定的字段限制"><span class="nav-number">3.</span> <span class="nav-text">3、Group By中Select指定的字段限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、Group-By-All"><span class="nav-number">4.</span> <span class="nav-text">4、Group By All</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、Group-By与聚合函数"><span class="nav-number">5.</span> <span class="nav-text">5、Group By与聚合函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#参考资料"><span class="nav-number">5.0.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
             
 
           </div>

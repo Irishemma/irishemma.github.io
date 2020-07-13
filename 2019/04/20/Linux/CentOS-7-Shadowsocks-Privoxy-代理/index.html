@@ -103,7 +103,7 @@
 <meta property="og:site_name" content="Beluga">
 <meta property="og:description" content="“本文介绍的是在 CentOS 上安装 shadowsocks 客户端的过程，最终实现的也就是当前 CentOS 通过其他服务器的 Shadowsocks 服务联网，非在 CentOS 上安装 shadowsocks 服务端的过程，因此你需要一个已经能科学上网的 shadowsocks 服务端。”">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-04-27T07:05:47.947Z">
+<meta property="og:updated_time" content="2019-12-20T06:37:14.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS 7 Shadowsocks+Privoxy 代理">
 <meta name="twitter:description" content="“本文介绍的是在 CentOS 上安装 shadowsocks 客户端的过程，最终实现的也就是当前 CentOS 通过其他服务器的 Shadowsocks 服务联网，非在 CentOS 上安装 shadowsocks 服务端的过程，因此你需要一个已经能科学上网的 shadowsocks 服务端。”">
@@ -383,7 +383,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-27 15:05:47" itemprop="dateModified" datetime="2019-04-27T15:05:47+08:00">2019-04-27</time>
+                <time title="修改时间：2019-12-20 14:37:14" itemprop="dateModified" datetime="2019-12-20T14:37:14+08:00">2019-12-20</time>
               
             
           </span>
@@ -445,6 +445,7 @@
 <p>填写以下内容:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;server&quot;:&quot;your_server_ip&quot;,      #ss服务器IP</span><br><span class="line">    &quot;server_port&quot;:your_server_port, #端口</span><br><span class="line">    &quot;local_address&quot;: &quot;127.0.0.1&quot;,   #本地ip</span><br><span class="line">    &quot;local_port&quot;:1080,              #本地端口</span><br><span class="line">    &quot;password&quot;:&quot;your_server_passwd&quot;,#连接ss密码</span><br><span class="line">    &quot;timeout&quot;:300,                  #等待超时</span><br><span class="line">    &quot;method&quot;:&quot;rc4-md5&quot;,             #加密方式</span><br><span class="line">    &quot;fast_open&quot;: false,             # true 或 false。如果你的服务器 Linux 内核在3.7+，可以开启 fast_open 以降低延迟。开启方法： echo 3 &gt; /proc/sys/net/ipv4/tcp_fastopen 开启之后，将 fast_open 的配置设置为 true 即可</span><br><span class="line">    &quot;workers&quot;: 1                    # 工作线程数</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>Demo参考：</p>
+<p>服务器地址：45.76.93.4 服务器端口：16458 加密方式：chacha20 密码：ZwtU9c 协议：origin 协议参数： 混淆：plain 混淆参数： </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;server&quot;:&quot;23.105.222.129&quot;,</span><br><span class="line">    &quot;server_port&quot;:5800,</span><br><span class="line">    &quot;local_address&quot;: &quot;127.0.0.1&quot;,</span><br><span class="line">    &quot;local_port&quot;:1080,</span><br><span class="line">    &quot;password&quot;:&quot;*******&quot;,</span><br><span class="line">    &quot;timeout&quot;:300,</span><br><span class="line">    &quot;method&quot;:&quot;aes-256-cfb&quot;,</span><br><span class="line">    &quot;fast_open&quot;: false,</span><br><span class="line">    &quot;workers&quot;: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="启动shadowsocks服务"><a href="#启动shadowsocks服务" class="headerlink" title="启动shadowsocks服务"></a>启动shadowsocks服务</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sslocal -c /etc/shadowsocks.json</span><br></pre></td></tr></table></figure>
 <h2 id="设置shadowsocks开机自启"><a href="#设置shadowsocks开机自启" class="headerlink" title="设置shadowsocks开机自启"></a>设置shadowsocks开机自启</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/systemd/system/shadowsocks.service</span><br></pre></td></tr></table></figure>
@@ -579,7 +580,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">48</span>
+                    <span class="site-state-item-count">53</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -630,7 +631,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">17</span>
+                      
+                    
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -661,7 +664,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">7</span>
+                      
+                    
+                    <span class="site-state-item-count">8</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -720,7 +725,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>

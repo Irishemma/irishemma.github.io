@@ -96,19 +96,19 @@
 
 
 
-  <meta name="description" content="goland是基于intellij IDEA推出的开发go的IDE，所以很多之前Intellij的使用习惯可以保留下来，实属developer的福音，今天遇到一个新的问题，就是我要调试远程服务器上的go代码，远程系统是ubuntu或者centos，总之是没有图形界面的，我想在本地调试该怎么办呢，答案是使用Delve 这个专门的调试工具。  前提：本地代码和远程代码保持一致，否则可能出现断点语句跟">
+  <meta name="description" content="goland是基于intellij IDEA推出的开发go的IDE，所以很多之前Intellij的使用习惯可以保留下来，实属developer的福音，今天遇到一个新的问题，就是我要调试远程服务器上的go代码，远程系统是ubuntu或者centos，总之是没有图形界面的，我想在本地调试该怎么办呢，答案是使用Delve 这个专门的调试工具。  前提：本地代码和远程代码保持一致，否则可能出现断点语句跟预">
 <meta property="og:type" content="article">
 <meta property="og:title" content="goland远程调试go程序">
 <meta property="og:url" content="http://yoursite.com/2019/10/09/Go/goland远程调试go程序/index.html">
 <meta property="og:site_name" content="Beluga">
-<meta property="og:description" content="goland是基于intellij IDEA推出的开发go的IDE，所以很多之前Intellij的使用习惯可以保留下来，实属developer的福音，今天遇到一个新的问题，就是我要调试远程服务器上的go代码，远程系统是ubuntu或者centos，总之是没有图形界面的，我想在本地调试该怎么办呢，答案是使用Delve 这个专门的调试工具。  前提：本地代码和远程代码保持一致，否则可能出现断点语句跟">
+<meta property="og:description" content="goland是基于intellij IDEA推出的开发go的IDE，所以很多之前Intellij的使用习惯可以保留下来，实属developer的福音，今天遇到一个新的问题，就是我要调试远程服务器上的go代码，远程系统是ubuntu或者centos，总之是没有图形界面的，我想在本地调试该怎么办呢，答案是使用Delve 这个专门的调试工具。  前提：本地代码和远程代码保持一致，否则可能出现断点语句跟预">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10120431-bedad69d270e3ecf.png?imageMogr2/auto-orient/strip|imageView2/2/w/738/format/webp">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10120431-3fce6c44c1aab4c8.png?imageMogr2/auto-orient/strip|imageView2/2/w/1125/format/webp">
-<meta property="og:updated_time" content="2019-10-09T09:08:14.000Z">
+<meta property="og:updated_time" content="2020-07-28T13:03:23.317Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="goland远程调试go程序">
-<meta name="twitter:description" content="goland是基于intellij IDEA推出的开发go的IDE，所以很多之前Intellij的使用习惯可以保留下来，实属developer的福音，今天遇到一个新的问题，就是我要调试远程服务器上的go代码，远程系统是ubuntu或者centos，总之是没有图形界面的，我想在本地调试该怎么办呢，答案是使用Delve 这个专门的调试工具。  前提：本地代码和远程代码保持一致，否则可能出现断点语句跟">
+<meta name="twitter:description" content="goland是基于intellij IDEA推出的开发go的IDE，所以很多之前Intellij的使用习惯可以保留下来，实属developer的福音，今天遇到一个新的问题，就是我要调试远程服务器上的go代码，远程系统是ubuntu或者centos，总之是没有图形界面的，我想在本地调试该怎么办呢，答案是使用Delve 这个专门的调试工具。  前提：本地代码和远程代码保持一致，否则可能出现断点语句跟预">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/10120431-bedad69d270e3ecf.png?imageMogr2/auto-orient/strip|imageView2/2/w/738/format/webp">
 
 
@@ -369,16 +369,46 @@
                 
               
 
-              <time title="创建时间：2019-10-09 17:07:05 / 修改时间：17:08:14" itemprop="dateCreated datePublished" datetime="2019-10-09T17:07:05+08:00">2019-10-09</time>
+              <time title="创建时间：2019-10-09 17:07:05" itemprop="dateCreated datePublished" datetime="2019-10-09T17:07:05+08:00">2019-10-09</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-07-28 21:03:23" itemprop="dateModified" datetime="2020-07-28T21:03:23+08:00">2020-07-28</time>
               
             
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Go/" itemprop="url" rel="index"><span itemprop="name">Go</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -408,11 +438,11 @@
       
 
       
-        <a id="more"></a>
-<p>goland是基于intellij IDEA推出的开发go的IDE，所以很多之前Intellij的使用习惯可以保留下来，实属developer的福音，今天遇到一个新的问题，就是我要调试远程服务器上的go代码，远程系统是ubuntu或者centos，总之是没有图形界面的，我想在本地调试该怎么办呢，答案是使用Delve 这个专门的调试工具。</p>
+        <p>goland是基于intellij IDEA推出的开发go的IDE，所以很多之前Intellij的使用习惯可以保留下来，实属developer的福音，今天遇到一个新的问题，就是我要调试远程服务器上的go代码，远程系统是ubuntu或者centos，总之是没有图形界面的，我想在本地调试该怎么办呢，答案是使用Delve 这个专门的调试工具。</p>
 <blockquote>
 <p>前提：本地代码和远程代码保持一致，否则可能出现断点语句跟预期不一致或莫名其妙的情况。可以在Intellij中使用经典的remote host access插件来dowload或者upload代码实现同步。因为比较简单，具体使用姿势自行探索。</p>
 </blockquote>
+<a id="more"></a>
 <h2 id="step1-远程主机"><a href="#step1-远程主机" class="headerlink" title="step1 远程主机"></a>step1 远程主机</h2><p>安装delve，项目地址：<a href="https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Fderekparker%2Fdelve" target="_blank" rel="noopener">https://github.com/derekparker/delve</a><br>按照官方的提示安装即可（注意因为GFW等你懂得的原因，网络下载可能较慢或不可用，请自行使用某高科技软件，如ss+proxychains等工具）。</p>
 <p>下载并安装完成后输入dlv就会看到帮助信息：</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/10120431-bedad69d270e3ecf.png?imageMogr2/auto-orient/strip|imageView2/2/w/738/format/webp" alt="img"></p>

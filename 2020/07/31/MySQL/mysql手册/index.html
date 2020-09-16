@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="从网上摘录了一些常用SQL操作，以备即用即查">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql手册">
+<meta property="og:url" content="http://yoursite.com/2020/07/31/MySQL/mysql手册/index.html">
+<meta property="og:site_name" content="Beluga">
+<meta property="og:description" content="从网上摘录了一些常用SQL操作，以备即用即查">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-09-13T08:52:57.629Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mysql手册">
+<meta name="twitter:description" content="从网上摘录了一些常用SQL操作，以备即用即查">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2020/07/31/MySQL/mysql手册/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>mysql手册 | Beluga</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Beluga</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/31/MySQL/mysql手册/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Irishemma">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Beluga">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">mysql手册
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-07-31 00:42:07" itemprop="dateCreated datePublished" datetime="2020-07-31T00:42:07+08:00">2020-07-31</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-09-13 16:52:57" itemprop="dateModified" datetime="2020-09-13T16:52:57+08:00">2020-09-13</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>从网上摘录了一些常用SQL操作，以备即用即查</p>
+<a id="more"></a>
+<p>本博客采用创作共用版权协议, 要求署名、非商业用途和保持一致. 转载本博客文章必须也遵循署名-非商业用途-保持一致的创作共用协议.</p>
+<p>MySQL是一种关系型数据库(RDBMS), 数据库可以理解为相关文件的集合. 数据库和控制器数据库的软件称为数据库管理系统(DBMS)</p>
+<p>数据库提供处理数据的方法: SQL</p>
+<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>每个表由多个行和列组成<br>每行包含一个单独实体的数据, 称为记录<br>每一列包含与该记录相关的一项数据, 称为属性</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>本博文中所有的SQL语句遵循小写书写风格, 不喜勿喷</p>
+<p>$ brew install mysql<br>$ mysql -u root mysql</p>
+<h1 id="设置开机启动"><a href="#设置开机启动" class="headerlink" title="设置开机启动"></a>设置开机启动</h1><p>$ ln -sfv /usr/local/opt/mysql/*.plist ~/Library/LaunchAgents </p>
+<h1 id="加载mysql"><a href="#加载mysql" class="headerlink" title="加载mysql"></a>加载mysql</h1><p>$ launchctl load ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist</p>
+<h1 id="启动mysql服务器"><a href="#启动mysql服务器" class="headerlink" title="启动mysql服务器"></a>启动mysql服务器</h1><p>$ mysql.server start</p>
+<h1 id="关闭mysql服务器"><a href="#关闭mysql服务器" class="headerlink" title="关闭mysql服务器"></a>关闭mysql服务器</h1><p>$ mysql.server stop</p>
+<h1 id="使用根用户"><a href="#使用根用户" class="headerlink" title="使用根用户"></a>使用根用户</h1><p>$ mysql -u root </p>
+<h1 id="创建用户密码"><a href="#创建用户密码" class="headerlink" title="创建用户密码"></a>创建用户密码</h1><p>mysql&gt; set password=password(‘123456’);</p>
+<h1 id="创建数据库"><a href="#创建数据库" class="headerlink" title="创建数据库"></a>创建数据库</h1><p>mysql&gt; create database firstdb;</p>
+<h1 id="添加用户和密码-并赋予firstdb的完全访问权限-账户名为amdin-密码为123456"><a href="#添加用户和密码-并赋予firstdb的完全访问权限-账户名为amdin-密码为123456" class="headerlink" title="添加用户和密码, 并赋予firstdb的完全访问权限, 账户名为amdin, 密码为123456"></a>添加用户和密码, 并赋予firstdb的完全访问权限, 账户名为amdin, 密码为123456</h1><p>mysql&gt; grant all on firstdb.* to admin@localhost identified by ‘123456’;  </p>
+<h1 id="退出"><a href="#退出" class="headerlink" title="退出"></a>退出</h1><p>mysql&gt; exit</p>
+<h2 id="初试数据库"><a href="#初试数据库" class="headerlink" title="初试数据库"></a>初试数据库</h2><h1 id="使用非根用户登陆数据库-并使用firstdb"><a href="#使用非根用户登陆数据库-并使用firstdb" class="headerlink" title="使用非根用户登陆数据库, 并使用firstdb"></a>使用非根用户登陆数据库, 并使用firstdb</h1><p>mysql&gt; mysql -u admin -p123456 firstdb</p>
+<h3 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h3><h1 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h1><p>mysql&gt; create table sales_rep(<br>    -&gt; employee_number int,<br>    -&gt; surname varchar(40),<br>    -&gt; first_name varchar(30),<br>    -&gt; commission tinyint<br>    -&gt; );</p>
+<h1 id="显示已有表"><a href="#显示已有表" class="headerlink" title="显示已有表"></a>显示已有表</h1><p>mysql&gt; show tables;</p>
+<h1 id="describe来检查表结构"><a href="#describe来检查表结构" class="headerlink" title="describe来检查表结构"></a>describe来检查表结构</h1><p>mysql&gt; describe sales_rep;<br>sales_rep为表名, employee_number, surname, first_name, commission为属性, int表示整型, varchar表示变长字符, tinyint表示小整数</p>
+<h3 id="删除表和数据库"><a href="#删除表和数据库" class="headerlink" title="删除表和数据库"></a>删除表和数据库</h3><h1 id="创建一个表"><a href="#创建一个表" class="headerlink" title="创建一个表"></a>创建一个表</h1><p>mysql&gt; create table com(id int);</p>
+<h1 id="删除表使用drop关键字"><a href="#删除表使用drop关键字" class="headerlink" title="删除表使用drop关键字"></a>删除表使用drop关键字</h1><p>mysql&gt; drop table com;</p>
+<h1 id="切换root用户-创建数据库com"><a href="#切换root用户-创建数据库com" class="headerlink" title="切换root用户, 创建数据库com"></a>切换root用户, 创建数据库com</h1><p>mysql&gt; create database com;</p>
+<h1 id="删除数据库"><a href="#删除数据库" class="headerlink" title="删除数据库"></a>删除数据库</h1><p>mysql&gt; drop database com;</p>
+<h3 id="插入-删除-修改记录"><a href="#插入-删除-修改记录" class="headerlink" title="插入/删除/修改记录"></a>插入/删除/修改记录</h3><h1 id="插入数据-insert-into-表名-要插入的属性名-values-属性值-字符串使用单引号"><a href="#插入数据-insert-into-表名-要插入的属性名-values-属性值-字符串使用单引号" class="headerlink" title="插入数据 insert into 表名(要插入的属性名) values(属性值), 字符串使用单引号"></a>插入数据 insert into 表名(要插入的属性名) values(属性值), 字符串使用单引号</h1><p>mysql&gt; insert into sales_rep values(1, ‘Rive’, ‘Sol’, 10);<br>mysql&gt; insert into sales_rep values(2, ‘Gordimer’, ‘Charlens’, 15);<br>mysql&gt; insert into sales_rep values(3, ‘Serote’, ‘Mike’, 10);</p>
+<h1 id="一行添加数据"><a href="#一行添加数据" class="headerlink" title="一行添加数据"></a>一行添加数据</h1><p>mysql&gt; insert into sales_rep values<br>     &gt;(1, ‘Rive’, ‘Sol’, 10),<br>     &gt;(2, ‘Gordimer’, ‘Charlens’, 15),<br>     &gt;(3, ‘Serote’, ‘Mike’, 10);</p>
+<h1 id="从文件中加载数据-格式load-data-local-infile-“文件名”-into-table-表名"><a href="#从文件中加载数据-格式load-data-local-infile-“文件名”-into-table-表名" class="headerlink" title="从文件中加载数据, 格式load data local infile “文件名” into table 表名;"></a>从文件中加载数据, 格式load data local infile “文件名” into table 表名;</h1><p>mysql&gt; load data local infile “sales_rep.sql” into table sales_rep;<br>删除记录</p>
+<h1 id="删除employee-number为5的记录"><a href="#删除employee-number为5的记录" class="headerlink" title="删除employee_number为5的记录"></a>删除employee_number为5的记录</h1><p>mysql&gt; delete from sales_rep where employee_number = 5;<br>修改记录</p>
+<h1 id="修改employee-number的记录的commission为12"><a href="#修改employee-number的记录的commission为12" class="headerlink" title="修改employee_number的记录的commission为12"></a>修改employee_number的记录的commission为12</h1><p>mysql&gt; update sales_rep set commission = 12 where employee_number = 1;</p>
+<h3 id="数据检索"><a href="#数据检索" class="headerlink" title="数据检索"></a>数据检索</h3><h1 id="检索所有插入的数据"><a href="#检索所有插入的数据" class="headerlink" title="检索所有插入的数据"></a>检索所有插入的数据</h1><p>mysql&gt; select * from sales_rep;</p>
+<h1 id="检索surname为’Gordimer’的记录"><a href="#检索surname为’Gordimer’的记录" class="headerlink" title="检索surname为’Gordimer’的记录"></a>检索surname为’Gordimer’的记录</h1><p>mysql&gt; select * from sales_rep where surname=’Gordimer’;</p>
+<h3 id="模式匹配"><a href="#模式匹配" class="headerlink" title="模式匹配"></a>模式匹配</h3><p>like和%进行模糊查找</p>
+<h1 id="输出已surname已R开头的数据"><a href="#输出已surname已R开头的数据" class="headerlink" title="输出已surname已R开头的数据"></a>输出已surname已R开头的数据</h1><p>mysql&gt; select * from sales_rep where surname like ‘R%’;</p>
+<h3 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h3><p>order by</p>
+<h1 id="数据按照surname排序输出-当surname相同时-使用first-name排序"><a href="#数据按照surname排序输出-当surname相同时-使用first-name排序" class="headerlink" title="数据按照surname排序输出, 当surname相同时, 使用first_name排序"></a>数据按照surname排序输出, 当surname相同时, 使用first_name排序</h1><p>mysql&gt; select * from sales_rep order by surname, first_name;</p>
+<h1 id="递减排序使用关键字desc-默认使用升序asc"><a href="#递减排序使用关键字desc-默认使用升序asc" class="headerlink" title="递减排序使用关键字desc, 默认使用升序asc"></a>递减排序使用关键字desc, 默认使用升序asc</h1><p>mysql&gt; select * from sales_rep order by surname desc;<br>多列排序时, 使用逗号隔开排序规则, order by排序优先次序为从左到右</p>
+<p>mysql&gt; select ename, job, sal from emp  order by deptno asc, sal desc;<br>按照字符串部分子串排序</p>
+<h1 id="按照job中最后两个字符进行排序"><a href="#按照job中最后两个字符进行排序" class="headerlink" title="按照job中最后两个字符进行排序"></a>按照job中最后两个字符进行排序</h1><p>mysql&gt; select ename, job from emp order by substr(job, length(job) - 1);<br>书中说: 找到字符串末尾(字符串长度)并减2, 则其实诶之就是字符串中倒数第二个字符</p>
+<p>但在我测试过程用应该是建1, 则是对最后两个字符排序(疑问?)</p>
+<p>根据数据项的键排序</p>
+<p>使用case语句</p>
+<p>如果job是salesman, 按照comm, 否则, 按照sal排序<br>mysql&gt; select ename, sal, job, comm from emp<br>    -&gt; order by case when job = ‘salesman’ then comm else sal end;</p>
+<h3 id="限制数据数量"><a href="#限制数据数量" class="headerlink" title="限制数据数量"></a>限制数据数量</h3><p>limit</p>
+<h1 id="按surname降序输出两行"><a href="#按surname降序输出两行" class="headerlink" title="按surname降序输出两行"></a>按surname降序输出两行</h1><p>mysql&gt; select * from sales_rep order by surname desc limit 2;<br>从表中随机返回n条记录</p>
+<p>order by可以接受函数的返回值, 并使用它来改变结果集的顺序<br>select ename, job from emp order by rand() limit 5;</p>
+<h3 id="最大值-最小值-计数-平均-综合"><a href="#最大值-最小值-计数-平均-综合" class="headerlink" title="最大值/最小值/计数/平均/综合"></a>最大值/最小值/计数/平均/综合</h3><h1 id="查询commission的最大值"><a href="#查询commission的最大值" class="headerlink" title="查询commission的最大值"></a>查询commission的最大值</h1><p>mysql&gt; select max(commission) from sales_rep;</p>
+<h1 id="查询最小值"><a href="#查询最小值" class="headerlink" title="查询最小值"></a>查询最小值</h1><p>mysql&gt; select min(commission) from sales_rep;</p>
+<h1 id="表中不重复surname的个数"><a href="#表中不重复surname的个数" class="headerlink" title="表中不重复surname的个数"></a>表中不重复surname的个数</h1><p>mysql&gt; select count(distinct surname) from sales_rep;</p>
+<h1 id="commission的平均值"><a href="#commission的平均值" class="headerlink" title="commission的平均值"></a>commission的平均值</h1><p>mysql&gt; select avg(commission) from sales_rep;</p>
+<h1 id="commission的总和"><a href="#commission的总和" class="headerlink" title="commission的总和"></a>commission的总和</h1><p>mysql&gt; select sum(commission) from sales_rep;</p>
+<h1 id="right-从字符串右端算起-按位返回字符串"><a href="#right-从字符串右端算起-按位返回字符串" class="headerlink" title="right()从字符串右端算起, 按位返回字符串"></a>right()从字符串右端算起, 按位返回字符串</h1><p>mysql&gt; select right(date_joined, 5), right(birthday, 5) from sales_rep;</p>
+<h3 id="去重"><a href="#去重" class="headerlink" title="去重"></a>去重</h3><h1 id="使用distinct-去掉查询字段相同的记录"><a href="#使用distinct-去掉查询字段相同的记录" class="headerlink" title="使用distinct, 去掉查询字段相同的记录"></a>使用distinct, 去掉查询字段相同的记录</h1><h3 id="改变表结构"><a href="#改变表结构" class="headerlink" title="改变表结构"></a>改变表结构</h3><p>添加列</p>
+<h1 id="给表添加一列名为data-joined-类型为date"><a href="#给表添加一列名为data-joined-类型为date" class="headerlink" title="给表添加一列名为data_joined, 类型为date"></a>给表添加一列名为data_joined, 类型为date</h1><p>mysql&gt; alter table sales_rep add date_joined date;</p>
+<h1 id="添加一类名为year-born-类型为year"><a href="#添加一类名为year-born-类型为year" class="headerlink" title="添加一类名为year_born, 类型为year"></a>添加一类名为year_born, 类型为year</h1><p>alter table sales_rep add year_born year;<br>修改列定义</p>
+<p>将year_born改为 列名为birthday, 类型为data<br>mysql&gt; alter table sales_rep change year_born birthday date;<br>重命名表</p>
+<p>mysql&gt; alter table sales_rep rename cash_flow;</p>
+<h1 id="恢复原来表名"><a href="#恢复原来表名" class="headerlink" title="恢复原来表名"></a>恢复原来表名</h1><p>mysql&gt; alter table cash_flow rename to sales_rep;<br>删除列</p>
+<h1 id="删除列名为enhancement-value的一列"><a href="#删除列名为enhancement-value的一列" class="headerlink" title="删除列名为enhancement_value的一列"></a>删除列名为enhancement_value的一列</h1><p>mysql&gt; alter table sales_rep drop enhancement_value;</p>
+<h3 id="日期函数"><a href="#日期函数" class="headerlink" title="日期函数"></a>日期函数</h3><h1 id="给date类型设置日期"><a href="#给date类型设置日期" class="headerlink" title="给date类型设置日期"></a>给date类型设置日期</h1><p>mysql&gt; update sales_rep set date_joined = ‘2014-02-15’, birthday = ‘2000-02-14’ where employee_number = 1;</p>
+<h1 id="使用日期函数-设置显示日期格式"><a href="#使用日期函数-设置显示日期格式" class="headerlink" title="使用日期函数, 设置显示日期格式"></a>使用日期函数, 设置显示日期格式</h1><p>mysql&gt; select date_format(date_joined, ‘%m/%d/%y’) from sales_rep;</p>
+<h1 id="使用year-输出年-month-输出月-dayofmonth-输出一个月的第几日"><a href="#使用year-输出年-month-输出月-dayofmonth-输出一个月的第几日" class="headerlink" title="使用year()输出年, month()输出月, dayofmonth()输出一个月的第几日"></a>使用year()输出年, month()输出月, dayofmonth()输出一个月的第几日</h1><p>mysql&gt; select year(birthday), month(birthday), dayofmonth(birthday) from sales_rep;</p>
+<h3 id="高级查找-别名-concat-多表查询-case表达式"><a href="#高级查找-别名-concat-多表查询-case表达式" class="headerlink" title="高级查找(别名, concat, 多表查询, case表达式)"></a>高级查找(别名, concat, 多表查询, case表达式)</h3><p>as起别名(类似pytho中import包时用as起别名)</p>
+<p>mysql&gt; select year(birthday) as year, month(birthday) as month, dayofmonth(birthday) as day from sales_rep;<br>在别名的时候用别名做限定条件</p>
+<p>from语句是在where之前完成的</p>
+<h1 id="将查询结果作为内敛视图"><a href="#将查询结果作为内敛视图" class="headerlink" title="将查询结果作为内敛视图"></a>将查询结果作为内敛视图</h1><p>mysql&gt; select * from (select sal as salary, comm as commission from emp) x where salary &lt; 5000;<br>concat连接列</p>
+<p>将多列作为一列进行输出</p>
+<h1 id="将first-name-一个空格-surname连接在一起输出"><a href="#将first-name-一个空格-surname连接在一起输出" class="headerlink" title="将first_name, 一个空格, surname连接在一起输出"></a>将first_name, 一个空格, surname连接在一起输出</h1><p>mysql&gt; select concat(first_name, ‘ ‘, surname) as name, month(birthday) as month from sales_rep order by month;<br>mysql&gt; select concat(ename, ‘ works as a ‘, job) as msg from emp where deptno = 10;</p>
+<h3 id="多表查询"><a href="#多表查询" class="headerlink" title="多表查询"></a>多表查询</h3><p>创建两个表并插入数据</p>
+<p>mysql&gt; create table client(<br>    -&gt; id int,<br>    -&gt; first_name varchar(40),<br>    -&gt; surname varchar(30)<br>    -&gt; );<br>mysql&gt; create table sales(<br>    -&gt; code int,<br>    -&gt; sales_rep int,<br>    -&gt; customer int,<br>    -&gt; value int<br>    -&gt; );</p>
+<p>mysql&gt; insert into customer values<br>    -&gt; (1, ‘Yvaonne’, ‘Clegg’),<br>    -&gt; (2, ‘Johnny’, ‘Chaka’),<br>    -&gt; (3, ‘Winston’, ‘Powers’),<br>    -&gt; (4, ‘Patricia’, ‘Mankunku’);<br>mysql&gt; insert into sales values<br>    -&gt; (1, 1, 1, 2000),<br>    -&gt; (2, 4, 3, 250),<br>    -&gt; (3, 2, 3, 500),<br>    -&gt; (4, 1, 4, 450),<br>    -&gt; (5, 3, 1, 3800),<br>    -&gt; (6, 1, 2, 500);<br>code为1, 且两表中employee_number和sales_rep的记录输出, select后面部分列出要返回的字段<br>mysql&gt; select sales_rep, customer, value, first_name, surname from sales, sales_rep where code = 1  and sales_rep.employee_number= sales.sales_rep;<br>case表达式</p>
+<p>对select中的列值执行if-else操作</p>
+<p>mysql&gt; select ename, sal,<br>    -&gt; case when sal &lt;= 2000 then ‘underpaid’<br>    -&gt; when sal &gt;= 4000 then ‘overpaid’<br>    -&gt; else ‘ok’        # else语句是可选的<br>    -&gt; end as status    # 对case语句返回的列取别名<br>    -&gt; from emp;</p>
+<h3 id="查询中分组-不懂"><a href="#查询中分组-不懂" class="headerlink" title="查询中分组(不懂)"></a>查询中分组(不懂)</h3><p>group by指的是按照某个属性分组, 与其他组互不干扰</p>
+<h1 id="查询每个sales-rep的value值的和"><a href="#查询每个sales-rep的value值的和" class="headerlink" title="查询每个sales_rep的value值的和"></a>查询每个sales_rep的value值的和</h1><p>mysql&gt; select sales_rep, sum(value) as sum from sales group by sales_rep;</p>
+<h2 id="常用类型"><a href="#常用类型" class="headerlink" title="常用类型"></a>常用类型</h2><p>数字类型</p>
+<p>int(整型), 表示整数<br>float/double分别表示单精度和双精度浮点数<br>字符类型</p>
+<p>char(M) 固定长度为M的字符串, 字符串长度不够会补上空格 , 搜索时大小写无关<br>varchar(M), 可变长字符串(相比char一般比较节省内存), 搜索时大小写无关<br>text, 最大65535个字符, 搜索时大小写无关<br>blob, 最大65535个字符, 搜索时大小写相关<br>日期和时间类型</p>
+<p>date, 默认格式YYYY-MM-DD, 可以使用date_format()函数更改输出方式<br>timestamp(M), 时间戳, YYYYMMDDHHMMSS, 可以指定不同长度的时间戳(M只影响显示)<br>time, 格式HH:MM:SS</p>
+<h2 id="表类型"><a href="#表类型" class="headerlink" title="表类型"></a>表类型</h2><p>表类型    优点    缺点<br>静态表    速度快, 易缓存    要求更多的磁盘空间<br>动态表    占磁盘空间小    需要维护, 不易出问题后重建<br>压缩表    只读表类型, 占用很少磁盘空间    每条记录分开压缩, 不能同时访问<br>merge表    表尺寸小, 某些情况下速度快    eq_ref搜索慢, replace不能工作<br>heap表    散列索引, 最快    数据存在内存, 出现问题易丢失</p>
+<h1 id="高级SQL"><a href="#高级SQL" class="headerlink" title="高级SQL"></a>高级SQL</h1><p>三表连接查找</p>
+<p>mysql&gt; select sales_rep.first_name, sales_rep.surname,<br>    -&gt; value, customer.first_name, customer.surname<br>    -&gt; from sales, sales_rep, customer where sales_rep.employee_number = sales.sales_rep<br>    -&gt; and customer.id = sales.customer;<br>sales_rep表的employee_number与sales的sales_rep关联<br>customer表的id和sales的customer相关, 构成了连接条件</p>
+<p>等值连接是一种内连接, 通过两个表或者多个表相等条件, 将两个表的行组合到一个表中.(内连接是连接的原始类型, 返回的每一行都包含来自每个表的数据)<br>mysql&gt; select ename, loc from emp, dept where emp.deptno = dept.deptno and emp.deptno = 10;</p>
+<h2 id="内连接"><a href="#内连接" class="headerlink" title="内连接"></a>内连接</h2><h1 id="下面两句是等价的"><a href="#下面两句是等价的" class="headerlink" title="下面两句是等价的"></a>下面两句是等价的</h1><p>mysql&gt; select first_name, surname, value from customer, sales where customer.id = sales.customer;</p>
+<h1 id="注意inner-join-表名-on-相关字段的SQL语句"><a href="#注意inner-join-表名-on-相关字段的SQL语句" class="headerlink" title="注意inner join 表名 on 相关字段的SQL语句"></a>注意inner join 表名 on 相关字段的SQL语句</h1><p>mysql&gt; select first_name, surname, value from customer inner join sales on customer.id = sales.customer;</p>
+<h2 id="左连接"><a href="#左连接" class="headerlink" title="左连接"></a>左连接</h2><p>左连接就是返回左边匹配行, 不考虑右边的表是否有相应的行. 返回匹配的全部行的必须是左表, left join关键字之前</p>
+<h1 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h1><p>select field1, field2 from table1 left join table2 on field1 = field2;<br>mysql&gt; select first_name, surname, value from sales left join customer on id = customer;<br>右连接连接的顺序与左连接相反</p>
+<h2 id="union链接"><a href="#union链接" class="headerlink" title="union链接"></a>union链接</h2><p>union用来把不同的select结果连接成一个, 每个语句必须有相同个数的列</p>
+<p>union可能会进行去重处理, 不去重可以使用union all进行连接</p>
+<p>union语句中order by是在整个union上进行的, 如果只想在某一个上使用可以请用小括号, union默认不返回重复记录</p>
+<h1 id="创建一个表用于union查询"><a href="#创建一个表用于union查询" class="headerlink" title="创建一个表用于union查询"></a>创建一个表用于union查询</h1><p>mysql&gt; create table old_customer(<br>    -&gt; id int,<br>    -&gt; first_name varchar(30),<br>    -&gt; surnamr varchar(40));</p>
+<h1 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h1><p>mysql&gt; insert into old_customer values<br>    -&gt; (5432, ‘Thulani’, ‘Salis’),<br>    -&gt; (2342, ‘Shahiem’, ‘Papo’);</p>
+<h1 id="两个查询语句有相同的列"><a href="#两个查询语句有相同的列" class="headerlink" title="两个查询语句有相同的列"></a>两个查询语句有相同的列</h1><p>mysql&gt; select id, first_name, surname from old_customer union select id, first_name, surname from customer;</p>
+<h2 id="查询结果添加到另一个表"><a href="#查询结果添加到另一个表" class="headerlink" title="查询结果添加到另一个表"></a>查询结果添加到另一个表</h2><h1 id="创建一个用于插入的表"><a href="#创建一个用于插入的表" class="headerlink" title="创建一个用于插入的表"></a>创建一个用于插入的表</h1><p>mysql&gt; create table customer_sales_values(<br>    -&gt; first_name varchar(30),<br>    -&gt; surname varchar(40),<br>    -&gt; value int);<br>mysql&gt; insert into customer_sales_values(first_name, surname, value)<br>    -&gt; select first_name, surname, sum(value) from sales natural join customer group by first_name, surname;</p>
+<h1 id="索引和查询优化"><a href="#索引和查询优化" class="headerlink" title="索引和查询优化"></a>索引和查询优化</h1><p>在MySQL中, 有四种类型的索引, 主键, 唯一索引, 全文索引和普通索引</p>
+<p>主键(Primary Key)就是值唯一并且没有值为NULL的域的索引</p>
+<p>主键不能包含NULL</p>
+<h1 id="创建表-并设置主键"><a href="#创建表-并设置主键" class="headerlink" title="创建表, 并设置主键"></a>创建表, 并设置主键</h1><p>mysql&gt; create table pk_test(<br>    -&gt; f1 int not NULL,<br>    -&gt; primary key(f1));</p>
+<h1 id="已存在的表上创建主键-语法-alter-table-tablename-add-primary-key-fieldname1-fieldname2"><a href="#已存在的表上创建主键-语法-alter-table-tablename-add-primary-key-fieldname1-fieldname2" class="headerlink" title="已存在的表上创建主键, 语法: alter table tablename add primary key(fieldname1 [, fieldname2])"></a>已存在的表上创建主键, 语法: alter table tablename add primary key(fieldname1 [, fieldname2])</h1><p>mysql&gt; alter table customer modify id int not null, add primary key(id);<br>普通索引容许重复的值</p>
+<h1 id="创建普通索引语法-mysql-gt-create-table-fieldname-columntype-fieldname2-columntype-indexindexname"><a href="#创建普通索引语法-mysql-gt-create-table-fieldname-columntype-fieldname2-columntype-indexindexname" class="headerlink" title="创建普通索引语法 mysql&gt; create table(fieldname columntype, fieldname2 columntype, indexindexname);"></a>创建普通索引语法 mysql&gt; create table(fieldname columntype, fieldname2 columntype, index<a href="fieldname1 [,fieldname2...]">indexname</a>);</h1><h1 id="创建后添加索引-alter-table-tablename-add-indexindexname"><a href="#创建后添加索引-alter-table-tablename-add-indexindexname" class="headerlink" title="创建后添加索引: alter table tablename add indexindexname;"></a>创建后添加索引: alter table tablename add index<a href="fieldname1 [,fieldname2...]">indexname</a>;</h1><p>mysql&gt; alter table sales add index(value);<br>全文索引</p>
+<h1 id="创建全文索引语法-mysql-gt-create-table-fieldname-columntype-fieldname2-columntype-fulltextindexname"><a href="#创建全文索引语法-mysql-gt-create-table-fieldname-columntype-fieldname2-columntype-fulltextindexname" class="headerlink" title="创建全文索引语法 mysql&gt; create table(fieldname columntype, fieldname2 columntype, fulltextindexname);"></a>创建全文索引语法 mysql&gt; create table(fieldname columntype, fieldname2 columntype, fulltext<a href="fieldname1 [,fieldname2...]">indexname</a>);</h1><p>mysql&gt; insert into ft2 values<br>    -&gt; (‘Waiting for the barbarians’),<br>    -&gt; (‘In the Heart of the Country’),<br>    -&gt; (‘The master of Patersbury’),<br>    -&gt; (‘Writing and Being’),<br>    -&gt; (‘Heart of the Beast’);<br>    -&gt; (‘Heart of the Beest’),<br>    -&gt; (‘The beginning and the End’),<br>    -&gt; (‘Master Master’),<br>    -&gt; (‘A barBarian at my door’);<br>Query OK, 4 rows affected (0.00 sec)</p>
+<h1 id="创建表后再添加全文索引-alter-table-tablename-add-fulltextindexname"><a href="#创建表后再添加全文索引-alter-table-tablename-add-fulltextindexname" class="headerlink" title="创建表后再添加全文索引:alter table tablename add fulltextindexname;"></a>创建表后再添加全文索引:alter table tablename add fulltext<a href="fieldname1 [,fieldname2...]">indexname</a>;</h1><p>mysql&gt; create table ft(f1 varchar(255), f2 text, f3 blob, f4 int);<br>mysql&gt; alter table ft add fulltext(f1, f2);<br>全文索引的用法</p>
+<p>文本域查找与大小写无关</p>
+<h1 id="match-匹配属性-against-匹配值"><a href="#match-匹配属性-against-匹配值" class="headerlink" title="match()匹配属性, against()匹配值"></a>match()匹配属性, against()匹配值</h1><p>mysql&gt; select * from ft2 where match(f1) against (‘master’);<br>唯一索引除了不容许有重复的记录外, 与普通索引一样</p>
+<h1 id="创建普通索引语法-mysql-gt-create-table-fieldname-columntype-fieldname2-columntype-unique-fieldname1-fieldname2…"><a href="#创建普通索引语法-mysql-gt-create-table-fieldname-columntype-fieldname2-columntype-unique-fieldname1-fieldname2…" class="headerlink" title="创建普通索引语法 mysql&gt; create table(fieldname columntype, fieldname2 columntype, unique(fieldname1 [,fieldname2…]));"></a>创建普通索引语法 mysql&gt; create table(fieldname columntype, fieldname2 columntype, unique(fieldname1 [,fieldname2…]));</h1><p>mysql&gt; create table ui_test(f1 int, f2 int, unique(f1));<br>mysql&gt; insert into ui_test values(1, 2);</p>
+<h1 id="f1域不能包含重复值"><a href="#f1域不能包含重复值" class="headerlink" title="f1域不能包含重复值"></a>f1域不能包含重复值</h1><p>mysql&gt; insert into ui_test values(1, 3);<br>ERROR 1062 (23000): Duplicate entry ‘1’ for key ‘f1’</p>
+<h1 id="创建后添加索引-alter-table-tablename-add-uniqueindexname"><a href="#创建后添加索引-alter-table-tablename-add-uniqueindexname" class="headerlink" title="创建后添加索引: alter table tablename add uniqueindexname;"></a>创建后添加索引: alter table tablename add unique<a href="fieldname1 [,fieldname2...]">indexname</a>;</h1><h2 id="删除或者改变索引"><a href="#删除或者改变索引" class="headerlink" title="删除或者改变索引"></a>删除或者改变索引</h2><h1 id="删除主键"><a href="#删除主键" class="headerlink" title="删除主键"></a>删除主键</h1><p>alter table tablename drop primary key;</p>
+<h1 id="删除普通-唯一-全文索引-需要制定索引名"><a href="#删除普通-唯一-全文索引-需要制定索引名" class="headerlink" title="删除普通, 唯一, 全文索引, 需要制定索引名"></a>删除普通, 唯一, 全文索引, 需要制定索引名</h1><p>alter table tablename frop index indexname;</p>
+<h1 id="显示全部索引名"><a href="#显示全部索引名" class="headerlink" title="显示全部索引名"></a>显示全部索引名</h1><p>show keys from tablename;</p>
+<h2 id="选择索引"><a href="#选择索引" class="headerlink" title="选择索引"></a>选择索引</h2><p>有查找需要使用索引的时候, 考虑创建索引<br>创建索引返回的行越少越好<br>私用短索引<br>不要创建太多的索引</p>
+<h1 id="SQL-Cookbook"><a href="#SQL-Cookbook" class="headerlink" title="SQL Cookbook"></a>SQL Cookbook</h1><h2 id="查找空值"><a href="#查找空值" class="headerlink" title="查找空值"></a>查找空值</h2><p>查找空值切记不能用=操作, 会返回Empty Set</p>
+<p>mysql&gt; select * from emp where comm is null;</p>
+<h2 id="空值转换为实际值返回"><a href="#空值转换为实际值返回" class="headerlink" title="空值转换为实际值返回"></a>空值转换为实际值返回</h2><p>改变输入的形式, 但并不改变表中的数据</p>
+<p>coalesce()函数有1个或者多个参数, comm非空时返回comm, null时返回0, 也可以用case语句判断实现</p>
+<p>mysql&gt; select coalesce(comm, 0) from emp;</p>
+<h2 id="从一个表中查找与其他表不匹配的记录"><a href="#从一个表中查找与其他表不匹配的记录" class="headerlink" title="从一个表中查找与其他表不匹配的记录"></a>从一个表中查找与其他表不匹配的记录</h2><p>外连接</p>
+<p>mysql&gt; select d.* from dept d left outer join emp e<br>    -&gt; on (d.deptno = e.deptno) where e.deptno is null;</p>
+<h2 id="插入更新删除"><a href="#插入更新删除" class="headerlink" title="插入更新删除"></a>插入更新删除</h2><h2 id="插入技巧"><a href="#插入技巧" class="headerlink" title="插入技巧"></a>插入技巧</h2><h2 id="从一个表向另外的表中复制行"><a href="#从一个表向另外的表中复制行" class="headerlink" title="从一个表向另外的表中复制行"></a>从一个表向另外的表中复制行</h2><p>解决方案: 在insert语句后面紧跟一个用来产生索要插入行的查询</p>
+<p>mysql&gt; create table dept_east(<br>    -&gt; deptno int,<br>    -&gt; dname  varchar(30),<br>    -&gt; loc varchar(30));<br>mysql&gt; insert into dept_east(deptno, dname, loc)<br>    -&gt; select deptno, dname, loc from dept<br>    -&gt; where loc in(‘new york’, ‘boston’);</p>
+<h2 id="赋值表定义"><a href="#赋值表定义" class="headerlink" title="赋值表定义"></a>赋值表定义</h2><p>只复制已有表的定义, 不复制其中的记录, 创建表的时候, 使用一个不返回任何行的子查询, where的条件时钟为false</p>
+<p>mysql&gt; create table dept_2<br>    -&gt; as<br>    -&gt; select * from dept where 1 = 0;</p>
+<h2 id="修改技巧"><a href="#修改技巧" class="headerlink" title="修改技巧"></a>修改技巧</h2><p>mysql&gt; update emp set sal = sal * 1.10 where deptno = 20;</p>
+<h2 id="删除技巧"><a href="#删除技巧" class="headerlink" title="删除技巧"></a>删除技巧</h2><h3 id="删除所有记录"><a href="#删除所有记录" class="headerlink" title="删除所有记录"></a>删除所有记录</h3><p>mysql&gt; delete from dept_2;</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p>MySQL Small Cookbook<br><a href="http://www.andrewliu.in/2015/05/24/MySQL_Small_Cookbook/index.html" target="_blank" rel="noopener">http://www.andrewliu.in/2015/05/24/MySQL_Small_Cookbook/index.html</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/30/etcd/在Go框架下使用Etcd选主demo/" rel="next" title="在Go框架下使用Etcd选主demo">
+                <i class="fa fa-chevron-left"></i> 在Go框架下使用Etcd选主demo
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/08/09/架构设计/从零开始学架构-听书笔记/" rel="prev" title="从零开始学架构-听书笔记">
+                从零开始学架构-听书笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="gitalk-container">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Irishemma</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">60</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">20</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本概念"><span class="nav-number">1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">1.1.</span> <span class="nav-text">安装</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#设置开机启动"><span class="nav-number">2.</span> <span class="nav-text">设置开机启动</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#加载mysql"><span class="nav-number">3.</span> <span class="nav-text">加载mysql</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#启动mysql服务器"><span class="nav-number">4.</span> <span class="nav-text">启动mysql服务器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关闭mysql服务器"><span class="nav-number">5.</span> <span class="nav-text">关闭mysql服务器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用根用户"><span class="nav-number">6.</span> <span class="nav-text">使用根用户</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建用户密码"><span class="nav-number">7.</span> <span class="nav-text">创建用户密码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建数据库"><span class="nav-number">8.</span> <span class="nav-text">创建数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#添加用户和密码-并赋予firstdb的完全访问权限-账户名为amdin-密码为123456"><span class="nav-number">9.</span> <span class="nav-text">添加用户和密码, 并赋予firstdb的完全访问权限, 账户名为amdin, 密码为123456</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#退出"><span class="nav-number">10.</span> <span class="nav-text">退出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初试数据库"><span class="nav-number">10.1.</span> <span class="nav-text">初试数据库</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用非根用户登陆数据库-并使用firstdb"><span class="nav-number">11.</span> <span class="nav-text">使用非根用户登陆数据库, 并使用firstdb</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建表"><span class="nav-number">11.0.1.</span> <span class="nav-text">创建表</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#创建"><span class="nav-number">12.</span> <span class="nav-text">创建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#显示已有表"><span class="nav-number">13.</span> <span class="nav-text">显示已有表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#describe来检查表结构"><span class="nav-number">14.</span> <span class="nav-text">describe来检查表结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#删除表和数据库"><span class="nav-number">14.0.1.</span> <span class="nav-text">删除表和数据库</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建一个表"><span class="nav-number">15.</span> <span class="nav-text">创建一个表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#删除表使用drop关键字"><span class="nav-number">16.</span> <span class="nav-text">删除表使用drop关键字</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#切换root用户-创建数据库com"><span class="nav-number">17.</span> <span class="nav-text">切换root用户, 创建数据库com</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#删除数据库"><span class="nav-number">18.</span> <span class="nav-text">删除数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#插入-删除-修改记录"><span class="nav-number">18.0.1.</span> <span class="nav-text">插入/删除/修改记录</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#插入数据-insert-into-表名-要插入的属性名-values-属性值-字符串使用单引号"><span class="nav-number">19.</span> <span class="nav-text">插入数据 insert into 表名(要插入的属性名) values(属性值), 字符串使用单引号</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一行添加数据"><span class="nav-number">20.</span> <span class="nav-text">一行添加数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从文件中加载数据-格式load-data-local-infile-“文件名”-into-table-表名"><span class="nav-number">21.</span> <span class="nav-text">从文件中加载数据, 格式load data local infile “文件名” into table 表名;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#删除employee-number为5的记录"><span class="nav-number">22.</span> <span class="nav-text">删除employee_number为5的记录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#修改employee-number的记录的commission为12"><span class="nav-number">23.</span> <span class="nav-text">修改employee_number的记录的commission为12</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据检索"><span class="nav-number">23.0.1.</span> <span class="nav-text">数据检索</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#检索所有插入的数据"><span class="nav-number">24.</span> <span class="nav-text">检索所有插入的数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#检索surname为’Gordimer’的记录"><span class="nav-number">25.</span> <span class="nav-text">检索surname为’Gordimer’的记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模式匹配"><span class="nav-number">25.0.1.</span> <span class="nav-text">模式匹配</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#输出已surname已R开头的数据"><span class="nav-number">26.</span> <span class="nav-text">输出已surname已R开头的数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#排序"><span class="nav-number">26.0.1.</span> <span class="nav-text">排序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据按照surname排序输出-当surname相同时-使用first-name排序"><span class="nav-number">27.</span> <span class="nav-text">数据按照surname排序输出, 当surname相同时, 使用first_name排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#递减排序使用关键字desc-默认使用升序asc"><span class="nav-number">28.</span> <span class="nav-text">递减排序使用关键字desc, 默认使用升序asc</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#按照job中最后两个字符进行排序"><span class="nav-number">29.</span> <span class="nav-text">按照job中最后两个字符进行排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#限制数据数量"><span class="nav-number">29.0.1.</span> <span class="nav-text">限制数据数量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#按surname降序输出两行"><span class="nav-number">30.</span> <span class="nav-text">按surname降序输出两行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#最大值-最小值-计数-平均-综合"><span class="nav-number">30.0.1.</span> <span class="nav-text">最大值/最小值/计数/平均/综合</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查询commission的最大值"><span class="nav-number">31.</span> <span class="nav-text">查询commission的最大值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查询最小值"><span class="nav-number">32.</span> <span class="nav-text">查询最小值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#表中不重复surname的个数"><span class="nav-number">33.</span> <span class="nav-text">表中不重复surname的个数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#commission的平均值"><span class="nav-number">34.</span> <span class="nav-text">commission的平均值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#commission的总和"><span class="nav-number">35.</span> <span class="nav-text">commission的总和</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#right-从字符串右端算起-按位返回字符串"><span class="nav-number">36.</span> <span class="nav-text">right()从字符串右端算起, 按位返回字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#去重"><span class="nav-number">36.0.1.</span> <span class="nav-text">去重</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用distinct-去掉查询字段相同的记录"><span class="nav-number">37.</span> <span class="nav-text">使用distinct, 去掉查询字段相同的记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#改变表结构"><span class="nav-number">37.0.1.</span> <span class="nav-text">改变表结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#给表添加一列名为data-joined-类型为date"><span class="nav-number">38.</span> <span class="nav-text">给表添加一列名为data_joined, 类型为date</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#添加一类名为year-born-类型为year"><span class="nav-number">39.</span> <span class="nav-text">添加一类名为year_born, 类型为year</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#恢复原来表名"><span class="nav-number">40.</span> <span class="nav-text">恢复原来表名</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#删除列名为enhancement-value的一列"><span class="nav-number">41.</span> <span class="nav-text">删除列名为enhancement_value的一列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#日期函数"><span class="nav-number">41.0.1.</span> <span class="nav-text">日期函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#给date类型设置日期"><span class="nav-number">42.</span> <span class="nav-text">给date类型设置日期</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用日期函数-设置显示日期格式"><span class="nav-number">43.</span> <span class="nav-text">使用日期函数, 设置显示日期格式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用year-输出年-month-输出月-dayofmonth-输出一个月的第几日"><span class="nav-number">44.</span> <span class="nav-text">使用year()输出年, month()输出月, dayofmonth()输出一个月的第几日</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#高级查找-别名-concat-多表查询-case表达式"><span class="nav-number">44.0.1.</span> <span class="nav-text">高级查找(别名, concat, 多表查询, case表达式)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#将查询结果作为内敛视图"><span class="nav-number">45.</span> <span class="nav-text">将查询结果作为内敛视图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#将first-name-一个空格-surname连接在一起输出"><span class="nav-number">46.</span> <span class="nav-text">将first_name, 一个空格, surname连接在一起输出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#多表查询"><span class="nav-number">46.0.1.</span> <span class="nav-text">多表查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查询中分组-不懂"><span class="nav-number">46.0.2.</span> <span class="nav-text">查询中分组(不懂)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查询每个sales-rep的value值的和"><span class="nav-number">47.</span> <span class="nav-text">查询每个sales_rep的value值的和</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#常用类型"><span class="nav-number">47.1.</span> <span class="nav-text">常用类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#表类型"><span class="nav-number">47.2.</span> <span class="nav-text">表类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#高级SQL"><span class="nav-number">48.</span> <span class="nav-text">高级SQL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#内连接"><span class="nav-number">48.1.</span> <span class="nav-text">内连接</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#下面两句是等价的"><span class="nav-number">49.</span> <span class="nav-text">下面两句是等价的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#注意inner-join-表名-on-相关字段的SQL语句"><span class="nav-number">50.</span> <span class="nav-text">注意inner join 表名 on 相关字段的SQL语句</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#左连接"><span class="nav-number">50.1.</span> <span class="nav-text">左连接</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#语法"><span class="nav-number">51.</span> <span class="nav-text">语法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#union链接"><span class="nav-number">51.1.</span> <span class="nav-text">union链接</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建一个表用于union查询"><span class="nav-number">52.</span> <span class="nav-text">创建一个表用于union查询</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#插入数据"><span class="nav-number">53.</span> <span class="nav-text">插入数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#两个查询语句有相同的列"><span class="nav-number">54.</span> <span class="nav-text">两个查询语句有相同的列</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#查询结果添加到另一个表"><span class="nav-number">54.1.</span> <span class="nav-text">查询结果添加到另一个表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建一个用于插入的表"><span class="nav-number">55.</span> <span class="nav-text">创建一个用于插入的表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#索引和查询优化"><span class="nav-number">56.</span> <span class="nav-text">索引和查询优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建表-并设置主键"><span class="nav-number">57.</span> <span class="nav-text">创建表, 并设置主键</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#已存在的表上创建主键-语法-alter-table-tablename-add-primary-key-fieldname1-fieldname2"><span class="nav-number">58.</span> <span class="nav-text">已存在的表上创建主键, 语法: alter table tablename add primary key(fieldname1 [, fieldname2])</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建普通索引语法-mysql-gt-create-table-fieldname-columntype-fieldname2-columntype-indexindexname"><span class="nav-number">59.</span> <span class="nav-text">创建普通索引语法 mysql&gt; create table(fieldname columntype, fieldname2 columntype, indexindexname);</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建后添加索引-alter-table-tablename-add-indexindexname"><span class="nav-number">60.</span> <span class="nav-text">创建后添加索引: alter table tablename add indexindexname;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建全文索引语法-mysql-gt-create-table-fieldname-columntype-fieldname2-columntype-fulltextindexname"><span class="nav-number">61.</span> <span class="nav-text">创建全文索引语法 mysql&gt; create table(fieldname columntype, fieldname2 columntype, fulltextindexname);</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建表后再添加全文索引-alter-table-tablename-add-fulltextindexname"><span class="nav-number">62.</span> <span class="nav-text">创建表后再添加全文索引:alter table tablename add fulltextindexname;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#match-匹配属性-against-匹配值"><span class="nav-number">63.</span> <span class="nav-text">match()匹配属性, against()匹配值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建普通索引语法-mysql-gt-create-table-fieldname-columntype-fieldname2-columntype-unique-fieldname1-fieldname2…"><span class="nav-number">64.</span> <span class="nav-text">创建普通索引语法 mysql&gt; create table(fieldname columntype, fieldname2 columntype, unique(fieldname1 [,fieldname2…]));</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#f1域不能包含重复值"><span class="nav-number">65.</span> <span class="nav-text">f1域不能包含重复值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建后添加索引-alter-table-tablename-add-uniqueindexname"><span class="nav-number">66.</span> <span class="nav-text">创建后添加索引: alter table tablename add uniqueindexname;</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#删除或者改变索引"><span class="nav-number">66.1.</span> <span class="nav-text">删除或者改变索引</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#删除主键"><span class="nav-number">67.</span> <span class="nav-text">删除主键</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#删除普通-唯一-全文索引-需要制定索引名"><span class="nav-number">68.</span> <span class="nav-text">删除普通, 唯一, 全文索引, 需要制定索引名</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#显示全部索引名"><span class="nav-number">69.</span> <span class="nav-text">显示全部索引名</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#选择索引"><span class="nav-number">69.1.</span> <span class="nav-text">选择索引</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SQL-Cookbook"><span class="nav-number">70.</span> <span class="nav-text">SQL Cookbook</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#查找空值"><span class="nav-number">70.1.</span> <span class="nav-text">查找空值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#空值转换为实际值返回"><span class="nav-number">70.2.</span> <span class="nav-text">空值转换为实际值返回</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从一个表中查找与其他表不匹配的记录"><span class="nav-number">70.3.</span> <span class="nav-text">从一个表中查找与其他表不匹配的记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插入更新删除"><span class="nav-number">70.4.</span> <span class="nav-text">插入更新删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插入技巧"><span class="nav-number">70.5.</span> <span class="nav-text">插入技巧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从一个表向另外的表中复制行"><span class="nav-number">70.6.</span> <span class="nav-text">从一个表向另外的表中复制行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#赋值表定义"><span class="nav-number">70.7.</span> <span class="nav-text">赋值表定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改技巧"><span class="nav-number">70.8.</span> <span class="nav-text">修改技巧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除技巧"><span class="nav-number">70.9.</span> <span class="nav-text">删除技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#删除所有记录"><span class="nav-number">70.9.1.</span> <span class="nav-text">删除所有记录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">70.9.2.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></li></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Irishemma</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: '0a6eec7fd244b2e22b39',
+    clientSecret: '6274d2a9a367de9c49922a42d909544fcbea259e',
+    repo: 'CommentRepo',
+    owner: 'Irishemma',
+    admin: ['Irishemma'],
+    id: md5(location.pathname),
+    
+      language: window.navigator.language || window.navigator.userLanguage,
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

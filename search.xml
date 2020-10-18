@@ -1,31 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Docker常用操作</title>
-    <url>/2019/04/18/Docker/Docker%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<h5 id="查看Docker容器的启动命令"><a href="#查看Docker容器的启动命令" class="headerlink" title="查看Docker容器的启动命令"></a>查看Docker容器的启动命令</h5><p>运行中的容器，<code>docker inspect container</code></p>
-<h5 id="实时查看docker容器名为s12的最后10行日志"><a href="#实时查看docker容器名为s12的最后10行日志" class="headerlink" title="实时查看docker容器名为s12的最后10行日志"></a>实时查看docker容器名为s12的最后10行日志</h5><p>$ sudo docker logs -f -t –tail 10 s12</p>
-<a id="more"></a>
-<p>从Rancher网站下载Docker-CE</p>
-<p>curl <a href="https://releases.rancher.com/install-docker/17.06.2.sh" target="_blank" rel="noopener">https://releases.rancher.com/install-docker/17.06.2.sh</a> | sh</p>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Docker配置http代理</title>
-    <url>/2019/12/22/Docker/Docker%E9%85%8D%E7%BD%AEhttp%E4%BB%A3%E7%90%86/</url>
-    <content><![CDATA[<a id="more"></a>
-<p>　编辑配置文件，Ubuntu下是/etc/default/docker，CentOS下是/etc/sysconfig/docker。不过通过修改这两个文件来配置daemon已经是discouraged的了。不鼓励使用这种方法。</p>
-<p>HTTP_PROXY=”<a href="http://127.0.0.1:1080/&quot;" target="_blank" rel="noopener">http://127.0.0.1:1080/&quot;</a><br>HTTPS_PROXY=”<a href="https://127.0.0.1:1080/&quot;" target="_blank" rel="noopener">https://127.0.0.1:1080/&quot;</a><br>export HTTP_PROXY HTTPS_PROXY</p>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>版权声明：本文为CSDN博主「styshoo」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/styshoo/article/details/55657714" target="_blank" rel="noopener">https://blog.csdn.net/styshoo/article/details/55657714</a></p>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-  </entry>
-  <entry>
     <title>使用ceph-deploy工具部署ceph集群</title>
     <url>/2019/04/20/Ceph/%E4%BD%BF%E7%94%A8ceph-deploy%E5%B7%A5%E5%85%B7%E9%83%A8%E7%BD%B2ceph%E9%9B%86%E7%BE%A4/</url>
     <content><![CDATA[<blockquote>
@@ -156,6 +131,56 @@
       </categories>
   </entry>
   <entry>
+    <title>使用Docker Registry快速搭建内网镜像库</title>
+    <url>/2019/04/18/Docker/%E4%BD%BF%E7%94%A8Docker-Registry%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E5%86%85%E7%BD%91%E9%95%9C%E5%83%8F%E5%BA%93/</url>
+    <content><![CDATA[<h2 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h2><p>两台安装好docker环境的主机</p>
+<ul>
+<li>服务端：192.168.3.82 私有仓库服务器在，运行registry容器</li>
+<li>客户端：192.168.3.83 测试客户端，用于上传、下载镜像文件<a id="more"></a>
+</li>
+</ul>
+<h2 id="安装布署过程"><a href="#安装布署过程" class="headerlink" title="安装布署过程"></a>安装布署过程</h2><h5 id="下载官方registry镜像文件"><a href="#下载官方registry镜像文件" class="headerlink" title="下载官方registry镜像文件"></a>下载官方registry镜像文件</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@master ~]# docker pull registry</span><br><span class="line">Using default tag: latest</span><br><span class="line">Trying to pull repository docker.io/library/registry ... </span><br><span class="line">latest: Pulling from docker.io/library/registry</span><br><span class="line">81033e7c1d6a: Pull complete </span><br><span class="line">b235084c2315: Pull complete </span><br><span class="line">c692f3a6894b: Pull complete </span><br><span class="line">ba2177f3a70e: Pull complete </span><br><span class="line">a8d793620947: Pull complete </span><br><span class="line">Digest: sha256:672d519d7fd7bbc7a448d17956ebeefe225d5eb27509d8dc5ce67ecb4a0bce54</span><br><span class="line">Status: Downloaded newer image for docker.io/registry:latest</span><br><span class="line">[root@master ~]# docker images |grep registry</span><br><span class="line">docker.io/registry   latest  d1fd7d86a825   5 months ago  33.3 MB</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<h5 id="运行registry容器"><a href="#运行registry容器" class="headerlink" title="运行registry容器"></a>运行registry容器</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@master ~]# mkdir /docker/registry -p</span><br><span class="line">[root@master ~]# docker run -itd -v /docker/registry/:/docker/registry -p 5000:5000 --restart=always --name registry registry:latest</span><br><span class="line">26d0b91a267f684f9da68f01d869b31dbc037ee6e7bf255d8fb435a22b857a0e</span><br><span class="line">[root@master ~]# docker ps</span><br><span class="line">CONTAINER ID   IMAGE            COMMAND                  CREATED        STATUS        PORTS                    NAMES</span><br><span class="line">26d0b91a267f   registry:latest  &quot;/entrypoint.sh /e...&quot;   4 seconds ago  Up 3 seconds  0.0.0.0:5000-&gt;5000/tcp   registry</span><br><span class="line">参数说明</span><br><span class="line">1）-itd：在容器中打开一个伪终端进行交互操作，并在后台运行；</span><br><span class="line">2）-v：把宿主机的/docker/registry目录绑定到容器/docker/registry目录(这个目录是registry容器中存放镜像文件的目录)，来实现数据的持久化；</span><br><span class="line">3）-p：映射端口；访问宿主机的5000端口就访问到registry容器的服务了；</span><br><span class="line">4）--restart=always：这是重启的策略，假如这个容器异常退出会自动重启容器；</span><br><span class="line">5）--name registry：创建容器命名为registry，可自定义任何名称；</span><br><span class="line">6）registry:latest：这个是刚才pull下来的镜像；</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<h5 id="查看远程仓库镜像文件"><a href="#查看远程仓库镜像文件" class="headerlink" title="查看远程仓库镜像文件"></a>查看远程仓库镜像文件</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@master ~]# curl http://localhost:5000/v2/_catalog</span><br><span class="line">&#123;&quot;repositories&quot;:[]&#125;</span><br><span class="line">同样也可以使用浏览器访问http://server-ip:5000/v2/_catalog, 结果相同，都是空的没有任何文件。</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<h2 id="客户端操作"><a href="#客户端操作" class="headerlink" title="客户端操作"></a>客户端操作</h2><h5 id="修改下载的镜像源"><a href="#修改下载的镜像源" class="headerlink" title="修改下载的镜像源"></a>修改下载的镜像源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@slave1 ~]# vim /etc/docker/daemon.json</span><br><span class="line">&#123;</span><br><span class="line">&quot;registry-mirrors&quot;:[&quot;https://registry.docker-cn.com&quot;]</span><br><span class="line">&#125;</span><br><span class="line">[root@slave1 ~]# systemctl restart docker</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<h5 id="下载测试镜像"><a href="#下载测试镜像" class="headerlink" title="下载测试镜像"></a>下载测试镜像</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@slave1 ~]# docker pull nginx</span><br><span class="line">Using default tag: latest</span><br><span class="line">Trying to pull repository docker.io/library/nginx ... </span><br><span class="line">latest: Pulling from docker.io/library/nginx</span><br><span class="line">683abbb4ea60: Pull complete </span><br><span class="line">6ff57cbc007a: Pull complete </span><br><span class="line">162f7aebbf40: Pull complete </span><br><span class="line">Digest: sha256:636dd2749d9a363e5b57557672a9ebc7c6d041c88d9aef184308d7434296feea</span><br><span class="line">Status: Downloaded newer image for docker.io/nginx:latest</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<h5 id="给镜像打TAG"><a href="#给镜像打TAG" class="headerlink" title="给镜像打TAG"></a>给镜像打TAG</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@slave1 ~]# docker tag nginx:latest 192.168.3.82:5000/nginx:v1</span><br><span class="line">[root@slave1 ~]# docker images</span><br><span class="line">REPOSITORY                TAG       IMAGE ID        CREATED       SIZE</span><br><span class="line">192.168.3.82:5000/nginx   v1        649dcb69b782    8 hours ago   109 MB</span><br><span class="line">docker.io/nginx           latest    649dcb69b782    8 hours ago   109 MB</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<h5 id="上传镜像"><a href="#上传镜像" class="headerlink" title="上传镜像"></a>上传镜像</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@slave1 ~]# docker push 192.168.3.82:5000/nginx:v1</span><br><span class="line">The push refers to a repository [192.168.3.82:5000/nginx]</span><br><span class="line">Get https://192.168.3.82:5000/v1/_ping: http: server gave HTTP response to HTTPS client</span><br><span class="line">#注意这里出现报错提示，从提示信息可以看出需要使用https的方式才能上传，解决方案如下：</span><br><span class="line">[root@slave1 ~]# vim /etc/docker/daemon.json</span><br><span class="line">&#123;</span><br><span class="line">&quot;registry-mirrors&quot;:[&quot;https://registry.docker-cn.com&quot;],</span><br><span class="line"> &quot;insecure-registries&quot;:[&quot;192.168.3.82:5000&quot;]</span><br><span class="line">&#125;</span><br><span class="line">#添加私有镜像服务器的地址，注意书写格式为json，有严格的书写要求，需要重启docker服务生效配置</span><br><span class="line">[root@slave1 ~]# systemctl restart docker</span><br><span class="line">[root@slave1 ~]# docker push 192.168.3.82:5000/nginx:v1</span><br><span class="line">The push refers to a repository [192.168.3.82:5000/nginx]</span><br><span class="line">6ee5b085558c: Pushed </span><br><span class="line">78f25536dafc: Pushed </span><br><span class="line">9c46f426bcb7: Pushed </span><br><span class="line">v1: digest: sha256:edad5e71815c79108ddbd1d42123ee13ba2d8050ad27cfa72c531986d03ee4e7 size: 948</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<h5 id="重新查看镜像仓库"><a href="#重新查看镜像仓库" class="headerlink" title="重新查看镜像仓库"></a>重新查看镜像仓库</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@master ~]# curl http://localhost:5000/v2/_catalog</span><br><span class="line">&#123;&quot;repositories&quot;:[&quot;nginx&quot;]&#125;</span><br><span class="line">[root@master ~]# curl http://localhost:5000/v2/nginx/tags/list</span><br><span class="line">&#123;&quot;name&quot;:&quot;nginx&quot;,&quot;tags&quot;:[&quot;v1&quot;]&#125;</span><br><span class="line">#查看有哪些版本</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<h5 id="测试下载"><a href="#测试下载" class="headerlink" title="测试下载"></a>测试下载</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#首先删除客户端主机之前从公共库下载下来的镜像文件</span><br><span class="line">[root@slave1 ~]# docker images</span><br><span class="line">REPOSITORY                TAG      IMAGE ID        CREATED        SIZE</span><br><span class="line">192.168.3.82:5000/nginx   v1       649dcb69b782    10 hours ago   109 MB</span><br><span class="line">docker.io/nginx           latest   649dcb69b782    10 hours ago   109 MB</span><br><span class="line">[root@slave1 ~]# docker image rmi -f 649dcb69b782</span><br><span class="line">Untagged: 192.168.3.82:5000/nginx:v1</span><br><span class="line">Untagged: 192.168.3.82:5000/nginx@sha256:edad5e71815c79108ddbd1d42123ee13ba2d8050ad27cfa72c531986d03ee4e7</span><br><span class="line">Untagged: docker.io/nginx:latest</span><br><span class="line">Untagged: docker.io/nginx@sha256:636dd2749d9a363e5b57557672a9ebc7c6d041c88d9aef184308d7434296feea</span><br><span class="line">Deleted: sha256:649dcb69b782d4e281c92ed2918a21fa63322a6605017e295ea75907c84f4d1e</span><br><span class="line">Deleted: sha256:bf7cb208a5a1da265666ad5ab3cf10f0bec1f4bcb0ba8d957e2e485e3ac2b463</span><br><span class="line">Deleted: sha256:55d02c20aa07136ab07ab47f4b20b97be7a0f34e01a88b3e046a728863b5621c</span><br><span class="line">Deleted: sha256:9c46f426bcb704beffafc951290ee7fe05efddbc7406500e7d0a3785538b8735</span><br><span class="line">[root@slave1 ~]# docker images</span><br><span class="line">REPOSITORY       TAG             IMAGE ID        CREATED         SIZE</span><br><span class="line">#此时客户端所有的镜像文件全部删除</span><br><span class="line">[root@slave1 ~]# docker pull 192.168.3.82:5000/nginx:v1</span><br><span class="line">Trying to pull repository 192.168.3.82:5000/nginx ... </span><br><span class="line">v1: Pulling from 192.168.3.82:5000/nginx</span><br><span class="line">683abbb4ea60: Pull complete </span><br><span class="line">6ff57cbc007a: Pull complete </span><br><span class="line">162f7aebbf40: Pull complete </span><br><span class="line">Digest: sha256:edad5e71815c79108ddbd1d42123ee13ba2d8050ad27cfa72c531986d03ee4e7</span><br><span class="line">Status: Downloaded newer image for 192.168.3.82:5000/nginx:v1</span><br><span class="line">[root@slave1 ~]# docker images</span><br><span class="line">REPOSITORY                TAG     IMAGE ID       CREATED         SIZE</span><br><span class="line">192.168.3.82:5000/nginx   v1      649dcb69b782   11 hours ago    109 MB</span><br><span class="line">#可以看出，客户端已正常从远端服务器拉取到所需要的镜像文件，其它内网服务器也可以正常共享这台镜像服务器上的镜像文件，不用去公网拉取。</span><br></pre></td></tr></table></figure>
+<h6 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h6><p>使用docker Registry快速搭建私有镜像仓库</p>
+<p><a href="https://juejin.im/post/5bbbf72c5188255c554710ca" target="_blank" rel="noopener">https://juejin.im/post/5bbbf72c5188255c554710ca</a> </p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Docker常用操作</title>
+    <url>/2019/04/18/Docker/Docker%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<h5 id="查看Docker容器的启动命令"><a href="#查看Docker容器的启动命令" class="headerlink" title="查看Docker容器的启动命令"></a>查看Docker容器的启动命令</h5><p>运行中的容器，<code>docker inspect container</code></p>
+<h5 id="实时查看docker容器名为s12的最后10行日志"><a href="#实时查看docker容器名为s12的最后10行日志" class="headerlink" title="实时查看docker容器名为s12的最后10行日志"></a>实时查看docker容器名为s12的最后10行日志</h5><p>$ sudo docker logs -f -t –tail 10 s12</p>
+<a id="more"></a>
+<p>从Rancher网站下载Docker-CE</p>
+<p>curl <a href="https://releases.rancher.com/install-docker/17.06.2.sh" target="_blank" rel="noopener">https://releases.rancher.com/install-docker/17.06.2.sh</a> | sh</p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Docker配置http代理</title>
+    <url>/2019/12/22/Docker/Docker%E9%85%8D%E7%BD%AEhttp%E4%BB%A3%E7%90%86/</url>
+    <content><![CDATA[<a id="more"></a>
+<p>　编辑配置文件，Ubuntu下是/etc/default/docker，CentOS下是/etc/sysconfig/docker。不过通过修改这两个文件来配置daemon已经是discouraged的了。不鼓励使用这种方法。</p>
+<p>HTTP_PROXY=”<a href="http://127.0.0.1:1080/&quot;" target="_blank" rel="noopener">http://127.0.0.1:1080/&quot;</a><br>HTTPS_PROXY=”<a href="https://127.0.0.1:1080/&quot;" target="_blank" rel="noopener">https://127.0.0.1:1080/&quot;</a><br>export HTTP_PROXY HTTPS_PROXY</p>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>版权声明：本文为CSDN博主「styshoo」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/styshoo/article/details/55657714" target="_blank" rel="noopener">https://blog.csdn.net/styshoo/article/details/55657714</a></p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+  </entry>
+  <entry>
     <title>修改docker镜像重新打包</title>
     <url>/2019/06/12/Docker/%E4%BF%AE%E6%94%B9docker%E9%95%9C%E5%83%8F%E9%87%8D%E6%96%B0%E6%89%93%E5%8C%85/</url>
     <content><![CDATA[<h2 id="更新镜像"><a href="#更新镜像" class="headerlink" title="更新镜像"></a>更新镜像</h2><p>更新镜像之前，我们需要使用镜像来创建一个容器。</p>
@@ -220,98 +245,6 @@
       </categories>
   </entry>
   <entry>
-    <title>go select与channel操作</title>
-    <url>/2020/07/28/Go/go-select%E4%B8%8Echannel%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<p>select和switch类似，不同的是case内容必须是接收io执行结果（例如&lt;-channel），且不需要break。<br>具体执行逻辑如下：</p>
-<ol>
-<li>如果除default之外，只有一个case满足，则执行case内容</li>
-<li>如果除default之外有多个case满足，则伪随机执行一个case内容</li>
-<li>如果default之外的case都不满足，则执行default内容</li>
-<li>如果没有default，所有case都不满足，则阻塞直到有一个case条件满足</li>
-</ol>
-<a id="more"></a>
-<h2 id="select与channel使用demo"><a href="#select与channel使用demo" class="headerlink" title="select与channel使用demo"></a>select与channel使用demo</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	c1 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	c2 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	c3 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	<span class="keyword">var</span> i1 <span class="keyword">string</span></span><br><span class="line">	s2 := <span class="string">"c2"</span></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		sec := <span class="number">0</span></span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			&lt;-time.After(<span class="number">1</span> * time.Second)</span><br><span class="line">			sec++</span><br><span class="line">			fmt.Printf(<span class="string">"========第%d秒========\n"</span>, sec)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		&lt;-time.After(<span class="number">1050</span> * time.Millisecond)</span><br><span class="line">		c1 &lt;- <span class="string">"c1"</span></span><br><span class="line">		&lt;-time.After(<span class="number">1</span> * time.Second)</span><br><span class="line">		c3 &lt;- <span class="string">"c3"</span></span><br><span class="line">		&lt;-time.After(<span class="number">1</span> * time.Second)</span><br><span class="line">		c1 &lt;- <span class="string">"c1'"</span></span><br><span class="line"></span><br><span class="line">		&lt;-time.After(<span class="number">3</span> * time.Second)</span><br><span class="line">		fmt.Println(&lt;-c2)</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		i := <span class="number">5</span></span><br><span class="line">		<span class="keyword">for</span> i &gt; <span class="number">0</span> &#123;</span><br><span class="line">			i--</span><br><span class="line">			timeout := time.After(<span class="number">2</span> * time.Second)</span><br><span class="line">			<span class="keyword">select</span> &#123;</span><br><span class="line">			<span class="keyword">case</span> i1 = &lt;-c1:</span><br><span class="line">				fmt.Printf(<span class="string">"从c1收到%s\n"</span>, i1)</span><br><span class="line">			<span class="keyword">case</span> c2 &lt;- s2:</span><br><span class="line">				fmt.Printf(<span class="string">"发送%s到 c2\n"</span>, s2)</span><br><span class="line">			<span class="keyword">case</span> i3, ok := &lt;-c3:</span><br><span class="line">				<span class="keyword">if</span> ok &#123;</span><br><span class="line">					fmt.Printf(<span class="string">"从c3收到%s\n"</span>, i3)</span><br><span class="line">				&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">					fmt.Printf(<span class="string">"c3 已关闭"</span>)</span><br><span class="line">				&#125;</span><br><span class="line">			<span class="keyword">case</span> &lt;-timeout:</span><br><span class="line">				fmt.Println(<span class="string">"等待超时"</span>)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	time.Sleep(<span class="number">8</span> * time.Second)</span><br><span class="line">	fmt.Printf(<span class="string">"结束测试\n"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>output:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">========第1秒=========</span><br><span class="line">从c1收到c1</span><br><span class="line">========第2秒=========</span><br><span class="line">从c3收到c3</span><br><span class="line">========第3秒=========</span><br><span class="line">从c1收到c1&apos;</span><br><span class="line">========第4秒=========</span><br><span class="line">========第5秒=========</span><br><span class="line">等待超时</span><br><span class="line">========第6秒=========</span><br><span class="line">c2</span><br><span class="line">发送c2到 c2</span><br><span class="line">========第7秒=========</span><br><span class="line">结束测试</span><br></pre></td></tr></table></figure>
-<h2 id="通过done-channel退出goroutine"><a href="#通过done-channel退出goroutine" class="headerlink" title="通过done channel退出goroutine"></a>通过done channel退出goroutine</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(done <span class="keyword">chan</span> <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	time.Sleep(time.Second)</span><br><span class="line">	<span class="comment">// 通知任务已完成</span></span><br><span class="line">	done &lt;- <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	done := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>, <span class="number">1</span>)</span><br><span class="line">	<span class="keyword">go</span> worker(done)</span><br><span class="line">	<span class="comment">// 等待任务完成</span></span><br><span class="line">	&lt;-done</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>Go语言并发模型：使用 select<br><a href="https://segmentfault.com/a/1190000006815341" target="_blank" rel="noopener">https://segmentfault.com/a/1190000006815341</a></p>
-<p>Go Channel 详解<br><a href="https://colobu.com/2016/04/14/Golang-Channels/" target="_blank" rel="noopener">https://colobu.com/2016/04/14/Golang-Channels/</a></p>
-]]></content>
-      <categories>
-        <category>Go</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>goland远程调试go程序</title>
-    <url>/2019/10/09/Go/goland%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95go%E7%A8%8B%E5%BA%8F/</url>
-    <content><![CDATA[<p>goland是基于intellij IDEA推出的开发go的IDE，所以很多之前Intellij的使用习惯可以保留下来，实属developer的福音，今天遇到一个新的问题，就是我要调试远程服务器上的go代码，远程系统是ubuntu或者centos，总之是没有图形界面的，我想在本地调试该怎么办呢，答案是使用Delve 这个专门的调试工具。</p>
-<blockquote>
-<p>前提：本地代码和远程代码保持一致，否则可能出现断点语句跟预期不一致或莫名其妙的情况。可以在Intellij中使用经典的remote host access插件来dowload或者upload代码实现同步。因为比较简单，具体使用姿势自行探索。</p>
-</blockquote>
-<a id="more"></a>
-<h2 id="step1-远程主机"><a href="#step1-远程主机" class="headerlink" title="step1 远程主机"></a>step1 远程主机</h2><p>安装delve，项目地址：<a href="https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Fderekparker%2Fdelve" target="_blank" rel="noopener">https://github.com/derekparker/delve</a><br>按照官方的提示安装即可（注意因为GFW等你懂得的原因，网络下载可能较慢或不可用，请自行使用某高科技软件，如ss+proxychains等工具）。</p>
-<p>下载并安装完成后输入dlv就会看到帮助信息：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/10120431-bedad69d270e3ecf.png?imageMogr2/auto-orient/strip|imageView2/2/w/738/format/webp" alt="img"></p>
-<p>image.png</p>
-<h2 id="step2-本地"><a href="#step2-本地" class="headerlink" title="step2 本地"></a>step2 本地</h2><p>本地进入IDE，在要调试的地方打上断点，然后<br>run–debug–eidit configurations–&gt;添加remote主机信息。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/10120431-3fce6c44c1aab4c8.png?imageMogr2/auto-orient/strip|imageView2/2/w/1125/format/webp" alt="img"></p>
-<p>image.png</p>
-<p>点debug 确认后，就会等待远端传回的debug信息。切远端：</p>
-<h2 id="step3-远端"><a href="#step3-远端" class="headerlink" title="step3 远端"></a>step3 远端</h2><p>如我要对 main.go 这个项目debug，对main进行编译后，可以直接运行<br>dlv –listen=:2345 –headless=true –api-version=2 exec ./main<br>然后本地就收到了调试信息。</p>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://www.jianshu.com/p/e74e940a64d9" target="_blank" rel="noopener">https://www.jianshu.com/p/e74e940a64d9</a> </p>
-]]></content>
-      <categories>
-        <category>Go</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>go语言string、int、int64互相转换</title>
-    <url>/2019/05/11/Go/go%E8%AF%AD%E8%A8%80string%E3%80%81int%E3%80%81int64%E4%BA%92%E7%9B%B8%E8%BD%AC%E6%8D%A2/</url>
-    <content><![CDATA[<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">#<span class="keyword">string</span>到<span class="keyword">int</span></span><br><span class="line"><span class="keyword">int</span>,err:=strconv.Atoi(<span class="keyword">string</span>)</span><br><span class="line">#<span class="keyword">string</span>到<span class="keyword">int64</span></span><br><span class="line"><span class="keyword">int64</span>, err := strconv.ParseInt(<span class="keyword">string</span>, <span class="number">10</span>, <span class="number">64</span>)</span><br><span class="line">#<span class="keyword">int</span>到<span class="keyword">string</span></span><br><span class="line"><span class="keyword">string</span>:=strconv.Itoa(<span class="keyword">int</span>)</span><br><span class="line">#<span class="keyword">int64</span>到<span class="keyword">string</span></span><br><span class="line"><span class="keyword">string</span>:=strconv.FormatInt(<span class="keyword">int64</span>,<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>作者：三少GG<br>来源：CSDN<br>原文：<a href="https://blog.csdn.net/pkueecser/article/details/50433460" target="_blank" rel="noopener">https://blog.csdn.net/pkueecser/article/details/50433460</a><br>版权声明：本文为博主原创文章，转载请附上博文链接！</p>
-]]></content>
-      <categories>
-        <category>Go</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>使用Docker Registry快速搭建内网镜像库</title>
-    <url>/2019/04/18/Docker/%E4%BD%BF%E7%94%A8Docker-Registry%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E5%86%85%E7%BD%91%E9%95%9C%E5%83%8F%E5%BA%93/</url>
-    <content><![CDATA[<h2 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h2><p>两台安装好docker环境的主机</p>
-<ul>
-<li>服务端：192.168.3.82 私有仓库服务器在，运行registry容器</li>
-<li>客户端：192.168.3.83 测试客户端，用于上传、下载镜像文件<a id="more"></a>
-</li>
-</ul>
-<h2 id="安装布署过程"><a href="#安装布署过程" class="headerlink" title="安装布署过程"></a>安装布署过程</h2><h5 id="下载官方registry镜像文件"><a href="#下载官方registry镜像文件" class="headerlink" title="下载官方registry镜像文件"></a>下载官方registry镜像文件</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@master ~]# docker pull registry</span><br><span class="line">Using default tag: latest</span><br><span class="line">Trying to pull repository docker.io/library/registry ... </span><br><span class="line">latest: Pulling from docker.io/library/registry</span><br><span class="line">81033e7c1d6a: Pull complete </span><br><span class="line">b235084c2315: Pull complete </span><br><span class="line">c692f3a6894b: Pull complete </span><br><span class="line">ba2177f3a70e: Pull complete </span><br><span class="line">a8d793620947: Pull complete </span><br><span class="line">Digest: sha256:672d519d7fd7bbc7a448d17956ebeefe225d5eb27509d8dc5ce67ecb4a0bce54</span><br><span class="line">Status: Downloaded newer image for docker.io/registry:latest</span><br><span class="line">[root@master ~]# docker images |grep registry</span><br><span class="line">docker.io/registry   latest  d1fd7d86a825   5 months ago  33.3 MB</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
-<h5 id="运行registry容器"><a href="#运行registry容器" class="headerlink" title="运行registry容器"></a>运行registry容器</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@master ~]# mkdir /docker/registry -p</span><br><span class="line">[root@master ~]# docker run -itd -v /docker/registry/:/docker/registry -p 5000:5000 --restart=always --name registry registry:latest</span><br><span class="line">26d0b91a267f684f9da68f01d869b31dbc037ee6e7bf255d8fb435a22b857a0e</span><br><span class="line">[root@master ~]# docker ps</span><br><span class="line">CONTAINER ID   IMAGE            COMMAND                  CREATED        STATUS        PORTS                    NAMES</span><br><span class="line">26d0b91a267f   registry:latest  &quot;/entrypoint.sh /e...&quot;   4 seconds ago  Up 3 seconds  0.0.0.0:5000-&gt;5000/tcp   registry</span><br><span class="line">参数说明</span><br><span class="line">1）-itd：在容器中打开一个伪终端进行交互操作，并在后台运行；</span><br><span class="line">2）-v：把宿主机的/docker/registry目录绑定到容器/docker/registry目录(这个目录是registry容器中存放镜像文件的目录)，来实现数据的持久化；</span><br><span class="line">3）-p：映射端口；访问宿主机的5000端口就访问到registry容器的服务了；</span><br><span class="line">4）--restart=always：这是重启的策略，假如这个容器异常退出会自动重启容器；</span><br><span class="line">5）--name registry：创建容器命名为registry，可自定义任何名称；</span><br><span class="line">6）registry:latest：这个是刚才pull下来的镜像；</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
-<h5 id="查看远程仓库镜像文件"><a href="#查看远程仓库镜像文件" class="headerlink" title="查看远程仓库镜像文件"></a>查看远程仓库镜像文件</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@master ~]# curl http://localhost:5000/v2/_catalog</span><br><span class="line">&#123;&quot;repositories&quot;:[]&#125;</span><br><span class="line">同样也可以使用浏览器访问http://server-ip:5000/v2/_catalog, 结果相同，都是空的没有任何文件。</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
-<h2 id="客户端操作"><a href="#客户端操作" class="headerlink" title="客户端操作"></a>客户端操作</h2><h5 id="修改下载的镜像源"><a href="#修改下载的镜像源" class="headerlink" title="修改下载的镜像源"></a>修改下载的镜像源</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@slave1 ~]# vim /etc/docker/daemon.json</span><br><span class="line">&#123;</span><br><span class="line">&quot;registry-mirrors&quot;:[&quot;https://registry.docker-cn.com&quot;]</span><br><span class="line">&#125;</span><br><span class="line">[root@slave1 ~]# systemctl restart docker</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
-<h5 id="下载测试镜像"><a href="#下载测试镜像" class="headerlink" title="下载测试镜像"></a>下载测试镜像</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@slave1 ~]# docker pull nginx</span><br><span class="line">Using default tag: latest</span><br><span class="line">Trying to pull repository docker.io/library/nginx ... </span><br><span class="line">latest: Pulling from docker.io/library/nginx</span><br><span class="line">683abbb4ea60: Pull complete </span><br><span class="line">6ff57cbc007a: Pull complete </span><br><span class="line">162f7aebbf40: Pull complete </span><br><span class="line">Digest: sha256:636dd2749d9a363e5b57557672a9ebc7c6d041c88d9aef184308d7434296feea</span><br><span class="line">Status: Downloaded newer image for docker.io/nginx:latest</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
-<h5 id="给镜像打TAG"><a href="#给镜像打TAG" class="headerlink" title="给镜像打TAG"></a>给镜像打TAG</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@slave1 ~]# docker tag nginx:latest 192.168.3.82:5000/nginx:v1</span><br><span class="line">[root@slave1 ~]# docker images</span><br><span class="line">REPOSITORY                TAG       IMAGE ID        CREATED       SIZE</span><br><span class="line">192.168.3.82:5000/nginx   v1        649dcb69b782    8 hours ago   109 MB</span><br><span class="line">docker.io/nginx           latest    649dcb69b782    8 hours ago   109 MB</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
-<h5 id="上传镜像"><a href="#上传镜像" class="headerlink" title="上传镜像"></a>上传镜像</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@slave1 ~]# docker push 192.168.3.82:5000/nginx:v1</span><br><span class="line">The push refers to a repository [192.168.3.82:5000/nginx]</span><br><span class="line">Get https://192.168.3.82:5000/v1/_ping: http: server gave HTTP response to HTTPS client</span><br><span class="line">#注意这里出现报错提示，从提示信息可以看出需要使用https的方式才能上传，解决方案如下：</span><br><span class="line">[root@slave1 ~]# vim /etc/docker/daemon.json</span><br><span class="line">&#123;</span><br><span class="line">&quot;registry-mirrors&quot;:[&quot;https://registry.docker-cn.com&quot;],</span><br><span class="line"> &quot;insecure-registries&quot;:[&quot;192.168.3.82:5000&quot;]</span><br><span class="line">&#125;</span><br><span class="line">#添加私有镜像服务器的地址，注意书写格式为json，有严格的书写要求，需要重启docker服务生效配置</span><br><span class="line">[root@slave1 ~]# systemctl restart docker</span><br><span class="line">[root@slave1 ~]# docker push 192.168.3.82:5000/nginx:v1</span><br><span class="line">The push refers to a repository [192.168.3.82:5000/nginx]</span><br><span class="line">6ee5b085558c: Pushed </span><br><span class="line">78f25536dafc: Pushed </span><br><span class="line">9c46f426bcb7: Pushed </span><br><span class="line">v1: digest: sha256:edad5e71815c79108ddbd1d42123ee13ba2d8050ad27cfa72c531986d03ee4e7 size: 948</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
-<h5 id="重新查看镜像仓库"><a href="#重新查看镜像仓库" class="headerlink" title="重新查看镜像仓库"></a>重新查看镜像仓库</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@master ~]# curl http://localhost:5000/v2/_catalog</span><br><span class="line">&#123;&quot;repositories&quot;:[&quot;nginx&quot;]&#125;</span><br><span class="line">[root@master ~]# curl http://localhost:5000/v2/nginx/tags/list</span><br><span class="line">&#123;&quot;name&quot;:&quot;nginx&quot;,&quot;tags&quot;:[&quot;v1&quot;]&#125;</span><br><span class="line">#查看有哪些版本</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
-<h5 id="测试下载"><a href="#测试下载" class="headerlink" title="测试下载"></a>测试下载</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#首先删除客户端主机之前从公共库下载下来的镜像文件</span><br><span class="line">[root@slave1 ~]# docker images</span><br><span class="line">REPOSITORY                TAG      IMAGE ID        CREATED        SIZE</span><br><span class="line">192.168.3.82:5000/nginx   v1       649dcb69b782    10 hours ago   109 MB</span><br><span class="line">docker.io/nginx           latest   649dcb69b782    10 hours ago   109 MB</span><br><span class="line">[root@slave1 ~]# docker image rmi -f 649dcb69b782</span><br><span class="line">Untagged: 192.168.3.82:5000/nginx:v1</span><br><span class="line">Untagged: 192.168.3.82:5000/nginx@sha256:edad5e71815c79108ddbd1d42123ee13ba2d8050ad27cfa72c531986d03ee4e7</span><br><span class="line">Untagged: docker.io/nginx:latest</span><br><span class="line">Untagged: docker.io/nginx@sha256:636dd2749d9a363e5b57557672a9ebc7c6d041c88d9aef184308d7434296feea</span><br><span class="line">Deleted: sha256:649dcb69b782d4e281c92ed2918a21fa63322a6605017e295ea75907c84f4d1e</span><br><span class="line">Deleted: sha256:bf7cb208a5a1da265666ad5ab3cf10f0bec1f4bcb0ba8d957e2e485e3ac2b463</span><br><span class="line">Deleted: sha256:55d02c20aa07136ab07ab47f4b20b97be7a0f34e01a88b3e046a728863b5621c</span><br><span class="line">Deleted: sha256:9c46f426bcb704beffafc951290ee7fe05efddbc7406500e7d0a3785538b8735</span><br><span class="line">[root@slave1 ~]# docker images</span><br><span class="line">REPOSITORY       TAG             IMAGE ID        CREATED         SIZE</span><br><span class="line">#此时客户端所有的镜像文件全部删除</span><br><span class="line">[root@slave1 ~]# docker pull 192.168.3.82:5000/nginx:v1</span><br><span class="line">Trying to pull repository 192.168.3.82:5000/nginx ... </span><br><span class="line">v1: Pulling from 192.168.3.82:5000/nginx</span><br><span class="line">683abbb4ea60: Pull complete </span><br><span class="line">6ff57cbc007a: Pull complete </span><br><span class="line">162f7aebbf40: Pull complete </span><br><span class="line">Digest: sha256:edad5e71815c79108ddbd1d42123ee13ba2d8050ad27cfa72c531986d03ee4e7</span><br><span class="line">Status: Downloaded newer image for 192.168.3.82:5000/nginx:v1</span><br><span class="line">[root@slave1 ~]# docker images</span><br><span class="line">REPOSITORY                TAG     IMAGE ID       CREATED         SIZE</span><br><span class="line">192.168.3.82:5000/nginx   v1      649dcb69b782   11 hours ago    109 MB</span><br><span class="line">#可以看出，客户端已正常从远端服务器拉取到所需要的镜像文件，其它内网服务器也可以正常共享这台镜像服务器上的镜像文件，不用去公网拉取。</span><br></pre></td></tr></table></figure>
-<h6 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h6><p>使用docker Registry快速搭建私有镜像仓库</p>
-<p><a href="https://juejin.im/post/5bbbf72c5188255c554710ca" target="_blank" rel="noopener">https://juejin.im/post/5bbbf72c5188255c554710ca</a> </p>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>使用@SerializableName注解自定义反序列化别名</title>
-    <url>/2020/09/08/Java/%E4%BD%BF%E7%94%A8-SerializableName%E6%B3%A8%E8%A7%A3%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%AB%E5%90%8D/</url>
-    <content><![CDATA[<p>主要用于“Java驼峰”和“小写+下划线”两种字段命名的自动化转换</p>
-<a id="more"></a>
-<p>在Java代码中，最常见的命名方式是驼峰。Http传输中，或者是Python之类脚本语言里，喜欢用“小写+下划线”来命名变量。<br>对于Gson来说，在Java里可以在字段上方添加“@SerializableName”注解直接指定需要序列化或者反序列化的字段名，例如“@SerializableName(“error_msg”)”。<br>对于Jackson来说，注解为“@JsonString(“error_msg”)”。</p>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5>]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-  </entry>
-  <entry>
     <title>Go Map、Slice线程安全研究以及append内存重复利用</title>
     <url>/2019/06/28/Go/Go-Map%E3%80%81Slice%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6%E4%BB%A5%E5%8F%8Aappend%E5%86%85%E5%AD%98%E9%87%8D%E5%A4%8D%E5%88%A9%E7%94%A8/</url>
     <content><![CDATA[<p>sync.Map存的是值</p>
@@ -352,6 +285,109 @@
       <categories>
         <category>Go</category>
       </categories>
+  </entry>
+  <entry>
+    <title>go语言string、int、int64互相转换</title>
+    <url>/2019/05/11/Go/go%E8%AF%AD%E8%A8%80string%E3%80%81int%E3%80%81int64%E4%BA%92%E7%9B%B8%E8%BD%AC%E6%8D%A2/</url>
+    <content><![CDATA[<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">#<span class="keyword">string</span>到<span class="keyword">int</span></span><br><span class="line"><span class="keyword">int</span>,err:=strconv.Atoi(<span class="keyword">string</span>)</span><br><span class="line">#<span class="keyword">string</span>到<span class="keyword">int64</span></span><br><span class="line"><span class="keyword">int64</span>, err := strconv.ParseInt(<span class="keyword">string</span>, <span class="number">10</span>, <span class="number">64</span>)</span><br><span class="line">#<span class="keyword">int</span>到<span class="keyword">string</span></span><br><span class="line"><span class="keyword">string</span>:=strconv.Itoa(<span class="keyword">int</span>)</span><br><span class="line">#<span class="keyword">int64</span>到<span class="keyword">string</span></span><br><span class="line"><span class="keyword">string</span>:=strconv.FormatInt(<span class="keyword">int64</span>,<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>作者：三少GG<br>来源：CSDN<br>原文：<a href="https://blog.csdn.net/pkueecser/article/details/50433460" target="_blank" rel="noopener">https://blog.csdn.net/pkueecser/article/details/50433460</a><br>版权声明：本文为博主原创文章，转载请附上博文链接！</p>
+]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>go select与channel操作</title>
+    <url>/2020/07/28/Go/go-select%E4%B8%8Echannel%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<p>select和switch类似，不同的是case内容必须是接收io执行结果（例如&lt;-channel），且不需要break。<br>具体执行逻辑如下：</p>
+<ol>
+<li>如果除default之外，只有一个case满足，则执行case内容</li>
+<li>如果除default之外有多个case满足，则伪随机执行一个case内容</li>
+<li>如果default之外的case都不满足，则执行default内容</li>
+<li>如果没有default，所有case都不满足，则阻塞直到有一个case条件满足</li>
+</ol>
+<a id="more"></a>
+<h2 id="select与channel使用demo"><a href="#select与channel使用demo" class="headerlink" title="select与channel使用demo"></a>select与channel使用demo</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	c1 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	c2 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	c3 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	<span class="keyword">var</span> i1 <span class="keyword">string</span></span><br><span class="line">	s2 := <span class="string">"c2"</span></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		sec := <span class="number">0</span></span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			&lt;-time.After(<span class="number">1</span> * time.Second)</span><br><span class="line">			sec++</span><br><span class="line">			fmt.Printf(<span class="string">"========第%d秒========\n"</span>, sec)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		&lt;-time.After(<span class="number">1050</span> * time.Millisecond)</span><br><span class="line">		c1 &lt;- <span class="string">"c1"</span></span><br><span class="line">		&lt;-time.After(<span class="number">1</span> * time.Second)</span><br><span class="line">		c3 &lt;- <span class="string">"c3"</span></span><br><span class="line">		&lt;-time.After(<span class="number">1</span> * time.Second)</span><br><span class="line">		c1 &lt;- <span class="string">"c1'"</span></span><br><span class="line"></span><br><span class="line">		&lt;-time.After(<span class="number">3</span> * time.Second)</span><br><span class="line">		fmt.Println(&lt;-c2)</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		i := <span class="number">5</span></span><br><span class="line">		<span class="keyword">for</span> i &gt; <span class="number">0</span> &#123;</span><br><span class="line">			i--</span><br><span class="line">			timeout := time.After(<span class="number">2</span> * time.Second)</span><br><span class="line">			<span class="keyword">select</span> &#123;</span><br><span class="line">			<span class="keyword">case</span> i1 = &lt;-c1:</span><br><span class="line">				fmt.Printf(<span class="string">"从c1收到%s\n"</span>, i1)</span><br><span class="line">			<span class="keyword">case</span> c2 &lt;- s2:</span><br><span class="line">				fmt.Printf(<span class="string">"发送%s到 c2\n"</span>, s2)</span><br><span class="line">			<span class="keyword">case</span> i3, ok := &lt;-c3:</span><br><span class="line">				<span class="keyword">if</span> ok &#123;</span><br><span class="line">					fmt.Printf(<span class="string">"从c3收到%s\n"</span>, i3)</span><br><span class="line">				&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">					fmt.Printf(<span class="string">"c3 已关闭"</span>)</span><br><span class="line">				&#125;</span><br><span class="line">			<span class="keyword">case</span> &lt;-timeout:</span><br><span class="line">				fmt.Println(<span class="string">"等待超时"</span>)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	time.Sleep(<span class="number">8</span> * time.Second)</span><br><span class="line">	fmt.Printf(<span class="string">"结束测试\n"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>output:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">========第1秒=========</span><br><span class="line">从c1收到c1</span><br><span class="line">========第2秒=========</span><br><span class="line">从c3收到c3</span><br><span class="line">========第3秒=========</span><br><span class="line">从c1收到c1&apos;</span><br><span class="line">========第4秒=========</span><br><span class="line">========第5秒=========</span><br><span class="line">等待超时</span><br><span class="line">========第6秒=========</span><br><span class="line">c2</span><br><span class="line">发送c2到 c2</span><br><span class="line">========第7秒=========</span><br><span class="line">结束测试</span><br></pre></td></tr></table></figure>
+<h2 id="通过done-channel退出goroutine"><a href="#通过done-channel退出goroutine" class="headerlink" title="通过done channel退出goroutine"></a>通过done channel退出goroutine</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(done <span class="keyword">chan</span> <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	time.Sleep(time.Second)</span><br><span class="line">	<span class="comment">// 通知任务已完成</span></span><br><span class="line">	done &lt;- <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	done := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>, <span class="number">1</span>)</span><br><span class="line">	<span class="keyword">go</span> worker(done)</span><br><span class="line">	<span class="comment">// 等待任务完成</span></span><br><span class="line">	&lt;-done</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>Go语言并发模型：使用 select<br><a href="https://segmentfault.com/a/1190000006815341" target="_blank" rel="noopener">https://segmentfault.com/a/1190000006815341</a></p>
+<p>Go Channel 详解<br><a href="https://colobu.com/2016/04/14/Golang-Channels/" target="_blank" rel="noopener">https://colobu.com/2016/04/14/Golang-Channels/</a></p>
+]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Chrome Devtools发起Ajax请求</title>
+    <url>/2020/10/18/JS/Chrome-Devtools%E5%8F%91%E8%B5%B7Ajax%E8%AF%B7%E6%B1%82/</url>
+    <content><![CDATA[<p>有时需要在浏览器直接调用后端接口编辑数据或者查询信息，可以利用Chrome Devtools支持的fetch方法</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fetch(`https://$&#123;location.hostname&#125;.replace(/^xxx\./, &apos;xxx.&apos;)/xxx`, &#123;</span><br><span class="line">    method: &apos;POST&apos;,</span><br><span class="line">    body: JSON.stringify(&#123;</span><br><span class="line">        xxx: &apos;xxx&apos;,</span><br><span class="line">        xxx: &apos;xxx&apos;</span><br><span class="line">    &#125;),</span><br><span class="line">    headers: &#123;</span><br><span class="line">        &apos;Content-Type&apos;: &apos;application/json&apos;,</span><br><span class="line">    &#125;,</span><br><span class="line">    credentials: &apos;include&apos;</span><br><span class="line">&#125;).then(res =&gt; &#123;</span><br><span class="line">    console.log(&apos;修改完毕&apos;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5>]]></content>
+      <categories>
+        <category>JS</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>使用@SerializableName注解自定义反序列化别名</title>
+    <url>/2020/09/08/Java/%E4%BD%BF%E7%94%A8-SerializableName%E6%B3%A8%E8%A7%A3%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%AB%E5%90%8D/</url>
+    <content><![CDATA[<p>主要用于“Java驼峰”和“小写+下划线”两种字段命名的自动化转换</p>
+<a id="more"></a>
+<p>在Java代码中，最常见的命名方式是驼峰。Http传输中，或者是Python之类脚本语言里，喜欢用“小写+下划线”来命名变量。<br>对于Gson来说，在Java里可以在字段上方添加“@SerializableName”注解直接指定需要序列化或者反序列化的字段名，例如“@SerializableName(“error_msg”)”。<br>对于Jackson来说，注解为“@JsonString(“error_msg”)”。</p>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5>]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>goland远程调试go程序</title>
+    <url>/2019/10/09/Go/goland%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95go%E7%A8%8B%E5%BA%8F/</url>
+    <content><![CDATA[<p>goland是基于intellij IDEA推出的开发go的IDE，所以很多之前Intellij的使用习惯可以保留下来，实属developer的福音，今天遇到一个新的问题，就是我要调试远程服务器上的go代码，远程系统是ubuntu或者centos，总之是没有图形界面的，我想在本地调试该怎么办呢，答案是使用Delve 这个专门的调试工具。</p>
+<blockquote>
+<p>前提：本地代码和远程代码保持一致，否则可能出现断点语句跟预期不一致或莫名其妙的情况。可以在Intellij中使用经典的remote host access插件来dowload或者upload代码实现同步。因为比较简单，具体使用姿势自行探索。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="step1-远程主机"><a href="#step1-远程主机" class="headerlink" title="step1 远程主机"></a>step1 远程主机</h2><p>安装delve，项目地址：<a href="https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Fderekparker%2Fdelve" target="_blank" rel="noopener">https://github.com/derekparker/delve</a><br>按照官方的提示安装即可（注意因为GFW等你懂得的原因，网络下载可能较慢或不可用，请自行使用某高科技软件，如ss+proxychains等工具）。</p>
+<p>下载并安装完成后输入dlv就会看到帮助信息：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10120431-bedad69d270e3ecf.png?imageMogr2/auto-orient/strip|imageView2/2/w/738/format/webp" alt="img"></p>
+<p>image.png</p>
+<h2 id="step2-本地"><a href="#step2-本地" class="headerlink" title="step2 本地"></a>step2 本地</h2><p>本地进入IDE，在要调试的地方打上断点，然后<br>run–debug–eidit configurations–&gt;添加remote主机信息。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10120431-3fce6c44c1aab4c8.png?imageMogr2/auto-orient/strip|imageView2/2/w/1125/format/webp" alt="img"></p>
+<p>image.png</p>
+<p>点debug 确认后，就会等待远端传回的debug信息。切远端：</p>
+<h2 id="step3-远端"><a href="#step3-远端" class="headerlink" title="step3 远端"></a>step3 远端</h2><p>如我要对 main.go 这个项目debug，对main进行编译后，可以直接运行<br>dlv –listen=:2345 –headless=true –api-version=2 exec ./main<br>然后本地就收到了调试信息。</p>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://www.jianshu.com/p/e74e940a64d9" target="_blank" rel="noopener">https://www.jianshu.com/p/e74e940a64d9</a> </p>
+]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Helm安装完之后遇到的权限问题</title>
+    <url>/2019/04/18/K8S/Helm%E5%AE%89%E8%A3%85%E5%AE%8C%E4%B9%8B%E5%90%8E%E9%81%87%E5%88%B0%E7%9A%84%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>如果照著手冊使用 <code>helm init</code>安裝完 Helm 之後，使用 <code>helm list</code> 指令，會看到這樣的錯誤：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ helm list</span><br><span class="line">Error: configmaps is forbidden: User &quot;system:serviceaccount:kube-system:default&quot; cannot list configmaps in the namespace &quot;kube-system&quot;: Unknown user &quot;system:serviceaccount:kube-system:default&quot;</span><br></pre></td></tr></table></figure>
+<h4 id="首先，在helm-init前准备一个ServiceAccount"><a href="#首先，在helm-init前准备一个ServiceAccount" class="headerlink" title="首先，在helm init前准备一个ServiceAccount"></a>首先，在helm init前准备一个ServiceAccount</h4><p>setup-helm-rbac.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">creationTimestamp:</span> <span class="number">2019</span><span class="number">-03</span><span class="string">-24T06:14:51Z</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">secrets:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">tiller-token-bbvwm</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1beta1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller-binding</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">cluster-admin</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>角色：Role，拥有资源的权限，可以看做是一个职业</p>
+<p>账号：ServiceAccount，用户使用K8S API的入口</p>
+<p>当您（真人用户）访问集群（例如使用<code>kubectl</code>命令）时，<code>apiserver</code> 会将您认证为一个特定的 <code>User Account</code>（目前通常是<code>admin</code>，除非您的系统管理员自定义了集群配置）。<code>Pod</code> 容器中的进程也可以与 <code>apiserver</code> 联系。 当它们在联系 <code>apiserver</code> 的时候，它们会被认证为一个特定的 <code>Service Account</code>（例如default）。</p>
+</blockquote>
+<h4 id="刪除原本的-Tiller"><a href="#刪除原本的-Tiller" class="headerlink" title="刪除原本的 Tiller"></a>刪除原本的 Tiller</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ kubectl delete deployment tiller-deploy --namespace=kube-system</span><br><span class="line">$ kubectl delete svc tiller-deploy --namespace=kube-system</span><br></pre></td></tr></table></figure>
+<h4 id="重新初始化-Helm-並且指定要使用的-Service-Account"><a href="#重新初始化-Helm-並且指定要使用的-Service-Account" class="headerlink" title="重新初始化 Helm 並且指定要使用的 Service Account"></a>重新初始化 Helm 並且指定要使用的 Service Account</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ helm init --service-account tiller</span><br></pre></td></tr></table></figure>
+<h4 id="如果helm-init时没指定账号，也可以用以下命令补上"><a href="#如果helm-init时没指定账号，也可以用以下命令补上" class="headerlink" title="如果helm init时没指定账号，也可以用以下命令补上"></a>如果helm init时没指定账号，也可以用以下命令补上</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ kubectl patch deploy --namespace kube-system tiller-deploy -p &apos;&#123;&quot;spec&quot;:&#123;&quot;template&quot;:&#123;&quot;spec&quot;:&#123;&quot;serviceAccount&quot;:&quot;tiller&quot;&#125;&#125;&#125;&#125;&apos;</span><br></pre></td></tr></table></figure>
+<h6 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h6><p>Helm 部署在 GKE 上的權限問題</p>
+<p><a href="https://medium.com/smalltowntechblog/helm-tiller-%E9%83%A8%E7%BD%B2%E5%9C%A8-gke-%E4%B8%8A%E7%9A%84%E6%AC%8A%E9%99%90%E5%95%8F%E9%A1%8C-a016f703372e" target="_blank" rel="noopener">https://medium.com/smalltowntechblog/helm-tiller-%E9%83%A8%E7%BD%B2%E5%9C%A8-gke-%E4%B8%8A%E7%9A%84%E6%AC%8A%E9%99%90%E5%95%8F%E9%A1%8C-a016f703372e</a> </p>
+]]></content>
+      <categories>
+        <category>K8S</category>
+      </categories>
+      <tags>
+        <tag>Helm</tag>
+      </tags>
   </entry>
   <entry>
     <title>Ceph块存储Demo</title>
@@ -415,29 +451,19 @@
       </categories>
   </entry>
   <entry>
-    <title>Helm安装完之后遇到的权限问题</title>
-    <url>/2019/04/18/K8S/Helm%E5%AE%89%E8%A3%85%E5%AE%8C%E4%B9%8B%E5%90%8E%E9%81%87%E5%88%B0%E7%9A%84%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p>如果照著手冊使用 <code>helm init</code>安裝完 Helm 之後，使用 <code>helm list</code> 指令，會看到這樣的錯誤：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ helm list</span><br><span class="line">Error: configmaps is forbidden: User &quot;system:serviceaccount:kube-system:default&quot; cannot list configmaps in the namespace &quot;kube-system&quot;: Unknown user &quot;system:serviceaccount:kube-system:default&quot;</span><br></pre></td></tr></table></figure>
-<h4 id="首先，在helm-init前准备一个ServiceAccount"><a href="#首先，在helm-init前准备一个ServiceAccount" class="headerlink" title="首先，在helm init前准备一个ServiceAccount"></a>首先，在helm init前准备一个ServiceAccount</h4><p>setup-helm-rbac.yaml</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">creationTimestamp:</span> <span class="number">2019</span><span class="number">-03</span><span class="string">-24T06:14:51Z</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">secrets:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">tiller-token-bbvwm</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1beta1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller-binding</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">cluster-admin</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>角色：Role，拥有资源的权限，可以看做是一个职业</p>
-<p>账号：ServiceAccount，用户使用K8S API的入口</p>
-<p>当您（真人用户）访问集群（例如使用<code>kubectl</code>命令）时，<code>apiserver</code> 会将您认证为一个特定的 <code>User Account</code>（目前通常是<code>admin</code>，除非您的系统管理员自定义了集群配置）。<code>Pod</code> 容器中的进程也可以与 <code>apiserver</code> 联系。 当它们在联系 <code>apiserver</code> 的时候，它们会被认证为一个特定的 <code>Service Account</code>（例如default）。</p>
-</blockquote>
-<h4 id="刪除原本的-Tiller"><a href="#刪除原本的-Tiller" class="headerlink" title="刪除原本的 Tiller"></a>刪除原本的 Tiller</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ kubectl delete deployment tiller-deploy --namespace=kube-system</span><br><span class="line">$ kubectl delete svc tiller-deploy --namespace=kube-system</span><br></pre></td></tr></table></figure>
-<h4 id="重新初始化-Helm-並且指定要使用的-Service-Account"><a href="#重新初始化-Helm-並且指定要使用的-Service-Account" class="headerlink" title="重新初始化 Helm 並且指定要使用的 Service Account"></a>重新初始化 Helm 並且指定要使用的 Service Account</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ helm init --service-account tiller</span><br></pre></td></tr></table></figure>
-<h4 id="如果helm-init时没指定账号，也可以用以下命令补上"><a href="#如果helm-init时没指定账号，也可以用以下命令补上" class="headerlink" title="如果helm init时没指定账号，也可以用以下命令补上"></a>如果helm init时没指定账号，也可以用以下命令补上</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ kubectl patch deploy --namespace kube-system tiller-deploy -p &apos;&#123;&quot;spec&quot;:&#123;&quot;template&quot;:&#123;&quot;spec&quot;:&#123;&quot;serviceAccount&quot;:&quot;tiller&quot;&#125;&#125;&#125;&#125;&apos;</span><br></pre></td></tr></table></figure>
-<h6 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h6><p>Helm 部署在 GKE 上的權限問題</p>
-<p><a href="https://medium.com/smalltowntechblog/helm-tiller-%E9%83%A8%E7%BD%B2%E5%9C%A8-gke-%E4%B8%8A%E7%9A%84%E6%AC%8A%E9%99%90%E5%95%8F%E9%A1%8C-a016f703372e" target="_blank" rel="noopener">https://medium.com/smalltowntechblog/helm-tiller-%E9%83%A8%E7%BD%B2%E5%9C%A8-gke-%E4%B8%8A%E7%9A%84%E6%AC%8A%E9%99%90%E5%95%8F%E9%A1%8C-a016f703372e</a> </p>
+    <title>Prometheus 相关</title>
+    <url>/2019/09/23/K8S/Prometheus-%E7%9B%B8%E5%85%B3/</url>
+    <content><![CDATA[<p>一本很好的gitbook</p>
+<p><a href="https://yunlzheng.gitbook.io/prometheus-book/" target="_blank" rel="noopener">https://yunlzheng.gitbook.io/prometheus-book/</a> </p>
+<a id="more"></a>
+<p>CentOS 7 上面安装Prometheus</p>
+<p><a href="https://www.howtoing.com/how-to-install-prometheus-and-node-exporter-on-centos-7" target="_blank" rel="noopener">https://www.howtoing.com/how-to-install-prometheus-and-node-exporter-on-centos-7</a> </p>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>一些使用体会</p>
+<p><a href="https://xenojoshua.com/2019/04/prometheus-note/" target="_blank" rel="noopener">https://xenojoshua.com/2019/04/prometheus-note/</a> </p>
 ]]></content>
       <categories>
         <category>K8S</category>
       </categories>
-      <tags>
-        <tag>Helm</tag>
-      </tags>
   </entry>
   <entry>
     <title>K8S重启Deployment的小技巧</title>
@@ -454,21 +480,6 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl patch deployment &lt;deployment-name&gt; \</span><br><span class="line">  -p <span class="string">'&#123;"spec":&#123;"template":&#123;"spec":&#123;"containers":[&#123;"name":"&lt;container-name&gt;","env":[&#123;"name":"RESTART_","value":"'</span>$(date +%s)<span class="string">'"&#125;]&#125;]&#125;&#125;&#125;&#125;'</span></span><br></pre></td></tr></table></figure>
 <p>基本思路就是给Container添加一个无关紧要的环境变量，这个环境变量的值就是时间戳，而这个时间戳则是每次执行上述命令的系统当前时间。这样一来对于K8S来讲这个Deployment spec就变化了，就可以像<a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#updating-a-deployment" target="_blank" rel="noopener">Updating a deployment</a>一样，重启Pod了。</p>
 <h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://chanjarster.github.io/post/k8s-restart-deployment/" target="_blank" rel="noopener">https://chanjarster.github.io/post/k8s-restart-deployment/</a> </p>
-]]></content>
-      <categories>
-        <category>K8S</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Prometheus 相关</title>
-    <url>/2019/09/23/K8S/Prometheus-%E7%9B%B8%E5%85%B3/</url>
-    <content><![CDATA[<p>一本很好的gitbook</p>
-<p><a href="https://yunlzheng.gitbook.io/prometheus-book/" target="_blank" rel="noopener">https://yunlzheng.gitbook.io/prometheus-book/</a> </p>
-<a id="more"></a>
-<p>CentOS 7 上面安装Prometheus</p>
-<p><a href="https://www.howtoing.com/how-to-install-prometheus-and-node-exporter-on-centos-7" target="_blank" rel="noopener">https://www.howtoing.com/how-to-install-prometheus-and-node-exporter-on-centos-7</a> </p>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>一些使用体会</p>
-<p><a href="https://xenojoshua.com/2019/04/prometheus-note/" target="_blank" rel="noopener">https://xenojoshua.com/2019/04/prometheus-note/</a> </p>
 ]]></content>
       <categories>
         <category>K8S</category>
@@ -496,16 +507,6 @@
       </tags>
   </entry>
   <entry>
-    <title>下载指定版本kubectl</title>
-    <url>/2019/04/18/K8S/%E4%B8%8B%E8%BD%BD%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%ACkubectl/</url>
-    <content><![CDATA[ <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.11.9/bin/linux/amd64/kubectl</span><br></pre></td></tr></table></figure>
-<p><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl</a> </p>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>K8S</category>
-      </categories>
-  </entry>
-  <entry>
     <title>在容器中获取podIP</title>
     <url>/2019/09/18/K8S/%E5%9C%A8%E5%AE%B9%E5%99%A8%E4%B8%AD%E8%8E%B7%E5%8F%96podIP/</url>
     <content><![CDATA[<p>通过环境变量来实现，该环境变量直接引用 resource 的状态字段，示例如下：</p>
@@ -517,6 +518,49 @@
 ]]></content>
       <categories>
         <category>K8S</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>下载指定版本kubectl</title>
+    <url>/2019/04/18/K8S/%E4%B8%8B%E8%BD%BD%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%ACkubectl/</url>
+    <content><![CDATA[ <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.11.9/bin/linux/amd64/kubectl</span><br></pre></td></tr></table></figure>
+<p><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl</a> </p>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>K8S</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Vim 设置是否显示行号</title>
+    <url>/2019/04/17/Linux/Vim%20%E8%AE%BE%E7%BD%AE%E6%98%AF%E5%90%A6%E6%98%BE%E7%A4%BA%E8%A1%8C%E5%8F%B7/</url>
+    <content><![CDATA[<p>Vim添加行号有助于定位文件内容，但是复制内容时会把行号也复制进去。找到了切换是否显示行号的方法</p>
+<a id="more"></a>
+<h4 id="不显示行号"><a href="#不显示行号" class="headerlink" title="不显示行号"></a>不显示行号</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">:set nonumber</span><br></pre></td></tr></table></figure>
+<h4 id="显示行号"><a href="#显示行号" class="headerlink" title="显示行号"></a>显示行号</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">:set number</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>研发效能</tag>
+        <tag>Vim</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Centos 安装Golang 1.9以上版本</title>
+    <url>/2019/04/20/Linux/Centos-%E5%AE%89%E8%A3%85Golang-1-9%E4%BB%A5%E4%B8%8A%E7%89%88%E6%9C%AC/</url>
+    <content><![CDATA[<p>Centos执行yum install golang，安装的go版本为1.8</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># go version</span><br><span class="line">go version go1.8.3 linux/amd64</span><br></pre></td></tr></table></figure>
+<p>如果已经yum安装了go，可以通过下面的命令删掉</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">rm -rf /usr/bin/go</span><br><span class="line">rm -rf /etc/alternatives/go</span><br><span class="line">rm -rf /usr/lib/golang</span><br></pre></td></tr></table></figure>
+<p>如果想要安装1.9以上版本，得先下载官方提供的tar包，如下：</p>
+<p><a href="https://storage.googleapis.com/golang/go1.9.4.linux-amd64.tar.gz" target="_blank" rel="noopener">https://storage.googleapis.com/golang/go1.9.4.linux-amd64.tar.gz</a></p>
+<p>可以在<code>golang.org/dl</code>查询可用的go版本</p>
+<p>将tar包传到Centos上，之后操作命令参考：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># tar -C /root -xzf go1.9.4.linux-amd64.tar.gz</span><br><span class="line"># cd /root; vi ~/.bashrc</span><br><span class="line">export GOPATH=/root/Go</span><br><span class="line">export GOROOT=/root/go</span><br><span class="line">export PATH=$PATH:$GOROOT/bin</span><br><span class="line"># source ~/.bashrc</span><br><span class="line"># go version</span><br><span class="line">go version go1.9.4 linux/amd64</span><br></pre></td></tr></table></figure>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>Linux</category>
       </categories>
   </entry>
   <entry>
@@ -556,80 +600,6 @@
 <p>测试生效：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl www.google.com</span><br></pre></td></tr></table></figure>
 <p>返回一大堆 HTML 则说明 shadowsocks 正常工作了。<br>备注：如果不需要用代理了，把 /etc/profile 里的配置注释即可。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Linux 常用操作</title>
-    <url>/2019/04/18/Linux/Linux-%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<h4 id="CentOS查看防火墙状态"><a href="#CentOS查看防火墙状态" class="headerlink" title="CentOS查看防火墙状态"></a>CentOS查看防火墙状态</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">firewall-cmd --state</span><br></pre></td></tr></table></figure>
-<p>停止firewall</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop firewalld.service1</span><br></pre></td></tr></table></figure>
-<p>禁止firewall开机启动</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl <span class="built_in">disable</span> firewalld.service</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<h4 id="重启网络服务"><a href="#重启网络服务" class="headerlink" title="重启网络服务"></a>重启网络服务</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart network</span><br></pre></td></tr></table></figure>
-<h4 id="安装-netstat-命令"><a href="#安装-netstat-命令" class="headerlink" title="安装 netstat 命令"></a>安装 netstat 命令</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install net-tools</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Vim 设置是否显示行号</title>
-    <url>/2019/04/17/Linux/Vim%20%E8%AE%BE%E7%BD%AE%E6%98%AF%E5%90%A6%E6%98%BE%E7%A4%BA%E8%A1%8C%E5%8F%B7/</url>
-    <content><![CDATA[<p>Vim添加行号有助于定位文件内容，但是复制内容时会把行号也复制进去。找到了切换是否显示行号的方法</p>
-<a id="more"></a>
-<h4 id="不显示行号"><a href="#不显示行号" class="headerlink" title="不显示行号"></a>不显示行号</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">:set nonumber</span><br></pre></td></tr></table></figure>
-<h4 id="显示行号"><a href="#显示行号" class="headerlink" title="显示行号"></a>显示行号</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">:set number</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>研发效能</tag>
-        <tag>Vim</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Centos 安装Golang 1.9以上版本</title>
-    <url>/2019/04/20/Linux/Centos-%E5%AE%89%E8%A3%85Golang-1-9%E4%BB%A5%E4%B8%8A%E7%89%88%E6%9C%AC/</url>
-    <content><![CDATA[<p>Centos执行yum install golang，安装的go版本为1.8</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># go version</span><br><span class="line">go version go1.8.3 linux/amd64</span><br></pre></td></tr></table></figure>
-<p>如果已经yum安装了go，可以通过下面的命令删掉</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">rm -rf /usr/bin/go</span><br><span class="line">rm -rf /etc/alternatives/go</span><br><span class="line">rm -rf /usr/lib/golang</span><br></pre></td></tr></table></figure>
-<p>如果想要安装1.9以上版本，得先下载官方提供的tar包，如下：</p>
-<p><a href="https://storage.googleapis.com/golang/go1.9.4.linux-amd64.tar.gz" target="_blank" rel="noopener">https://storage.googleapis.com/golang/go1.9.4.linux-amd64.tar.gz</a></p>
-<p>可以在<code>golang.org/dl</code>查询可用的go版本</p>
-<p>将tar包传到Centos上，之后操作命令参考：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># tar -C /root -xzf go1.9.4.linux-amd64.tar.gz</span><br><span class="line"># cd /root; vi ~/.bashrc</span><br><span class="line">export GOPATH=/root/Go</span><br><span class="line">export GOROOT=/root/go</span><br><span class="line">export PATH=$PATH:$GOROOT/bin</span><br><span class="line"># source ~/.bashrc</span><br><span class="line"># go version</span><br><span class="line">go version go1.9.4 linux/amd64</span><br></pre></td></tr></table></figure>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Windows换行符导致shell脚本在Linux无法运行</title>
-    <url>/2019/04/20/Linux/Windows%E6%8D%A2%E8%A1%8C%E7%AC%A6%E5%AF%BC%E8%87%B4shell%E8%84%9A%E6%9C%AC%E5%9C%A8Linux%E6%97%A0%E6%B3%95%E8%BF%90%E8%A1%8C/</url>
-    <content><![CDATA[<p>$’\r’: command not found错误</p>
-<p>打开vi使用<code>set ff=unix</code>解决这个换行符的问题后，重新启动问题解决 </p>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>linux下环境变量PATH设置错误的补救</title>
-    <url>/2019/07/13/Linux/linux%E4%B8%8B%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8FPATH%E8%AE%BE%E7%BD%AE%E9%94%99%E8%AF%AF%E7%9A%84%E8%A1%A5%E6%95%91/</url>
-    <content><![CDATA[<pre><code>&quot;export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin&quot;
-</code></pre><a id="more"></a>
-<p>修复PATH变量其实很简单，就是重新给PATH变量赋值就可以了。至于PATH的默认值可以从其他的服务器上复制过来。<br>使用”echo $PATH”命令就可以查看当前服务器的PATH变量值，在正常的服务器上运行命令并复制输出的结果，然后用”export PATH”命令重新给PATH命令赋值就可以了。命令如下：</p>
-<pre><code>&quot;export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin&quot;
-</code></pre><hr>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>作者：铭霏<br>来源：CSDN </p>
-<p>原文：<a href="https://blog.csdn.net/u012102306/article/details/51036561" target="_blank" rel="noopener">https://blog.csdn.net/u012102306/article/details/51036561</a> </p>
 ]]></content>
       <categories>
         <category>Linux</category>
@@ -680,11 +650,41 @@
       </categories>
   </entry>
   <entry>
-    <title>在CentOS上配置MySQL</title>
-    <url>/2019/04/20/Linux/%E5%9C%A8CentOS%E4%B8%8A%E9%85%8D%E7%BD%AEMySQL/</url>
-    <content><![CDATA[<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo groupadd mysql</span><br><span class="line">sudo useradd -r -g mysql -s /bin/<span class="literal">false</span> mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># Postinstallation setup</span></span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/mysql</span><br><span class="line">sudo mkdir mysql-files</span><br><span class="line">sudo chown mysql:mysql mysql-files</span><br><span class="line">sudo chmod 777 mysql-files</span><br><span class="line">sudo bin/mysqld --initialize --user=mysql</span><br><span class="line">  </span><br><span class="line">sudo mkdir /var/run/mariadb</span><br><span class="line">sudo mkdir /var/<span class="built_in">log</span>/mariadb</span><br><span class="line">sudo chown mysql:mysql</span><br><span class="line">sudo touch /var/<span class="built_in">log</span>/mariadb/mariadb.log</span><br><span class="line">sudo chmod 777 /var/<span class="built_in">log</span>/mariadb/mariadb.log</span><br><span class="line">sudo chmod 777 /var/run/mariadb/</span><br><span class="line">sudo chmod 777 /var/<span class="built_in">log</span>/mariadb/</span><br><span class="line">sudo chmod 777 /var/lib/mysql</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">sudo bin/mysql_ssl_rsa_setup             </span><br><span class="line">sudo bin/mysqld_safe --user=mysql &amp;</span><br><span class="line">sudo bin/mysqld --user=mysql &amp;</span><br><span class="line">sudo vim ~/.bash_profile</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/usr/<span class="built_in">local</span>/mysql/bin</span><br><span class="line"> </span><br><span class="line">如果mysqld_safe遇到错误</span><br><span class="line">mysqld_safe mysqld from pid file /var/lib/mysql/mysqld.pid ended</span><br><span class="line">sudo chmod 777 /var/<span class="built_in">log</span>/mariadb/mariadb.log</span><br><span class="line">chmod -R 777 /var/lib/mysql   <span class="comment">#这个是重点</span></span><br><span class="line">如果在mysql -uroot -p 登录时，提示：</span><br><span class="line">ERROR 2002 (HY000): Can<span class="string">'t connect to local MySQL server through socket '</span>/tmp/mysql.sock<span class="string">' (2)</span></span><br><span class="line"><span class="string">ln -s /var/lib/mysql/mysql.sock /tmp/mysql.sock</span></span><br></pre></td></tr></table></figure>
-<p>初始密码设置</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">set</span> password <span class="keyword">for</span> root@localhost = password(<span class="string">'密码'</span>);</span><br><span class="line">grant all privileges on *.* to <span class="string">'对外用户名'</span>@<span class="string">'%'</span> identified by <span class="string">'对外密码'</span>;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+    <title>Linux 常用操作</title>
+    <url>/2019/04/18/Linux/Linux-%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<h4 id="CentOS查看防火墙状态"><a href="#CentOS查看防火墙状态" class="headerlink" title="CentOS查看防火墙状态"></a>CentOS查看防火墙状态</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">firewall-cmd --state</span><br></pre></td></tr></table></figure>
+<p>停止firewall</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop firewalld.service1</span><br></pre></td></tr></table></figure>
+<p>禁止firewall开机启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl <span class="built_in">disable</span> firewalld.service</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h4 id="重启网络服务"><a href="#重启网络服务" class="headerlink" title="重启网络服务"></a>重启网络服务</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart network</span><br></pre></td></tr></table></figure>
+<h4 id="安装-netstat-命令"><a href="#安装-netstat-命令" class="headerlink" title="安装 netstat 命令"></a>安装 netstat 命令</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install net-tools</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>linux下环境变量PATH设置错误的补救</title>
+    <url>/2019/07/13/Linux/linux%E4%B8%8B%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8FPATH%E8%AE%BE%E7%BD%AE%E9%94%99%E8%AF%AF%E7%9A%84%E8%A1%A5%E6%95%91/</url>
+    <content><![CDATA[<pre><code>&quot;export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin&quot;
+</code></pre><a id="more"></a>
+<p>修复PATH变量其实很简单，就是重新给PATH变量赋值就可以了。至于PATH的默认值可以从其他的服务器上复制过来。<br>使用”echo $PATH”命令就可以查看当前服务器的PATH变量值，在正常的服务器上运行命令并复制输出的结果，然后用”export PATH”命令重新给PATH命令赋值就可以了。命令如下：</p>
+<pre><code>&quot;export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin&quot;
+</code></pre><hr>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>作者：铭霏<br>来源：CSDN </p>
+<p>原文：<a href="https://blog.csdn.net/u012102306/article/details/51036561" target="_blank" rel="noopener">https://blog.csdn.net/u012102306/article/details/51036561</a> </p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Windows换行符导致shell脚本在Linux无法运行</title>
+    <url>/2019/04/20/Linux/Windows%E6%8D%A2%E8%A1%8C%E7%AC%A6%E5%AF%BC%E8%87%B4shell%E8%84%9A%E6%9C%AC%E5%9C%A8Linux%E6%97%A0%E6%B3%95%E8%BF%90%E8%A1%8C/</url>
+    <content><![CDATA[<p>$’\r’: command not found错误</p>
+<p>打开vi使用<code>set ff=unix</code>解决这个换行符的问题后，重新启动问题解决 </p>
 <a id="more"></a>]]></content>
       <categories>
         <category>Linux</category>
@@ -748,64 +748,51 @@
       </categories>
   </entry>
   <entry>
-    <title>安装libsodium库支持chacha20</title>
-    <url>/2019/12/20/Linux/%E5%AE%89%E8%A3%85libsodium%E5%BA%93%E6%94%AF%E6%8C%81chacha20/</url>
-    <content><![CDATA[<p>系统默认是没有 chacha20 加密方式的，需要手动编译 libsodium 1.0.8 及以上版本。安装需要以root权限安装</p>
-<a id="more"></a>
-<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><h4 id="0-获取root权限"><a href="#0-获取root权限" class="headerlink" title="0.获取root权限"></a>0.获取root权限</h4><p><code>su root</code></p>
-<h3 id="1-安装依赖"><a href="#1-安装依赖" class="headerlink" title="1. 安装依赖"></a>1. 安装依赖</h3><p>Debian 7/8、Ubuntu 14/15/16 及其衍生系列：</p>
-<p><code>1. sudo apt-get update</code><br><code>2. sudo apt-get install build-essential wget -y</code></p>
-<p>Centos 6/7、RHEL 7 及其衍生系列：</p>
-<p><code>yum groupinstall &quot;Development Tools&quot; -y</code><br><code>yum install wget -y</code></p>
-<h3 id="2-下载-libsodium-最新版本"><a href="#2-下载-libsodium-最新版本" class="headerlink" title="2. 下载 libsodium 最新版本"></a>2. 下载 libsodium 最新版本</h3><p>— 可以从libsodium 官网下，也可以从github 下载。选择速度最快的下载方式。</p>
-<p><1> 从官网下载：</1></p>
-<p><code>wget https://download.libsodium.org/libsodium/releases/LATEST.tar.gz</code></p>
-<p><2> 从 github 下载（其中 1.0.10 是 libusodium 的版本号，可以改成最新的）：</2></p>
-<p><code>wget https://github.com/jedisct1/libsodium/releases/download/1.0.10/libsodium-1.0.10.tar.gz</code></p>
-<h3 id="3-解压"><a href="#3-解压" class="headerlink" title="3. 解压"></a>3. 解压</h3><p><1>官网下载的：</1></p>
-<p><code>tar xzvf LATEST.tar.gz</code></p>
-<p><2>github 下载的：</2></p>
-<p><code>tar xzvf libsodium-1.0.10.tar.gz</code></p>
-<h3 id="4-生成配置文件"><a href="#4-生成配置文件" class="headerlink" title="4. 生成配置文件"></a>4. 生成配置文件</h3><p><code>cd libsodium*</code></p>
-<p><code>./configure</code></p>
-<h3 id="5-编译并安装"><a href="#5-编译并安装" class="headerlink" title="5. 编译并安装"></a>5. 编译并安装</h3><p><code>make -j8 &amp;&amp; make install</code></p>
-<h3 id="6-添加运行库位置并加载运行库："><a href="#6-添加运行库位置并加载运行库：" class="headerlink" title="6. 添加运行库位置并加载运行库："></a>6. 添加运行库位置并加载运行库：</h3><p><code>echo /usr/local/lib &gt; /etc/ld.so.conf.d/usr_local_lib.conf</code></p>
-<p><code>ldconfig</code></p>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>安装libsodium库解决libsodium not found问题</p>
-<p><a href="https://www.debugnode.com/ubuntul_ibsodium/" target="_blank" rel="noopener">https://www.debugnode.com/ubuntul_ibsodium/</a> </p>
-]]></content>
+    <title>在CentOS上配置MySQL</title>
+    <url>/2019/04/20/Linux/%E5%9C%A8CentOS%E4%B8%8A%E9%85%8D%E7%BD%AEMySQL/</url>
+    <content><![CDATA[<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo groupadd mysql</span><br><span class="line">sudo useradd -r -g mysql -s /bin/<span class="literal">false</span> mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># Postinstallation setup</span></span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/mysql</span><br><span class="line">sudo mkdir mysql-files</span><br><span class="line">sudo chown mysql:mysql mysql-files</span><br><span class="line">sudo chmod 777 mysql-files</span><br><span class="line">sudo bin/mysqld --initialize --user=mysql</span><br><span class="line">  </span><br><span class="line">sudo mkdir /var/run/mariadb</span><br><span class="line">sudo mkdir /var/<span class="built_in">log</span>/mariadb</span><br><span class="line">sudo chown mysql:mysql</span><br><span class="line">sudo touch /var/<span class="built_in">log</span>/mariadb/mariadb.log</span><br><span class="line">sudo chmod 777 /var/<span class="built_in">log</span>/mariadb/mariadb.log</span><br><span class="line">sudo chmod 777 /var/run/mariadb/</span><br><span class="line">sudo chmod 777 /var/<span class="built_in">log</span>/mariadb/</span><br><span class="line">sudo chmod 777 /var/lib/mysql</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">sudo bin/mysql_ssl_rsa_setup             </span><br><span class="line">sudo bin/mysqld_safe --user=mysql &amp;</span><br><span class="line">sudo bin/mysqld --user=mysql &amp;</span><br><span class="line">sudo vim ~/.bash_profile</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/usr/<span class="built_in">local</span>/mysql/bin</span><br><span class="line"> </span><br><span class="line">如果mysqld_safe遇到错误</span><br><span class="line">mysqld_safe mysqld from pid file /var/lib/mysql/mysqld.pid ended</span><br><span class="line">sudo chmod 777 /var/<span class="built_in">log</span>/mariadb/mariadb.log</span><br><span class="line">chmod -R 777 /var/lib/mysql   <span class="comment">#这个是重点</span></span><br><span class="line">如果在mysql -uroot -p 登录时，提示：</span><br><span class="line">ERROR 2002 (HY000): Can<span class="string">'t connect to local MySQL server through socket '</span>/tmp/mysql.sock<span class="string">' (2)</span></span><br><span class="line"><span class="string">ln -s /var/lib/mysql/mysql.sock /tmp/mysql.sock</span></span><br></pre></td></tr></table></figure>
+<p>初始密码设置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">set</span> password <span class="keyword">for</span> root@localhost = password(<span class="string">'密码'</span>);</span><br><span class="line">grant all privileges on *.* to <span class="string">'对外用户名'</span>@<span class="string">'%'</span> identified by <span class="string">'对外密码'</span>;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>]]></content>
       <categories>
         <category>Linux</category>
       </categories>
   </entry>
   <entry>
-    <title>安装zsh</title>
-    <url>/2019/05/12/Linux/%E5%AE%89%E8%A3%85zsh/</url>
-    <content><![CDATA[<h2 id="安装zsh"><a href="#安装zsh" class="headerlink" title="安装zsh"></a>安装zsh</h2><p><code>yum install -y zsh</code></p>
+    <title>更改CentOS主机名</title>
+    <url>/2019/04/20/Linux/%E6%9B%B4%E6%94%B9CentOS%E4%B8%BB%E6%9C%BA%E5%90%8D/</url>
+    <content><![CDATA[<p>在CentOS中，有三种定义的主机名:静态的（static），瞬态的（transient），和灵活的（pretty）。<code>静态</code>主机名也称为内核主机名，是系统在启动时从/etc/hostname自动初始化的主机名。<code>瞬态</code>主机名是在系统运行时临时分配的主机名，例如，通过DHCP或mDNS服务器分配。静态主机名和瞬态主机名都遵从作为互联网域名同样的字符限制规则。而另一方面，<code>灵活</code>主机名则允许使用自由形式（包括特殊/空白字符）的主机名，以展示给终端用户（如qqmm）。<br> 在CentOS 7中，有个叫hostnamectl的命令行工具，它允许你查看或修改与主机名相关的配置。</p>
 <a id="more"></a>
-<p>装完之后验证一下最后一行有/bin/zsh</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@hadoop3 ~]<span class="comment"># cat /etc/shells</span></span><br><span class="line">/bin/sh</span><br><span class="line">/bin/bash</span><br><span class="line">/sbin/nologin</span><br><span class="line">/usr/bin/sh</span><br><span class="line">/usr/bin/bash</span><br><span class="line">/usr/sbin/nologin</span><br><span class="line">/bin/zsh</span><br></pre></td></tr></table></figure>
-<p>切换shell为zsh</p>
-<p><code>chsh -s /bin/zsh</code></p>
-<p>然后echo $SHELL看还是bash，很多博客说要重启，其实只要退出终端重新打开就切换过来了。</p>
-<h2 id="安装oh-my-zsh"><a href="#安装oh-my-zsh" class="headerlink" title="安装oh-my-zsh"></a>安装oh-my-zsh</h2><p><code>wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh</code></p>
-<p>有时候连不上github的443端口，就直接下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh</span><br><span class="line">cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc</span><br></pre></td></tr></table></figure>
-<p>再重进登录一下终端就可以用了</p>
-<p>查看主题</p>
-<p><code>ls .oh-my-zsh/themes</code></p>
-<p>把.zshrc里面的theme改成ys，提示符变成这样：</p>
-<p><code># root @ hadoop3 in ~ [10:59:27]</code><br>安装自动提示插件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget http://mimosa-pudica.net/src/incr-0.2.zsh</span><br><span class="line">mkdir ~/.oh-my-zsh/plugins/incr</span><br><span class="line">mv incr-0.2.zsh ~/.oh-my-zsh/plugins/incr</span><br><span class="line"><span class="built_in">echo</span> <span class="string">'source ~/.oh-my-zsh/plugins/incr/incr*.zsh'</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
-<p>ok了，cd一下看看爽不爽。</p>
-<h2 id="安装autojump"><a href="#安装autojump" class="headerlink" title="安装autojump"></a>安装autojump</h2><p>我yum源没有autojump，直接下载安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git://github.com/joelthelion/autojump.git</span><br><span class="line">autojump/install.py</span><br></pre></td></tr></table></figure>
-<p>安装完成在~/下面有.autojump目录，在.zshrc里面加一行</p>
-<p><code>[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] &amp;&amp; . ~/.autojump/etc/profile.d/autojump.sh</code></p>
-<p>妥了，可以使用j了。 </p>
-<p>我敲过一遍cd ~/go/src/learningGo/ch2以后如果换了当前目录，再敲j 2就回来了，爽</p>
-<h2 id="让zsh支持Home键"><a href="#让zsh支持Home键" class="headerlink" title="让zsh支持Home键"></a>让zsh支持Home键</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat &lt;&lt;ENDOF &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="comment"># Home</span></span><br><span class="line"><span class="built_in">bindkey</span> <span class="string">'\e[1~'</span> beginning-of-line</span><br><span class="line"><span class="comment"># End</span></span><br><span class="line"><span class="built_in">bindkey</span> <span class="string">'\e[4~'</span> end-of-line</span><br><span class="line"></span><br><span class="line"><span class="comment"># Keypad</span></span><br><span class="line"><span class="comment"># 0 . Enter</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Op"</span> <span class="string">"0"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ol"</span> <span class="string">"."</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[OM"</span> <span class="string">"^M"</span></span><br><span class="line"><span class="comment"># 1 2 3</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Oq"</span> <span class="string">"1"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Or"</span> <span class="string">"2"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Os"</span> <span class="string">"3"</span></span><br><span class="line"><span class="comment"># 4 5 6</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ot"</span> <span class="string">"4"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ou"</span> <span class="string">"5"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ov"</span> <span class="string">"6"</span></span><br><span class="line"><span class="comment"># 7 8 9</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ow"</span> <span class="string">"7"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ox"</span> <span class="string">"8"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Oy"</span> <span class="string">"9"</span></span><br><span class="line"><span class="comment"># + -  * /</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ok"</span> <span class="string">"+"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Om"</span> <span class="string">"-"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Oj"</span> <span class="string">"*"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Oo"</span> <span class="string">"/"</span></span><br><span class="line">ENDOF</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>作者：疯琴<br>来源：CSDN<br>原文：<a href="https://blog.csdn.net/qq_35753140/article/details/79551560" target="_blank" rel="noopener">https://blog.csdn.net/qq_35753140/article/details/79551560</a><br>版权声明：本文为博主原创文章，转载请附上博文链接！</p>
+<ol>
+<li>要查看主机名相关的设置：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# hostnamectl</span><br><span class="line">   Static hostname: localhost.localdomain</span><br><span class="line">         Icon name: computer-vm</span><br><span class="line">           Chassis: vm</span><br><span class="line">        Machine ID: 21ff9d4ebdd94e949b9fd6cbdb1926c0</span><br><span class="line">           Boot ID: 2a952e91c02841e3ae10de0d16dd3f01</span><br><span class="line">    Virtualization: kvm</span><br><span class="line">  Operating System: CentOS Linux 7 (Core)</span><br><span class="line">       CPE OS Name: cpe:/o:centos:centos:7</span><br><span class="line">            Kernel: Linux 3.10.0-327.el7.x86_64</span><br><span class="line">      Architecture: x86-64</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# hostnamectl status</span><br><span class="line">   Static hostname: localhost.localdomain</span><br><span class="line">         Icon name: computer-vm</span><br><span class="line">           Chassis: vm</span><br><span class="line">        Machine ID: 21ff9d4ebdd94e949b9fd6cbdb1926c0</span><br><span class="line">           Boot ID: 2a952e91c02841e3ae10de0d16dd3f01</span><br><span class="line">    Virtualization: kvm</span><br><span class="line">  Operating System: CentOS Linux 7 (Core)</span><br><span class="line">       CPE OS Name: cpe:/o:centos:centos:7</span><br><span class="line">            Kernel: Linux 3.10.0-327.el7.x86_64</span><br><span class="line">      Architecture: x86-64</span><br></pre></td></tr></table></figure>
+<ol>
+<li>只查看静态、瞬态或灵活主机名，分别使用<code>--static</code>，<code>--transient</code>或<code>--pretty</code>选项。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# hostnamectl --static</span><br><span class="line">localhost.localdomain</span><br><span class="line">[root@localhost ~]# hostnamectl --transient</span><br><span class="line">localhost.localdomain</span><br><span class="line">[root@localhost ~]# hostnamectl --pretty</span><br></pre></td></tr></table></figure>
+<ol>
+<li>要同时修改所有三个主机名：静态、瞬态和灵活主机名：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# hostnamectl set-hostname qqmm</span><br><span class="line">[root@localhost ~]# hostnamectl --pretty</span><br><span class="line">[root@localhost ~]# hostnamectl --static</span><br><span class="line">qqmm</span><br><span class="line">[root@localhost ~]# hostnamectl --transient</span><br><span class="line">qqmm</span><br></pre></td></tr></table></figure>
+<p>就像上面展示的那样，在修改静态/瞬态主机名时，任何特殊字符或空白字符会被移除，而提供的参数中的任何大写字母会自动转化为小写。<br> 一旦修改了静态主机名，<code>/etc/hostname</code> 将被自动更新。然而，<code>/etc/hosts</code> 不会更新以保存所做的修改，所以你每次在修改主机名后一定要手动更新<code>/etc/hosts</code>，之后再重启CentOS 7。否则系统再启动时会很慢。</p>
+<ol>
+<li>手动更新<code>/etc/hosts</code> </li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim /etc/hosts</span><br><span class="line">#127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">127.0.0.1  qqmm</span><br><span class="line">#::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line">::1        qqmm</span><br></pre></td></tr></table></figure>
+<ol>
+<li>重启CentOS 7 之后<code>（reboot -f ）</code>，</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@qqmm ~]# hostname</span><br><span class="line">qqmm</span><br><span class="line">[root@qqmm ~]# hostnamectl</span><br><span class="line">   Static hostname: qqmm</span><br><span class="line">         Icon name: computer-vm</span><br><span class="line">           Chassis: vm</span><br><span class="line">        Machine ID: 21ff9d4ebdd94e949b9fd6cbdb1926c0</span><br><span class="line">           Boot ID: 2a952e91c02841e3ae10de0d16dd3f01</span><br><span class="line">    Virtualization: kvm</span><br><span class="line">  Operating System: CentOS Linux 7 (Core)</span><br><span class="line">       CPE OS Name: cpe:/o:centos:centos:7</span><br><span class="line">            Kernel: Linux 3.10.0-327.el7.x86_64</span><br><span class="line">      Architecture: x86-64</span><br></pre></td></tr></table></figure>
+<ol>
+<li>如果你只想修改特定的主机名（静态，瞬态或灵活），你可以使用<code>--static</code>，<code>--transient</code>或<code>--pretty</code>选项。例如，要永久修改主机名，你可以修改静态主机名：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# hostnamectl --static set-hostname qqmm</span><br></pre></td></tr></table></figure>
+<p>重启CentOS 7 之后（<code>reboot -f</code> ），</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# hostnamectl --static</span><br><span class="line">qqmm</span><br><span class="line">[root@localhost ~]# hostnamectl --transient</span><br><span class="line">qqmm</span><br><span class="line">[root@localhost ~]# hostnamectl --pretty</span><br><span class="line">qqmm</span><br><span class="line">[root@localhost ~]# hostname</span><br><span class="line">qqmm</span><br></pre></td></tr></table></figure>
+<p>其实，你不必重启机器以激活永久主机名修改。上面的命令会立即修改内核主机名。<br> 注销并重新登入后在命令行提示来观察新的静态主机名</p>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://www.jianshu.com/p/39d7000dfa47" target="_blank" rel="noopener">https://www.jianshu.com/p/39d7000dfa47</a> </p>
 ]]></content>
       <categories>
         <category>Linux</category>
@@ -877,6 +864,39 @@
       </tags>
   </entry>
   <entry>
+    <title>安装zsh</title>
+    <url>/2019/05/12/Linux/%E5%AE%89%E8%A3%85zsh/</url>
+    <content><![CDATA[<h2 id="安装zsh"><a href="#安装zsh" class="headerlink" title="安装zsh"></a>安装zsh</h2><p><code>yum install -y zsh</code></p>
+<a id="more"></a>
+<p>装完之后验证一下最后一行有/bin/zsh</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@hadoop3 ~]<span class="comment"># cat /etc/shells</span></span><br><span class="line">/bin/sh</span><br><span class="line">/bin/bash</span><br><span class="line">/sbin/nologin</span><br><span class="line">/usr/bin/sh</span><br><span class="line">/usr/bin/bash</span><br><span class="line">/usr/sbin/nologin</span><br><span class="line">/bin/zsh</span><br></pre></td></tr></table></figure>
+<p>切换shell为zsh</p>
+<p><code>chsh -s /bin/zsh</code></p>
+<p>然后echo $SHELL看还是bash，很多博客说要重启，其实只要退出终端重新打开就切换过来了。</p>
+<h2 id="安装oh-my-zsh"><a href="#安装oh-my-zsh" class="headerlink" title="安装oh-my-zsh"></a>安装oh-my-zsh</h2><p><code>wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh</code></p>
+<p>有时候连不上github的443端口，就直接下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh</span><br><span class="line">cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc</span><br></pre></td></tr></table></figure>
+<p>再重进登录一下终端就可以用了</p>
+<p>查看主题</p>
+<p><code>ls .oh-my-zsh/themes</code></p>
+<p>把.zshrc里面的theme改成ys，提示符变成这样：</p>
+<p><code># root @ hadoop3 in ~ [10:59:27]</code><br>安装自动提示插件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget http://mimosa-pudica.net/src/incr-0.2.zsh</span><br><span class="line">mkdir ~/.oh-my-zsh/plugins/incr</span><br><span class="line">mv incr-0.2.zsh ~/.oh-my-zsh/plugins/incr</span><br><span class="line"><span class="built_in">echo</span> <span class="string">'source ~/.oh-my-zsh/plugins/incr/incr*.zsh'</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+<p>ok了，cd一下看看爽不爽。</p>
+<h2 id="安装autojump"><a href="#安装autojump" class="headerlink" title="安装autojump"></a>安装autojump</h2><p>我yum源没有autojump，直接下载安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git://github.com/joelthelion/autojump.git</span><br><span class="line">autojump/install.py</span><br></pre></td></tr></table></figure>
+<p>安装完成在~/下面有.autojump目录，在.zshrc里面加一行</p>
+<p><code>[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] &amp;&amp; . ~/.autojump/etc/profile.d/autojump.sh</code></p>
+<p>妥了，可以使用j了。 </p>
+<p>我敲过一遍cd ~/go/src/learningGo/ch2以后如果换了当前目录，再敲j 2就回来了，爽</p>
+<h2 id="让zsh支持Home键"><a href="#让zsh支持Home键" class="headerlink" title="让zsh支持Home键"></a>让zsh支持Home键</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat &lt;&lt;ENDOF &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="comment"># Home</span></span><br><span class="line"><span class="built_in">bindkey</span> <span class="string">'\e[1~'</span> beginning-of-line</span><br><span class="line"><span class="comment"># End</span></span><br><span class="line"><span class="built_in">bindkey</span> <span class="string">'\e[4~'</span> end-of-line</span><br><span class="line"></span><br><span class="line"><span class="comment"># Keypad</span></span><br><span class="line"><span class="comment"># 0 . Enter</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Op"</span> <span class="string">"0"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ol"</span> <span class="string">"."</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[OM"</span> <span class="string">"^M"</span></span><br><span class="line"><span class="comment"># 1 2 3</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Oq"</span> <span class="string">"1"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Or"</span> <span class="string">"2"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Os"</span> <span class="string">"3"</span></span><br><span class="line"><span class="comment"># 4 5 6</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ot"</span> <span class="string">"4"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ou"</span> <span class="string">"5"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ov"</span> <span class="string">"6"</span></span><br><span class="line"><span class="comment"># 7 8 9</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ow"</span> <span class="string">"7"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ox"</span> <span class="string">"8"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Oy"</span> <span class="string">"9"</span></span><br><span class="line"><span class="comment"># + -  * /</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Ok"</span> <span class="string">"+"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Om"</span> <span class="string">"-"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Oj"</span> <span class="string">"*"</span></span><br><span class="line"><span class="built_in">bindkey</span> -s <span class="string">"^[Oo"</span> <span class="string">"/"</span></span><br><span class="line">ENDOF</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>作者：疯琴<br>来源：CSDN<br>原文：<a href="https://blog.csdn.net/qq_35753140/article/details/79551560" target="_blank" rel="noopener">https://blog.csdn.net/qq_35753140/article/details/79551560</a><br>版权声明：本文为博主原创文章，转载请附上博文链接！</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+  </entry>
+  <entry>
     <title>使用virtualenv来管理系统环境变量</title>
     <url>/2020/09/13/MacOS%E6%8A%80%E5%B7%A7/%E4%BD%BF%E7%94%A8virtualenv%E6%9D%A5%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/</url>
     <content><![CDATA[<p>MacOS自带老掉牙的python2.7，因为删掉会破坏系统完整性，还不能乱删。让python3和python2和平相处就是系统环境变量管理的其中一个场景。<br>本文记录在MacOS下安装virtualenv，管理多套系统环境变量配置的方法。</p>
@@ -943,40 +963,31 @@ rmvirtualenv test
       </tags>
   </entry>
   <entry>
-    <title>更改CentOS主机名</title>
-    <url>/2019/04/20/Linux/%E6%9B%B4%E6%94%B9CentOS%E4%B8%BB%E6%9C%BA%E5%90%8D/</url>
-    <content><![CDATA[<p>在CentOS中，有三种定义的主机名:静态的（static），瞬态的（transient），和灵活的（pretty）。<code>静态</code>主机名也称为内核主机名，是系统在启动时从/etc/hostname自动初始化的主机名。<code>瞬态</code>主机名是在系统运行时临时分配的主机名，例如，通过DHCP或mDNS服务器分配。静态主机名和瞬态主机名都遵从作为互联网域名同样的字符限制规则。而另一方面，<code>灵活</code>主机名则允许使用自由形式（包括特殊/空白字符）的主机名，以展示给终端用户（如qqmm）。<br> 在CentOS 7中，有个叫hostnamectl的命令行工具，它允许你查看或修改与主机名相关的配置。</p>
+    <title>安装libsodium库支持chacha20</title>
+    <url>/2019/12/20/Linux/%E5%AE%89%E8%A3%85libsodium%E5%BA%93%E6%94%AF%E6%8C%81chacha20/</url>
+    <content><![CDATA[<p>系统默认是没有 chacha20 加密方式的，需要手动编译 libsodium 1.0.8 及以上版本。安装需要以root权限安装</p>
 <a id="more"></a>
-<ol>
-<li>要查看主机名相关的设置：</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# hostnamectl</span><br><span class="line">   Static hostname: localhost.localdomain</span><br><span class="line">         Icon name: computer-vm</span><br><span class="line">           Chassis: vm</span><br><span class="line">        Machine ID: 21ff9d4ebdd94e949b9fd6cbdb1926c0</span><br><span class="line">           Boot ID: 2a952e91c02841e3ae10de0d16dd3f01</span><br><span class="line">    Virtualization: kvm</span><br><span class="line">  Operating System: CentOS Linux 7 (Core)</span><br><span class="line">       CPE OS Name: cpe:/o:centos:centos:7</span><br><span class="line">            Kernel: Linux 3.10.0-327.el7.x86_64</span><br><span class="line">      Architecture: x86-64</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# hostnamectl status</span><br><span class="line">   Static hostname: localhost.localdomain</span><br><span class="line">         Icon name: computer-vm</span><br><span class="line">           Chassis: vm</span><br><span class="line">        Machine ID: 21ff9d4ebdd94e949b9fd6cbdb1926c0</span><br><span class="line">           Boot ID: 2a952e91c02841e3ae10de0d16dd3f01</span><br><span class="line">    Virtualization: kvm</span><br><span class="line">  Operating System: CentOS Linux 7 (Core)</span><br><span class="line">       CPE OS Name: cpe:/o:centos:centos:7</span><br><span class="line">            Kernel: Linux 3.10.0-327.el7.x86_64</span><br><span class="line">      Architecture: x86-64</span><br></pre></td></tr></table></figure>
-<ol>
-<li>只查看静态、瞬态或灵活主机名，分别使用<code>--static</code>，<code>--transient</code>或<code>--pretty</code>选项。</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# hostnamectl --static</span><br><span class="line">localhost.localdomain</span><br><span class="line">[root@localhost ~]# hostnamectl --transient</span><br><span class="line">localhost.localdomain</span><br><span class="line">[root@localhost ~]# hostnamectl --pretty</span><br></pre></td></tr></table></figure>
-<ol>
-<li>要同时修改所有三个主机名：静态、瞬态和灵活主机名：</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# hostnamectl set-hostname qqmm</span><br><span class="line">[root@localhost ~]# hostnamectl --pretty</span><br><span class="line">[root@localhost ~]# hostnamectl --static</span><br><span class="line">qqmm</span><br><span class="line">[root@localhost ~]# hostnamectl --transient</span><br><span class="line">qqmm</span><br></pre></td></tr></table></figure>
-<p>就像上面展示的那样，在修改静态/瞬态主机名时，任何特殊字符或空白字符会被移除，而提供的参数中的任何大写字母会自动转化为小写。<br> 一旦修改了静态主机名，<code>/etc/hostname</code> 将被自动更新。然而，<code>/etc/hosts</code> 不会更新以保存所做的修改，所以你每次在修改主机名后一定要手动更新<code>/etc/hosts</code>，之后再重启CentOS 7。否则系统再启动时会很慢。</p>
-<ol>
-<li>手动更新<code>/etc/hosts</code> </li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim /etc/hosts</span><br><span class="line">#127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">127.0.0.1  qqmm</span><br><span class="line">#::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line">::1        qqmm</span><br></pre></td></tr></table></figure>
-<ol>
-<li>重启CentOS 7 之后<code>（reboot -f ）</code>，</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@qqmm ~]# hostname</span><br><span class="line">qqmm</span><br><span class="line">[root@qqmm ~]# hostnamectl</span><br><span class="line">   Static hostname: qqmm</span><br><span class="line">         Icon name: computer-vm</span><br><span class="line">           Chassis: vm</span><br><span class="line">        Machine ID: 21ff9d4ebdd94e949b9fd6cbdb1926c0</span><br><span class="line">           Boot ID: 2a952e91c02841e3ae10de0d16dd3f01</span><br><span class="line">    Virtualization: kvm</span><br><span class="line">  Operating System: CentOS Linux 7 (Core)</span><br><span class="line">       CPE OS Name: cpe:/o:centos:centos:7</span><br><span class="line">            Kernel: Linux 3.10.0-327.el7.x86_64</span><br><span class="line">      Architecture: x86-64</span><br></pre></td></tr></table></figure>
-<ol>
-<li>如果你只想修改特定的主机名（静态，瞬态或灵活），你可以使用<code>--static</code>，<code>--transient</code>或<code>--pretty</code>选项。例如，要永久修改主机名，你可以修改静态主机名：</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# hostnamectl --static set-hostname qqmm</span><br></pre></td></tr></table></figure>
-<p>重启CentOS 7 之后（<code>reboot -f</code> ），</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# hostnamectl --static</span><br><span class="line">qqmm</span><br><span class="line">[root@localhost ~]# hostnamectl --transient</span><br><span class="line">qqmm</span><br><span class="line">[root@localhost ~]# hostnamectl --pretty</span><br><span class="line">qqmm</span><br><span class="line">[root@localhost ~]# hostname</span><br><span class="line">qqmm</span><br></pre></td></tr></table></figure>
-<p>其实，你不必重启机器以激活永久主机名修改。上面的命令会立即修改内核主机名。<br> 注销并重新登入后在命令行提示来观察新的静态主机名</p>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://www.jianshu.com/p/39d7000dfa47" target="_blank" rel="noopener">https://www.jianshu.com/p/39d7000dfa47</a> </p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><h4 id="0-获取root权限"><a href="#0-获取root权限" class="headerlink" title="0.获取root权限"></a>0.获取root权限</h4><p><code>su root</code></p>
+<h3 id="1-安装依赖"><a href="#1-安装依赖" class="headerlink" title="1. 安装依赖"></a>1. 安装依赖</h3><p>Debian 7/8、Ubuntu 14/15/16 及其衍生系列：</p>
+<p><code>1. sudo apt-get update</code><br><code>2. sudo apt-get install build-essential wget -y</code></p>
+<p>Centos 6/7、RHEL 7 及其衍生系列：</p>
+<p><code>yum groupinstall &quot;Development Tools&quot; -y</code><br><code>yum install wget -y</code></p>
+<h3 id="2-下载-libsodium-最新版本"><a href="#2-下载-libsodium-最新版本" class="headerlink" title="2. 下载 libsodium 最新版本"></a>2. 下载 libsodium 最新版本</h3><p>— 可以从libsodium 官网下，也可以从github 下载。选择速度最快的下载方式。</p>
+<p><1> 从官网下载：</1></p>
+<p><code>wget https://download.libsodium.org/libsodium/releases/LATEST.tar.gz</code></p>
+<p><2> 从 github 下载（其中 1.0.10 是 libusodium 的版本号，可以改成最新的）：</2></p>
+<p><code>wget https://github.com/jedisct1/libsodium/releases/download/1.0.10/libsodium-1.0.10.tar.gz</code></p>
+<h3 id="3-解压"><a href="#3-解压" class="headerlink" title="3. 解压"></a>3. 解压</h3><p><1>官网下载的：</1></p>
+<p><code>tar xzvf LATEST.tar.gz</code></p>
+<p><2>github 下载的：</2></p>
+<p><code>tar xzvf libsodium-1.0.10.tar.gz</code></p>
+<h3 id="4-生成配置文件"><a href="#4-生成配置文件" class="headerlink" title="4. 生成配置文件"></a>4. 生成配置文件</h3><p><code>cd libsodium*</code></p>
+<p><code>./configure</code></p>
+<h3 id="5-编译并安装"><a href="#5-编译并安装" class="headerlink" title="5. 编译并安装"></a>5. 编译并安装</h3><p><code>make -j8 &amp;&amp; make install</code></p>
+<h3 id="6-添加运行库位置并加载运行库："><a href="#6-添加运行库位置并加载运行库：" class="headerlink" title="6. 添加运行库位置并加载运行库："></a>6. 添加运行库位置并加载运行库：</h3><p><code>echo /usr/local/lib &gt; /etc/ld.so.conf.d/usr_local_lib.conf</code></p>
+<p><code>ldconfig</code></p>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>安装libsodium库解决libsodium not found问题</p>
+<p><a href="https://www.debugnode.com/ubuntul_ibsodium/" target="_blank" rel="noopener">https://www.debugnode.com/ubuntul_ibsodium/</a> </p>
 ]]></content>
       <categories>
         <category>Linux</category>
@@ -1018,67 +1029,6 @@ rmvirtualenv test
 <h3 id="感谢作者。"><a href="#感谢作者。" class="headerlink" title="感谢作者。"></a>感谢作者。</h3>]]></content>
       <categories>
         <category>MacOS技巧</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>一行python代码实现ftp</title>
-    <url>/2019/05/28/Python/%E4%B8%80%E8%A1%8Cpython%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0ftp/</url>
-    <content><![CDATA[<p>python -m pyftpdlib</p>
-<a id="more"></a>
-<p>环境要求</p>
-<p>·         Python 2.7</p>
-<p>·         Windows / Linux</p>
-<p>环境搭建</p>
-<p>pip install pyftpdlib</p>
-<p>一行代码实现FTP服务器</p>
-<p>通过Python的-m选项作为一个简单的独立服务器来运行，当你想快速共享一个目录的时候，这是特别有用的。</p>
-<p>在需要共享的目录下执行如下命令即可把当前目录共享出去（匿名登录）</p>
-<p>python -m pyftpdlib</p>
-<p>至此一个简单的FTP服务器已经搭建完成，访问 <a href="ftp://127.0.0.1:2121" target="_blank" rel="noopener">ftp://127.0.0.1:2121</a> 即可</p>
-<p>（默认IP为 127.0.0.1 、端口为 2121 ）</p>
-<p>可选参数</p>
-<p>·         -i 指定IP地址（默认为本机的IP地址）</p>
-<p>·         -p 指定端口（默认为2121）</p>
-<p>·         -w 写权限（默认为只读）</p>
-<p>·         -d 指定目录 （默认为当前目录）</p>
-<p>·         -u 指定用户名登录</p>
-<p>·         -P 设置登录密码</p>
-<p>​    </p>
-<p>简单示例</p>
-<p>上述的一行命令已经可以实现一个简单的FTP服务器，但是要搭建一个功能强大完善的FTP服务所涉及到的配置较多，这时需要使用Pyftpdlib提供的 <a href="http://pyftpdlib.readthedocs.io/en/latest/api.html" target="_blank" rel="noopener">API</a> 来编写。如下是一个简单的示例</p>
-<p>from pyftpdlib.authorizers import DummyAuthorizer</p>
-<p>from pyftpdlib.handlers import FTPHandler</p>
-<p>from pyftpdlib.servers import FTPServer</p>
-<p># 实例化DummyAuthorizer来创建ftp用户</p>
-<p>authorizer = DummyAuthorizer()</p>
-<p># 参数：用户名，密码，目录，权限</p>
-<p>authorizer.add_user(‘user’, ‘12345’, ‘/opt/pyftp/test’, perm=’elradfmwMT’)</p>
-<p># 匿名登录</p>
-<p># authorizer.add_anonymous(‘/home/nobody’)</p>
-<p>handler = FTPHandler</p>
-<p>handler.authorizer = authorizer</p>
-<p># 参数：IP，端口，handler</p>
-<p>server = FTPServer((‘192.168.56.100’, 21), handler)</p>
-<p>server.serve_forever()</p>
-<p>perm权限选项</p>
-<p>读取权限：</p>
-<p>·         “e” =更改目录（CWD，CDUP命令）</p>
-<p>·         “l” =列表文件（LIST，NLST，STAT，MLSD，MLST，SIZE命令）</p>
-<p>·         “r” =从服务器检索文件（RETR命令）</p>
-<p>写入权限：</p>
-<p>·         “a” =将数据追加到现有文件（APPE命令）</p>
-<p>·         “d” =删除文件或目录（DELE，RMD命令）</p>
-<p>·         “f” =重命名文件或目录（RNFR，RNTO命令）</p>
-<p>·         “m” =创建目录（MKD命令）</p>
-<p>·         “w” =将文件存储到服务器（STOR，STOU命令）</p>
-<p>·         “M”=更改文件模式/权限（SITE CHMOD命令）</p>
-<p>·         “T”=更改文件修改时间（SITE MFMT命令）</p>
-<p>参考</p>
-<p>Pyftpdlib文档：<a href="http://pyftpdlib.readthedocs.io/en/latest/index.html" target="_blank" rel="noopener">http://pyftpdlib.readthedocs.io/en/latest/index.html</a></p>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p> 手把手教你用1行Python代码实现FTP服务器 – Pyftpdlib<br> <a href="https://my.oschina.net/kangvcar/blog/1599867" target="_blank" rel="noopener">https://my.oschina.net/kangvcar/blog/1599867</a></p>
-]]></content>
-      <categories>
-        <category>Python</category>
       </categories>
   </entry>
   <entry>
@@ -1147,6 +1097,67 @@ rmvirtualenv test
       </categories>
   </entry>
   <entry>
+    <title>一行python代码实现ftp</title>
+    <url>/2019/05/28/Python/%E4%B8%80%E8%A1%8Cpython%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0ftp/</url>
+    <content><![CDATA[<p>python -m pyftpdlib</p>
+<a id="more"></a>
+<p>环境要求</p>
+<p>·         Python 2.7</p>
+<p>·         Windows / Linux</p>
+<p>环境搭建</p>
+<p>pip install pyftpdlib</p>
+<p>一行代码实现FTP服务器</p>
+<p>通过Python的-m选项作为一个简单的独立服务器来运行，当你想快速共享一个目录的时候，这是特别有用的。</p>
+<p>在需要共享的目录下执行如下命令即可把当前目录共享出去（匿名登录）</p>
+<p>python -m pyftpdlib</p>
+<p>至此一个简单的FTP服务器已经搭建完成，访问 <a href="ftp://127.0.0.1:2121" target="_blank" rel="noopener">ftp://127.0.0.1:2121</a> 即可</p>
+<p>（默认IP为 127.0.0.1 、端口为 2121 ）</p>
+<p>可选参数</p>
+<p>·         -i 指定IP地址（默认为本机的IP地址）</p>
+<p>·         -p 指定端口（默认为2121）</p>
+<p>·         -w 写权限（默认为只读）</p>
+<p>·         -d 指定目录 （默认为当前目录）</p>
+<p>·         -u 指定用户名登录</p>
+<p>·         -P 设置登录密码</p>
+<p>​    </p>
+<p>简单示例</p>
+<p>上述的一行命令已经可以实现一个简单的FTP服务器，但是要搭建一个功能强大完善的FTP服务所涉及到的配置较多，这时需要使用Pyftpdlib提供的 <a href="http://pyftpdlib.readthedocs.io/en/latest/api.html" target="_blank" rel="noopener">API</a> 来编写。如下是一个简单的示例</p>
+<p>from pyftpdlib.authorizers import DummyAuthorizer</p>
+<p>from pyftpdlib.handlers import FTPHandler</p>
+<p>from pyftpdlib.servers import FTPServer</p>
+<p># 实例化DummyAuthorizer来创建ftp用户</p>
+<p>authorizer = DummyAuthorizer()</p>
+<p># 参数：用户名，密码，目录，权限</p>
+<p>authorizer.add_user(‘user’, ‘12345’, ‘/opt/pyftp/test’, perm=’elradfmwMT’)</p>
+<p># 匿名登录</p>
+<p># authorizer.add_anonymous(‘/home/nobody’)</p>
+<p>handler = FTPHandler</p>
+<p>handler.authorizer = authorizer</p>
+<p># 参数：IP，端口，handler</p>
+<p>server = FTPServer((‘192.168.56.100’, 21), handler)</p>
+<p>server.serve_forever()</p>
+<p>perm权限选项</p>
+<p>读取权限：</p>
+<p>·         “e” =更改目录（CWD，CDUP命令）</p>
+<p>·         “l” =列表文件（LIST，NLST，STAT，MLSD，MLST，SIZE命令）</p>
+<p>·         “r” =从服务器检索文件（RETR命令）</p>
+<p>写入权限：</p>
+<p>·         “a” =将数据追加到现有文件（APPE命令）</p>
+<p>·         “d” =删除文件或目录（DELE，RMD命令）</p>
+<p>·         “f” =重命名文件或目录（RNFR，RNTO命令）</p>
+<p>·         “m” =创建目录（MKD命令）</p>
+<p>·         “w” =将文件存储到服务器（STOR，STOU命令）</p>
+<p>·         “M”=更改文件模式/权限（SITE CHMOD命令）</p>
+<p>·         “T”=更改文件修改时间（SITE MFMT命令）</p>
+<p>参考</p>
+<p>Pyftpdlib文档：<a href="http://pyftpdlib.readthedocs.io/en/latest/index.html" target="_blank" rel="noopener">http://pyftpdlib.readthedocs.io/en/latest/index.html</a></p>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p> 手把手教你用1行Python代码实现FTP服务器 – Pyftpdlib<br> <a href="https://my.oschina.net/kangvcar/blog/1599867" target="_blank" rel="noopener">https://my.oschina.net/kangvcar/blog/1599867</a></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+  </entry>
+  <entry>
     <title>事务隔离级别</title>
     <url>/2019/08/04/MySQL/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</url>
     <content><![CDATA[<p>MySQL事务隔离级别由弱到强分别为Read Committed，Snapshot Isolation，Repeatable Read，Serizable</p>
@@ -1160,45 +1171,6 @@ rmvirtualenv test
       <categories>
         <category>MySQL</category>
       </categories>
-  </entry>
-  <entry>
-    <title>VirtualBox vmdk文件缩容</title>
-    <url>/2019/04/22/VirtualBox/VirtualBox-vmdk%E6%96%87%E4%BB%B6%E7%BC%A9%E5%AE%B9/</url>
-    <content><![CDATA[<h4 id="一、清理虚拟机内的内容"><a href="#一、清理虚拟机内的内容" class="headerlink" title="一、清理虚拟机内的内容"></a>一、清理虚拟机内的内容</h4><p>df -hl 查看 各盘使用情况</p>
-<p>使用 du -h –max-depth=1 </p>
-<p>一步步找到占用大空间的文件夹</p>
-<p>然后进行删除整理磁盘</p>
-<h4 id="二、vmdk-k、-d命令缩容"><a href="#二、vmdk-k、-d命令缩容" class="headerlink" title="二、vmdk -k、-d命令缩容"></a>二、vmdk -k、-d命令缩容</h4><a id="more"></a>]]></content>
-      <categories>
-        <category>VirtualBox</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Windows命令行设置永久环境变量</title>
-    <url>/2019/04/26/Windows/Windows%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%AE%BE%E7%BD%AE%E6%B0%B8%E4%B9%85%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/</url>
-    <content><![CDATA[<p>在cmd窗口中set设置的环境变量为临时变量，如：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">set PATH=%PATH%;D:\Program Files\</span><br></pre></td></tr></table></figure>
-<p>使用setx设置为永久环境变量,适用于bat中：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">setx PATH &quot;%PATH%;D:\Program Files\&quot;</span><br></pre></td></tr></table></figure>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>Windows</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>ZK可视化工具</title>
-    <url>/2019/12/10/ZK/ZK%E5%8F%AF%E8%A7%86%E5%8C%96%E5%B7%A5%E5%85%B7/</url>
-    <content><![CDATA[<p>下载地址 <a href="https://issues.apache.org/jira/secure/attachment/12436620/ZooInspector.zip" target="_blank" rel="noopener">https://issues.apache.org/jira/secure/attachment/12436620/ZooInspector.zip</a> </p>
-<a id="more"></a>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>ZooKeeper客户端监控软件ZooInspector</p>
-<p> <a href="https://blog.52itstyle.vip/archives/343/" target="_blank" rel="noopener">https://blog.52itstyle.vip/archives/343/</a> </p>
-]]></content>
-      <categories>
-        <category>ZK</category>
-      </categories>
-      <tags>
-        <tag>分布式</tag>
-      </tags>
   </entry>
   <entry>
     <title>mysql手册</title>
@@ -1333,25 +1305,50 @@ rmvirtualenv test
       </categories>
   </entry>
   <entry>
-    <title>etcd 可视化</title>
-    <url>/2019/05/07/etcd/etcd-%E5%8F%AF%E8%A7%86%E5%8C%96/</url>
-    <content><![CDATA[<p><code>wget https://github.com/evildecay/etcdkeeper/releases/download/v0.7.4/etcdkeeper-v0.7.4-linux_x86_64.zip</code></p>
-<p>在etcd集群的某台机器上，解压后执行命令</p>
-<p><code>./etcdkeeper -p 8001</code></p>
-<p>通过http访问这个端口，可以可视化操作etcd</p>
+    <title>VirtualBox vmdk文件缩容</title>
+    <url>/2019/04/22/VirtualBox/VirtualBox-vmdk%E6%96%87%E4%BB%B6%E7%BC%A9%E5%AE%B9/</url>
+    <content><![CDATA[<h4 id="一、清理虚拟机内的内容"><a href="#一、清理虚拟机内的内容" class="headerlink" title="一、清理虚拟机内的内容"></a>一、清理虚拟机内的内容</h4><p>df -hl 查看 各盘使用情况</p>
+<p>使用 du -h –max-depth=1 </p>
+<p>一步步找到占用大空间的文件夹</p>
+<p>然后进行删除整理磁盘</p>
+<h4 id="二、vmdk-k、-d命令缩容"><a href="#二、vmdk-k、-d命令缩容" class="headerlink" title="二、vmdk -k、-d命令缩容"></a>二、vmdk -k、-d命令缩容</h4><a id="more"></a>]]></content>
+      <categories>
+        <category>VirtualBox</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Windows命令行设置永久环境变量</title>
+    <url>/2019/04/26/Windows/Windows%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%AE%BE%E7%BD%AE%E6%B0%B8%E4%B9%85%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/</url>
+    <content><![CDATA[<p>在cmd窗口中set设置的环境变量为临时变量，如：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">set PATH=%PATH%;D:\Program Files\</span><br></pre></td></tr></table></figure>
+<p>使用setx设置为永久环境变量,适用于bat中：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">setx PATH &quot;%PATH%;D:\Program Files\&quot;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>Windows</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>ZK可视化工具</title>
+    <url>/2019/12/10/ZK/ZK%E5%8F%AF%E8%A7%86%E5%8C%96%E5%B7%A5%E5%85%B7/</url>
+    <content><![CDATA[<p>下载地址 <a href="https://issues.apache.org/jira/secure/attachment/12436620/ZooInspector.zip" target="_blank" rel="noopener">https://issues.apache.org/jira/secure/attachment/12436620/ZooInspector.zip</a> </p>
 <a id="more"></a>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://github.com/evildecay/etcdkeeper/releases" target="_blank" rel="noopener">https://github.com/evildecay/etcdkeeper/releases</a> </p>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>ZooKeeper客户端监控软件ZooInspector</p>
+<p> <a href="https://blog.52itstyle.vip/archives/343/" target="_blank" rel="noopener">https://blog.52itstyle.vip/archives/343/</a> </p>
 ]]></content>
       <categories>
-        <category>etcd</category>
+        <category>ZK</category>
       </categories>
+      <tags>
+        <tag>分布式</tag>
+      </tags>
   </entry>
   <entry>
     <title>redis基本数据结构和语法</title>
     <url>/2020/10/10/Redis/redis%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E8%AF%AD%E6%B3%95-1/</url>
     <content><![CDATA[<p>《Redis实战》读书笔记，记录了Redis的基本数据结构和语法。</p>
 <a id="more"></a>
-<h2 id="string"><a href="#string" class="headerlink" title="string"></a>string</h2><p>对字符串的整体或局部操作。对整数或浮点数自增或自减</p>
+<h1 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h1><h2 id="string"><a href="#string" class="headerlink" title="string"></a>string</h2><p>对字符串的整体或局部操作。对整数或浮点数自增或自减</p>
 <ul>
 <li>查询<ul>
 <li>get</li>
@@ -1468,62 +1465,17 @@ rmvirtualenv test
 </li>
 </ul>
 <p>注意按分值/成员两种方式返回的元素顺序都是一样的，只是范围指定方式不同。</p>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>《Redis实战》</p>
+<p>其他高级操作速查：<a href="https://www.runoob.com/redis/redis-sorted-sets.html" target="_blank" rel="noopener"></a></p>
+<h1 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h1><h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ol>
+<li><a href="https://www.runoob.com/redis" target="_blank" rel="noopener">Runoob.com Redis教程</a></li>
+<li>《Redis实战》</li>
+</ol>
 ]]></content>
       <categories>
         <category>Redis</category>
       </categories>
       <tags>
         <tag>Redis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>jackcooper 简书一些文章</title>
-    <url>/2019/05/10/%E4%BB%96%E5%B1%B1%E4%B9%8B%E7%9F%B3/jackcooper-%E7%AE%80%E4%B9%A6%E4%B8%80%E4%BA%9B%E6%96%87%E7%AB%A0/</url>
-    <content><![CDATA[<p><a href="https://www.jianshu.com/p/32b3e91aa22c" target="_blank" rel="noopener">分库分表需要考虑的问题及方案</a><br><a href="https://www.jianshu.com/p/8d0d2c86ff50" target="_blank" rel="noopener">idea快捷键</a><br><a href="https://www.jianshu.com/p/e7fb32bd255c" target="_blank" rel="noopener">java8 中常用的新方法</a><br><a href="https://www.jianshu.com/p/b2961d9a9e0a" target="_blank" rel="noopener">设计模式简单总结</a></p>
-<a id="more"></a>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://www.jianshu.com/p/9fb79fb0b5b1" target="_blank" rel="noopener">各大互联网公司架构汇总</a></p>
-<p><a href="https://www.jianshu.com/p/5920a93a451f" target="_blank" rel="noopener">SpringBoot学习目录</a></p>
-<p><a href="https://www.jianshu.com/p/c689ea6c2905" target="_blank" rel="noopener">Java技术栈2017年度精选干货总结</a></p>
-<p><a href="https://www.jianshu.com/p/aaa700a131f0" target="_blank" rel="noopener">后端架构师技术图谱</a></p>
-<p><a href="https://www.jianshu.com/p/061a78a94ec4" target="_blank" rel="noopener">神奇的mybatis分页插件</a></p>
-<p><a href="https://www.jianshu.com/p/4b95162fa09e" target="_blank" rel="noopener">Java后端常用的开源项目推荐</a></p>
-]]></content>
-      <categories>
-        <category>他山之石</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>一致性哈希</title>
-    <url>/2020/07/28/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C/</url>
-    <content><![CDATA[<p>一致性哈希主要解决的问题是，数据分片之后，简单取模方式在增删节点时会造成所有节点不可用。经过一致性哈希，可以将故障限制在局部范围内。比如redis集群就是一个使用一致性哈希的场景（虽然redis用的不是一致性哈希）。<br><a id="more"></a></p>
-<p>题外话：</p>
-<blockquote>
-<p>可以认为vitess的分片方式也是一致性哈希。vitess也是将键空间映射到2^32 的范围，将键空间分割，根据分片键的值决定将数据存放到对应分片中。<br>和一致性哈希不同的是，vitess每个分片可以是均匀的，新加节点可以把现有的单个分片拆得更细，而不会影响到其他分片</p>
-</blockquote>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>一致性hash算法释义<br><a href="https://www.cnblogs.com/haippy/archive/2011/12/10/2282943.html" target="_blank" rel="noopener">https://www.cnblogs.com/haippy/archive/2011/12/10/2282943.html</a></p>
-]]></content>
-      <categories>
-        <category>分布式系统</category>
-      </categories>
-      <tags>
-        <tag>redis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>基于go和etcd实现分布式锁</title>
-    <url>/2019/04/20/etcd/%E5%9F%BA%E4%BA%8Ego%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</url>
-    <content><![CDATA[<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"context"</span></span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"go.etcd.io/etcd/clientv3"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        config clientv3.Config</span><br><span class="line">        client *clientv3.Client</span><br><span class="line">        lease  clientv3.Lease</span><br><span class="line">        leaseResp *clientv3.LeaseGrantResponse</span><br><span class="line">        leaseId clientv3.LeaseID</span><br><span class="line">        leaseRespChan &lt;-<span class="keyword">chan</span> *clientv3.LeaseKeepAliveResponse</span><br><span class="line">        err    error</span><br><span class="line">    )</span><br><span class="line">    <span class="comment">//客户端配置</span></span><br><span class="line">    config = clientv3.Config&#123;</span><br><span class="line">        Endpoints:   []<span class="keyword">string</span>&#123;<span class="string">"127.0.0.1:2379"</span>&#125;,</span><br><span class="line">        DialTimeout: <span class="number">5</span> * time.Second,</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//建立连接</span></span><br><span class="line">    <span class="keyword">if</span> client, err = clientv3.New(config); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//上锁（创建租约，自动续租）</span></span><br><span class="line">    lease = clientv3.NewLease(client)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置一个ctx取消自动续租</span></span><br><span class="line">    ctx,cancleFunc := context.WithCancel(context.TODO())</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置10秒租约（过期时间）</span></span><br><span class="line">    <span class="keyword">if</span> leaseResp,err = lease.Grant(context.TODO(),<span class="number">10</span>);err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//拿到租约id</span></span><br><span class="line">    leaseId = leaseResp.ID</span><br><span class="line"></span><br><span class="line">    <span class="comment">//自动续租（不停地往管道中扔租约信息）</span></span><br><span class="line">    <span class="keyword">if</span> leaseRespChan,err =lease.KeepAlive(ctx,leaseId);err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//启动一个协程去监听</span></span><br><span class="line">    <span class="keyword">go</span> listenLeaseChan(leaseRespChan)</span><br><span class="line">    <span class="comment">//业务处理</span></span><br><span class="line">    kv := clientv3.NewKV(client)</span><br><span class="line">    <span class="comment">//创建事务</span></span><br><span class="line">    txn := kv.Txn(context.TODO())</span><br><span class="line">    txn.If(clientv3.Compare(clientv3.CreateRevision(<span class="string">"/cron/lock/job9"</span>),<span class="string">"="</span>,<span class="number">0</span>)).</span><br><span class="line">        Then(clientv3.OpPut(<span class="string">"/cron/lock/job9"</span>,<span class="string">"xxx"</span>,clientv3.WithLease(leaseId))).</span><br><span class="line">        Else(clientv3.OpGet(<span class="string">"/cron/lock/job9"</span>))<span class="comment">//否则抢锁失败</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//提交事务</span></span><br><span class="line">    <span class="keyword">if</span> txtResp,err :=txn.Commit();err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//判断是否抢锁</span></span><br><span class="line">        <span class="keyword">if</span> !txtResp.Succeeded &#123;</span><br><span class="line">            fmt.Println(<span class="string">"锁被占用："</span>,<span class="keyword">string</span>(txtResp.Responses[<span class="number">0</span>].GetResponseRange().Kvs[<span class="number">0</span>].Value))</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fmt.Println(<span class="string">"处理任务"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//释放锁（停止续租，终止租约）</span></span><br><span class="line">    <span class="keyword">defer</span> cancleFunc()<span class="comment">//函数退出取消自动续租</span></span><br><span class="line">    <span class="keyword">defer</span> lease.Revoke(context.TODO(),leaseId) <span class="comment">//终止租约（去掉过期时间）</span></span><br><span class="line"></span><br><span class="line">    time.Sleep(<span class="number">10</span> * time.Second)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">listenLeaseChan</span><span class="params">(leaseRespChan &lt;-<span class="keyword">chan</span> *clientv3.LeaseKeepAliveResponse)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        leaseKeepResp *clientv3.LeaseKeepAliveResponse</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        <span class="keyword">select</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> leaseKeepResp = &lt;-leaseRespChan:</span><br><span class="line">            <span class="keyword">if</span> leaseKeepResp == <span class="literal">nil</span> &#123;</span><br><span class="line">                fmt.Println(<span class="string">"租约失效了"</span>)</span><br><span class="line">                <span class="keyword">goto</span> END</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                fmt.Println(leaseKeepResp.ID)</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    END:</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://www.jianshu.com/p/d3068d0ac7c1" target="_blank" rel="noopener">https://www.jianshu.com/p/d3068d0ac7c1</a> </p>
-<a id="more"></a>
-]]></content>
-      <categories>
-        <category>分布式系统</category>
-      </categories>
-      <tags>
-        <tag>etcd</tag>
-        <tag>go</tag>
-        <tag>分布式系统</tag>
       </tags>
   </entry>
   <entry>
@@ -1829,80 +1781,6 @@ rmvirtualenv test
       </categories>
   </entry>
   <entry>
-    <title>学习数据分析</title>
-    <url>/2020/08/15/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/%E5%AD%A6%E4%B9%A0%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/</url>
-    <content><![CDATA[<p>从专业角度看看数据可视化<br><a id="more"></a></p>
-<h4 id="数据的恰当表达很重要"><a href="#数据的恰当表达很重要" class="headerlink" title="数据的恰当表达很重要"></a>数据的恰当表达很重要</h4><p>合适的表达有助于推导出结论，表达思维</p>
-<p>理解图表自有的内在逻辑</p>
-<ul>
-<li>柱状图<ul>
-<li>直观展示数据变化</li>
-</ul>
-</li>
-<li>关系图</li>
-<li>空间图表<ul>
-<li>按地理位置分布</li>
-</ul>
-</li>
-<li>散点图<ul>
-<li>多个维度交叉查看</li>
-</ul>
-</li>
-</ul>
-<h4 id="数据表达的形式和意义"><a href="#数据表达的形式和意义" class="headerlink" title="数据表达的形式和意义"></a>数据表达的形式和意义</h4><p>分析图表、动态交互、商业智能</p>
-<ul>
-<li>分析图表<ul>
-<li>多维度<ul>
-<li>热力图</li>
-<li>K线图</li>
-<li>散点图+x/y轴直方图表示概率分布</li>
-<li>矩阵形式的单维度表</li>
-<li>树状图</li>
-</ul>
-</li>
-<li>空间图表</li>
-<li>关系图表<ul>
-<li>捋清关系</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>动态交互<ul>
-<li>Echarts<ul>
-<li>显示某个点的值以及横纵坐标</li>
-<li>查看不同时间段内的数据</li>
-<li>选择查看的类目</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>商业智能<ul>
-<li>商务报表。数据分析固化，</li>
-<li>BDP（线上）、Tableau（离线，收费）、微软PowerBI</li>
-</ul>
-</li>
-</ul>
-<p>数据分析课程更重在静/动态图表表达的逻辑，以及怎样帮助我们出结论。</p>
-<h4 id="工具包"><a href="#工具包" class="headerlink" title="工具包"></a>工具包</h4><p>Matplotlib、geoplotlib、Seaborn、Bokeh、Gephi</p>
-<h4 id="题外话："><a href="#题外话：" class="headerlink" title="题外话："></a>题外话：</h4><p>课程主要目的是培养数据的逻辑思维，技能其次。<br>不用规划太长的道路，可以边走边看业务场景和个人发展路径。<br>从数据分析师、建模分析师到数据科学家有很长的路要走。除了做技术，应该上升到更宏观的层次，对个人发展比较好。<br>数据库、数据分析、数据爬虫是三个领域。</p>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>网易数据分析</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>一些杂碎知识</title>
-    <url>/2019/04/11/%E6%9D%82%E8%B4%A7%E6%9F%9C/%E4%B8%80%E4%BA%9B%E6%9D%82%E7%A2%8E%E7%9F%A5%E8%AF%86/</url>
-    <content><![CDATA[<p>日常收集</p>
-<a id="more"></a>
-<p>架构图的画法——阿里巴巴中间件<br><a href="https://mp.weixin.qq.com/s/MZwTb3nINuRsOKy0mLNa_A" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/MZwTb3nINuRsOKy0mLNa_A</a></p>
-<p>新型查询框架GraphQL，类似REST<br><a href="https://mp.weixin.qq.com/s/Cx3xxPbqhb_Zx7mjyS3Tyg" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/Cx3xxPbqhb_Zx7mjyS3Tyg</a></p>
-<p>一个比较中意的Hexo<br><a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank" rel="noopener">https://github.com/pinggod/hexo-theme-apollo</a></p>
-<p>一个有意思的技术博客<br><a href="http://andrewliu.in/archives/" target="_blank" rel="noopener">http://andrewliu.in/archives/</a></p>
-]]></content>
-      <categories>
-        <category>杂货柜</category>
-      </categories>
-  </entry>
-  <entry>
     <title>在Go框架下使用Etcd选主demo</title>
     <url>/2020/07/30/etcd/%E5%9C%A8Go%E6%A1%86%E6%9E%B6%E4%B8%8B%E4%BD%BF%E7%94%A8Etcd%E9%80%89%E4%B8%BBdemo/</url>
     <content><![CDATA[<p>在Go语言里，etcd的clientv3.concurrency包开放了选举方法concurrency.NewElection，可以直接调用。我把选举过程打印出来看，发现其内部逻辑和常规的ZK选主一样。<br>首先开启一个会话，调用election.Campaign时，在指定目录下创建一个有序id用于排队，并判断自己的id是不是最小值。如果是最小值则成为Leader。会话设置了一个TTL值，如果在TTL的时间内重新建立会话并election.Campaign，则重置TTL计时，给Leader Buff续命。超过TTL则Leader Buff消失。<br>如果自己的id不是最小值，election.Campaign会阻塞形成排队状态，此时的状态是Follower。election会watch队伍中前一个候选人的id，当它消失时则自己成为最小值，当选Leader并退出排队。如果在会话TTL的时间里重新建立会话并election.Campaign，则重置TTL计时，给Follower排队位置Buff续命。如果超过TTL，election.Campaign内部有个waitDelete方法会清除无效的排队信息，退出排队，给别人让出机会。再次election.Campaign需重新排队。</p>
@@ -1922,127 +1800,19 @@ rmvirtualenv test
       </tags>
   </entry>
   <entry>
-    <title>从零开始学架构-听书笔记</title>
-    <url>/2020/08/09/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E6%9E%B6%E6%9E%84-%E5%90%AC%E4%B9%A6%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<ul>
-<li>理解架构复杂度来源</li>
-<li>架构设计三原则</li>
-</ul>
+    <title>基于go和etcd实现分布式锁</title>
+    <url>/2019/04/20/etcd/%E5%9F%BA%E4%BA%8Ego%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</url>
+    <content><![CDATA[<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"context"</span></span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"go.etcd.io/etcd/clientv3"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        config clientv3.Config</span><br><span class="line">        client *clientv3.Client</span><br><span class="line">        lease  clientv3.Lease</span><br><span class="line">        leaseResp *clientv3.LeaseGrantResponse</span><br><span class="line">        leaseId clientv3.LeaseID</span><br><span class="line">        leaseRespChan &lt;-<span class="keyword">chan</span> *clientv3.LeaseKeepAliveResponse</span><br><span class="line">        err    error</span><br><span class="line">    )</span><br><span class="line">    <span class="comment">//客户端配置</span></span><br><span class="line">    config = clientv3.Config&#123;</span><br><span class="line">        Endpoints:   []<span class="keyword">string</span>&#123;<span class="string">"127.0.0.1:2379"</span>&#125;,</span><br><span class="line">        DialTimeout: <span class="number">5</span> * time.Second,</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//建立连接</span></span><br><span class="line">    <span class="keyword">if</span> client, err = clientv3.New(config); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//上锁（创建租约，自动续租）</span></span><br><span class="line">    lease = clientv3.NewLease(client)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置一个ctx取消自动续租</span></span><br><span class="line">    ctx,cancleFunc := context.WithCancel(context.TODO())</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置10秒租约（过期时间）</span></span><br><span class="line">    <span class="keyword">if</span> leaseResp,err = lease.Grant(context.TODO(),<span class="number">10</span>);err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//拿到租约id</span></span><br><span class="line">    leaseId = leaseResp.ID</span><br><span class="line"></span><br><span class="line">    <span class="comment">//自动续租（不停地往管道中扔租约信息）</span></span><br><span class="line">    <span class="keyword">if</span> leaseRespChan,err =lease.KeepAlive(ctx,leaseId);err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//启动一个协程去监听</span></span><br><span class="line">    <span class="keyword">go</span> listenLeaseChan(leaseRespChan)</span><br><span class="line">    <span class="comment">//业务处理</span></span><br><span class="line">    kv := clientv3.NewKV(client)</span><br><span class="line">    <span class="comment">//创建事务</span></span><br><span class="line">    txn := kv.Txn(context.TODO())</span><br><span class="line">    txn.If(clientv3.Compare(clientv3.CreateRevision(<span class="string">"/cron/lock/job9"</span>),<span class="string">"="</span>,<span class="number">0</span>)).</span><br><span class="line">        Then(clientv3.OpPut(<span class="string">"/cron/lock/job9"</span>,<span class="string">"xxx"</span>,clientv3.WithLease(leaseId))).</span><br><span class="line">        Else(clientv3.OpGet(<span class="string">"/cron/lock/job9"</span>))<span class="comment">//否则抢锁失败</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//提交事务</span></span><br><span class="line">    <span class="keyword">if</span> txtResp,err :=txn.Commit();err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//判断是否抢锁</span></span><br><span class="line">        <span class="keyword">if</span> !txtResp.Succeeded &#123;</span><br><span class="line">            fmt.Println(<span class="string">"锁被占用："</span>,<span class="keyword">string</span>(txtResp.Responses[<span class="number">0</span>].GetResponseRange().Kvs[<span class="number">0</span>].Value))</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fmt.Println(<span class="string">"处理任务"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//释放锁（停止续租，终止租约）</span></span><br><span class="line">    <span class="keyword">defer</span> cancleFunc()<span class="comment">//函数退出取消自动续租</span></span><br><span class="line">    <span class="keyword">defer</span> lease.Revoke(context.TODO(),leaseId) <span class="comment">//终止租约（去掉过期时间）</span></span><br><span class="line"></span><br><span class="line">    time.Sleep(<span class="number">10</span> * time.Second)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">listenLeaseChan</span><span class="params">(leaseRespChan &lt;-<span class="keyword">chan</span> *clientv3.LeaseKeepAliveResponse)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        leaseKeepResp *clientv3.LeaseKeepAliveResponse</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        <span class="keyword">select</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> leaseKeepResp = &lt;-leaseRespChan:</span><br><span class="line">            <span class="keyword">if</span> leaseKeepResp == <span class="literal">nil</span> &#123;</span><br><span class="line">                fmt.Println(<span class="string">"租约失效了"</span>)</span><br><span class="line">                <span class="keyword">goto</span> END</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                fmt.Println(leaseKeepResp.ID)</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    END:</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://www.jianshu.com/p/d3068d0ac7c1" target="_blank" rel="noopener">https://www.jianshu.com/p/d3068d0ac7c1</a> </p>
 <a id="more"></a>
-<h2 id="复杂度四大来源"><a href="#复杂度四大来源" class="headerlink" title="复杂度四大来源"></a>复杂度四大来源</h2><ul>
-<li><p>高性能<br>单机复杂度：批处理-&gt;进程-&gt;SMP（现在最流行的对称多处理器架构）<br>集群复杂度：任务分配、任务分解</p>
-</li>
-<li><p>高可用<br>计算高可用、存储高可用</p>
-</li>
-<li><p>可扩展性<br>正确预测变化：分清主次，头脑风暴<br>完美封装变化：剥离变化层和稳定层</p>
-</li>
-<li><p>低成本、安全、规模</p>
-</li>
-</ul>
-<h2 id="架构设计三原则"><a href="#架构设计三原则" class="headerlink" title="架构设计三原则"></a>架构设计三原则</h2><ul>
-<li><p>合适优于先进<br>先进技术可能有缺陷未被发现<br>对不熟悉的技术把控不足</p>
-</li>
-<li><p>简单优于复杂<br>对于集成电路，越复杂可能越好，软件领域却不是这样。因为电路设计好之后基本不会变，而软件就是不断迭代变化，越简单越容易实现和维护。<br>实在不得已要做得复杂时，可以参考集成电路模块化，以模块为单元进行更替。</p>
-</li>
-<li><p>可演化优于一步到位</p>
-</li>
-</ul>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>极客时间 - 从零开始学架构</p>
 ]]></content>
       <categories>
-        <category>架构设计</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>idea常用快捷键</title>
-    <url>/2019/05/10/%E7%A0%94%E5%8F%91%E6%95%88%E8%83%BD/idea-%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE/</url>
-    <content><![CDATA[<ul>
-<li><code>Ctrl+Alt+[</code>　　跳转到下一个项目</li>
-<li><code>Ctrl+Alt+]</code>　　跳转到上一个项目</li>
-</ul>
-<a id="more"></a>
-<h2 id="美化"><a href="#美化" class="headerlink" title="美化"></a>美化</h2><ul>
-<li><code>Ctrl＋Alt+L</code></li>
-</ul>
-<h2 id="抽取"><a href="#抽取" class="headerlink" title="抽取"></a>抽取</h2><ul>
-<li><code>Ctrl+Alt+v</code> 方法内抽取变量</li>
-<li><code>Ctrl+Alt+C</code> 抽取静态变量</li>
-<li><code>Ctrl+Alt+F</code> 抽取成员变量</li>
-<li><code>Ctrl+Alt+P</code>　抽取方法参数</li>
-<li><code>Ctrl+Alt+M</code> 抽取方法</li>
-</ul>
-<h2 id="重构"><a href="#重构" class="headerlink" title="重构"></a>重构</h2><ul>
-<li><code>Shift+F6</code> 重命名（所有的文件，类名，函数名，属性名都可以重命名）</li>
-<li><code>Ctrl+F6</code> 重构函数（当你需要重构方法时，无论是增加参数，修改返回值，还是更改函数实现，只需要Ctrl+F6，就可以把所有用到此函数的地方一起重构，界面如下）</li>
-</ul>
-<h2 id="视图查看"><a href="#视图查看" class="headerlink" title="视图查看"></a>视图查看</h2><ul>
-<li><code>Ctrl+F12</code> 查看file，method结构图、类继承机构图</li>
-<li><code>Ctrl+shift+Alt+U</code> 查看maven依赖，类图</li>
-<li><code>Ctrl＋Alt+H</code> 查看方法调用层次</li>
-</ul>
-<h2 id="定位"><a href="#定位" class="headerlink" title="定位"></a>定位</h2><p>1、项目之间跳转</p>
-<ul>
-<li><code>Ctrl+Alt+[</code>　　跳转到下一个项目</li>
-<li><code>Ctrl+Alt+]</code>　　跳转到上一个项目</li>
-</ul>
-<p>2、文件之间跳转</p>
-<ul>
-<li><code>Ctrl+E</code>　　 定位到最近浏览过的文件</li>
-<li><code>Ctrl+Shift+E</code>　　最近更改的文件</li>
-<li><code>Shift+Click</code>　　可以关闭文件</li>
-</ul>
-<p>3.位置的跳转</p>
-<ul>
-<li><code>Ctrl+Shift+Backspace</code>　　 跳转上一次修改的地方</li>
-<li><code>Ctrl+Alt+B</code>　　跳转到方法实现处</li>
-<li><code>Ctrl+Shift+左箭头</code>　　上一个浏览的地方</li>
-<li><code>Ctrl+Shift+右箭头</code>　　下一个浏览的地方</li>
-</ul>
-<p>4.其他的跳转</p>
-<ul>
-<li><code>Ctrl+H</code>　　显示类结构图（类的继承层次）</li>
-<li><code>Ctrl+Q</code>　　显示注释文档</li>
-<li><code>Alt+1</code>　　快速打开或隐藏工程面板</li>
-<li><code>Alt+left/right</code>　　切换代码视图</li>
-<li><code>F2 或 Shift+F2</code>　　高亮错误或警告快速定位</li>
-<li><code>Tab</code>　　代码标签输入完成后，按 Tab，生成代码</li>
-<li><code>Ctrl+Shift+F7</code>　　高亮显示所有该文本，按 Esc 高亮消失</li>
-</ul>
-<p>5.搜索</p>
-<ul>
-<li><code>Ctrl＋N</code>　　快速搜索类</li>
-<li><code>Ctrl＋Shift＋N</code>　　快速搜索文件</li>
-<li><code>Ctrl＋Alt+Shift＋N</code>　　快速搜索函数</li>
-<li><code>Ctrl+Shift+F</code>　　快速搜索字符串</li>
-<li><code>Alt+F1</code>　　查找代码所在位置</li>
-<li><code>Alt+F3</code>　　逐个往下查找相同文本，并高亮显示</li>
-</ul>
-<p>6.光标移动和选中</p>
-<ul>
-<li><code>Ctrl＋Alt+Shift＋J</code> 选中所有相应的目标</li>
-<li><code>Alt+Up/Down</code>　　在方法间快速移动定位</li>
-<li><code>Ctrl+Shift+Up/Down</code>　　向上/下移动语句</li>
-<li><code>Ctrl+Up/Down</code>　　光标中转到第一行或最后一行下</li>
-<li><code>Ctrl+B/Ctrl+Click</code>　　快速打开光标处的类或方法（跳转到定义处）</li>
-</ul>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://www.jianshu.com/p/8d0d2c86ff50" target="_blank" rel="noopener">https://www.jianshu.com/p/8d0d2c86ff50</a> </p>
-]]></content>
-      <categories>
-        <category>研发效能</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>博客安家</title>
-    <url>/2019/04/09/%E6%9D%82%E8%B4%A7%E6%9F%9C/%E5%8D%9A%E5%AE%A2%E5%AE%89%E5%AE%B6/</url>
-    <content><![CDATA[<p>搭个博客来记录技术日志和生活</p>
-<a id="more"></a>
-<p>主要参考 小茗同学 的帖子<br><a href="https://www.cnblogs.com/liuxianan/p/build-blog-website-by-hexo-github.html#%E5%88%9B%E5%BB%BA%E4%BB%93%E5%BA%93" target="_blank" rel="noopener">https://www.cnblogs.com/liuxianan/p/build-blog-website-by-hexo-github.html#%E5%88%9B%E5%BB%BA%E4%BB%93%E5%BA%93</a></p>
-]]></content>
-      <categories>
-        <category>杂货柜</category>
+        <category>分布式系统</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
+        <tag>etcd</tag>
+        <tag>go</tag>
+        <tag>分布式系统</tag>
       </tags>
   </entry>
   <entry>
@@ -2215,6 +1985,159 @@ rmvirtualenv test
 ]]></content>
   </entry>
   <entry>
+    <title>etcd 可视化</title>
+    <url>/2019/05/07/etcd/etcd-%E5%8F%AF%E8%A7%86%E5%8C%96/</url>
+    <content><![CDATA[<p><code>wget https://github.com/evildecay/etcdkeeper/releases/download/v0.7.4/etcdkeeper-v0.7.4-linux_x86_64.zip</code></p>
+<p>在etcd集群的某台机器上，解压后执行命令</p>
+<p><code>./etcdkeeper -p 8001</code></p>
+<p>通过http访问这个端口，可以可视化操作etcd</p>
+<a id="more"></a>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://github.com/evildecay/etcdkeeper/releases" target="_blank" rel="noopener">https://github.com/evildecay/etcdkeeper/releases</a> </p>
+]]></content>
+      <categories>
+        <category>etcd</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>一致性哈希</title>
+    <url>/2020/07/28/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C/</url>
+    <content><![CDATA[<p>一致性哈希主要解决的问题是，数据分片之后，简单取模方式在增删节点时会造成所有节点不可用。经过一致性哈希，可以将故障限制在局部范围内。比如redis集群就是一个使用一致性哈希的场景（虽然redis用的不是一致性哈希）。<br><a id="more"></a></p>
+<p>题外话：</p>
+<blockquote>
+<p>可以认为vitess的分片方式也是一致性哈希。vitess也是将键空间映射到2^32 的范围，将键空间分割，根据分片键的值决定将数据存放到对应分片中。<br>和一致性哈希不同的是，vitess每个分片可以是均匀的，新加节点可以把现有的单个分片拆得更细，而不会影响到其他分片</p>
+</blockquote>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>一致性hash算法释义<br><a href="https://www.cnblogs.com/haippy/archive/2011/12/10/2282943.html" target="_blank" rel="noopener">https://www.cnblogs.com/haippy/archive/2011/12/10/2282943.html</a></p>
+]]></content>
+      <categories>
+        <category>分布式系统</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>jackcooper 简书一些文章</title>
+    <url>/2019/05/10/%E4%BB%96%E5%B1%B1%E4%B9%8B%E7%9F%B3/jackcooper-%E7%AE%80%E4%B9%A6%E4%B8%80%E4%BA%9B%E6%96%87%E7%AB%A0/</url>
+    <content><![CDATA[<p><a href="https://www.jianshu.com/p/32b3e91aa22c" target="_blank" rel="noopener">分库分表需要考虑的问题及方案</a><br><a href="https://www.jianshu.com/p/8d0d2c86ff50" target="_blank" rel="noopener">idea快捷键</a><br><a href="https://www.jianshu.com/p/e7fb32bd255c" target="_blank" rel="noopener">java8 中常用的新方法</a><br><a href="https://www.jianshu.com/p/b2961d9a9e0a" target="_blank" rel="noopener">设计模式简单总结</a></p>
+<a id="more"></a>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://www.jianshu.com/p/9fb79fb0b5b1" target="_blank" rel="noopener">各大互联网公司架构汇总</a></p>
+<p><a href="https://www.jianshu.com/p/5920a93a451f" target="_blank" rel="noopener">SpringBoot学习目录</a></p>
+<p><a href="https://www.jianshu.com/p/c689ea6c2905" target="_blank" rel="noopener">Java技术栈2017年度精选干货总结</a></p>
+<p><a href="https://www.jianshu.com/p/aaa700a131f0" target="_blank" rel="noopener">后端架构师技术图谱</a></p>
+<p><a href="https://www.jianshu.com/p/061a78a94ec4" target="_blank" rel="noopener">神奇的mybatis分页插件</a></p>
+<p><a href="https://www.jianshu.com/p/4b95162fa09e" target="_blank" rel="noopener">Java后端常用的开源项目推荐</a></p>
+]]></content>
+      <categories>
+        <category>他山之石</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>一些杂碎知识</title>
+    <url>/2019/04/11/%E6%9D%82%E8%B4%A7%E6%9F%9C/%E4%B8%80%E4%BA%9B%E6%9D%82%E7%A2%8E%E7%9F%A5%E8%AF%86/</url>
+    <content><![CDATA[<p>日常收集</p>
+<a id="more"></a>
+<p>架构图的画法——阿里巴巴中间件<br><a href="https://mp.weixin.qq.com/s/MZwTb3nINuRsOKy0mLNa_A" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/MZwTb3nINuRsOKy0mLNa_A</a></p>
+<p>新型查询框架GraphQL，类似REST<br><a href="https://mp.weixin.qq.com/s/Cx3xxPbqhb_Zx7mjyS3Tyg" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/Cx3xxPbqhb_Zx7mjyS3Tyg</a></p>
+<p>一个比较中意的Hexo<br><a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank" rel="noopener">https://github.com/pinggod/hexo-theme-apollo</a></p>
+<p>一个有意思的技术博客<br><a href="http://andrewliu.in/archives/" target="_blank" rel="noopener">http://andrewliu.in/archives/</a></p>
+]]></content>
+      <categories>
+        <category>杂货柜</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>博客安家</title>
+    <url>/2019/04/09/%E6%9D%82%E8%B4%A7%E6%9F%9C/%E5%8D%9A%E5%AE%A2%E5%AE%89%E5%AE%B6/</url>
+    <content><![CDATA[<p>搭个博客来记录技术日志和生活</p>
+<a id="more"></a>
+<p>主要参考 小茗同学 的帖子<br><a href="https://www.cnblogs.com/liuxianan/p/build-blog-website-by-hexo-github.html#%E5%88%9B%E5%BB%BA%E4%BB%93%E5%BA%93" target="_blank" rel="noopener">https://www.cnblogs.com/liuxianan/p/build-blog-website-by-hexo-github.html#%E5%88%9B%E5%BB%BA%E4%BB%93%E5%BA%93</a></p>
+]]></content>
+      <categories>
+        <category>杂货柜</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>idea常用快捷键</title>
+    <url>/2019/05/10/%E7%A0%94%E5%8F%91%E6%95%88%E8%83%BD/idea-%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE/</url>
+    <content><![CDATA[<ul>
+<li><code>Ctrl+Alt+[</code>　　跳转到下一个项目</li>
+<li><code>Ctrl+Alt+]</code>　　跳转到上一个项目</li>
+</ul>
+<a id="more"></a>
+<h2 id="美化"><a href="#美化" class="headerlink" title="美化"></a>美化</h2><ul>
+<li><code>Ctrl＋Alt+L</code></li>
+</ul>
+<h2 id="抽取"><a href="#抽取" class="headerlink" title="抽取"></a>抽取</h2><ul>
+<li><code>Ctrl+Alt+v</code> 方法内抽取变量</li>
+<li><code>Ctrl+Alt+C</code> 抽取静态变量</li>
+<li><code>Ctrl+Alt+F</code> 抽取成员变量</li>
+<li><code>Ctrl+Alt+P</code>　抽取方法参数</li>
+<li><code>Ctrl+Alt+M</code> 抽取方法</li>
+</ul>
+<h2 id="重构"><a href="#重构" class="headerlink" title="重构"></a>重构</h2><ul>
+<li><code>Shift+F6</code> 重命名（所有的文件，类名，函数名，属性名都可以重命名）</li>
+<li><code>Ctrl+F6</code> 重构函数（当你需要重构方法时，无论是增加参数，修改返回值，还是更改函数实现，只需要Ctrl+F6，就可以把所有用到此函数的地方一起重构，界面如下）</li>
+</ul>
+<h2 id="视图查看"><a href="#视图查看" class="headerlink" title="视图查看"></a>视图查看</h2><ul>
+<li><code>Ctrl+F12</code> 查看file，method结构图、类继承机构图</li>
+<li><code>Ctrl+shift+Alt+U</code> 查看maven依赖，类图</li>
+<li><code>Ctrl＋Alt+H</code> 查看方法调用层次</li>
+</ul>
+<h2 id="定位"><a href="#定位" class="headerlink" title="定位"></a>定位</h2><p>1、项目之间跳转</p>
+<ul>
+<li><code>Ctrl+Alt+[</code>　　跳转到下一个项目</li>
+<li><code>Ctrl+Alt+]</code>　　跳转到上一个项目</li>
+</ul>
+<p>2、文件之间跳转</p>
+<ul>
+<li><code>Ctrl+E</code>　　 定位到最近浏览过的文件</li>
+<li><code>Ctrl+Shift+E</code>　　最近更改的文件</li>
+<li><code>Shift+Click</code>　　可以关闭文件</li>
+</ul>
+<p>3.位置的跳转</p>
+<ul>
+<li><code>Ctrl+Shift+Backspace</code>　　 跳转上一次修改的地方</li>
+<li><code>Ctrl+Alt+B</code>　　跳转到方法实现处</li>
+<li><code>Ctrl+Shift+左箭头</code>　　上一个浏览的地方</li>
+<li><code>Ctrl+Shift+右箭头</code>　　下一个浏览的地方</li>
+</ul>
+<p>4.其他的跳转</p>
+<ul>
+<li><code>Ctrl+H</code>　　显示类结构图（类的继承层次）</li>
+<li><code>Ctrl+Q</code>　　显示注释文档</li>
+<li><code>Alt+1</code>　　快速打开或隐藏工程面板</li>
+<li><code>Alt+left/right</code>　　切换代码视图</li>
+<li><code>F2 或 Shift+F2</code>　　高亮错误或警告快速定位</li>
+<li><code>Tab</code>　　代码标签输入完成后，按 Tab，生成代码</li>
+<li><code>Ctrl+Shift+F7</code>　　高亮显示所有该文本，按 Esc 高亮消失</li>
+</ul>
+<p>5.搜索</p>
+<ul>
+<li><code>Ctrl＋N</code>　　快速搜索类</li>
+<li><code>Ctrl＋Shift＋N</code>　　快速搜索文件</li>
+<li><code>Ctrl＋Alt+Shift＋N</code>　　快速搜索函数</li>
+<li><code>Ctrl+Shift+F</code>　　快速搜索字符串</li>
+<li><code>Alt+F1</code>　　查找代码所在位置</li>
+<li><code>Alt+F3</code>　　逐个往下查找相同文本，并高亮显示</li>
+</ul>
+<p>6.光标移动和选中</p>
+<ul>
+<li><code>Ctrl＋Alt+Shift＋J</code> 选中所有相应的目标</li>
+<li><code>Alt+Up/Down</code>　　在方法间快速移动定位</li>
+<li><code>Ctrl+Shift+Up/Down</code>　　向上/下移动语句</li>
+<li><code>Ctrl+Up/Down</code>　　光标中转到第一行或最后一行下</li>
+<li><code>Ctrl+B/Ctrl+Click</code>　　快速打开光标处的类或方法（跳转到定义处）</li>
+</ul>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://www.jianshu.com/p/8d0d2c86ff50" target="_blank" rel="noopener">https://www.jianshu.com/p/8d0d2c86ff50</a> </p>
+]]></content>
+      <categories>
+        <category>研发效能</category>
+      </categories>
+  </entry>
+  <entry>
     <title>设计模式（一）</title>
     <url>/2019/05/07/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%80%EF%BC%89/</url>
     <content><![CDATA[<p>一、工厂模式</p>
@@ -2238,39 +2161,95 @@ rmvirtualenv test
       </categories>
   </entry>
   <entry>
-    <title>JDK并发包</title>
-    <url>/2019/04/26/Java/%E9%AB%98%E5%B9%B6%E5%8F%91/JDK%E5%B9%B6%E5%8F%91%E5%8C%85/</url>
-    <content><![CDATA[<h3 id="JDK并发包简介"><a href="#JDK并发包简介" class="headerlink" title="JDK并发包简介"></a>JDK并发包简介</h3><p>[TOC]</p>
-<h2 id="同步控制"><a href="#同步控制" class="headerlink" title="同步控制"></a>同步控制</h2><h3 id="1-synchronized扩展：重入锁-ReentrantLock"><a href="#1-synchronized扩展：重入锁-ReentrantLock" class="headerlink" title="1. synchronized扩展：重入锁 ReentrantLock"></a>1. synchronized扩展：重入锁 ReentrantLock</h3><p>必须手动指定加解锁，提高逻辑控制灵活性</p>
-<h4 id="中断响应"><a href="#中断响应" class="headerlink" title="中断响应"></a>中断响应</h4><p>lock.lockInterruptibly()可被Thread.interrupt()中断</p>
-<h4 id="可设置超时"><a href="#可设置超时" class="headerlink" title="可设置超时"></a>可设置超时</h4><p>lock.tryLock(5, TimeUnit.SECONDS) 超时返回false</p>
-<h4 id="公平锁"><a href="#公平锁" class="headerlink" title="公平锁"></a>公平锁</h4><p>new ReentrantLock(true) 可生成公平锁</p>
-<h3 id="2-信号量-Semaphore"><a href="#2-信号量-Semaphore" class="headerlink" title="2. 信号量 Semaphore"></a>2. 信号量 Semaphore</h3><p>控制同时执行的线程数</p>
-<h3 id="3-读写锁-ReadWriteLock"><a href="#3-读写锁-ReadWriteLock" class="headerlink" title="3. 读写锁 ReadWriteLock"></a>3. 读写锁 ReadWriteLock</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">readWriteLock = new ReentrantReadWriteLock()</span><br><span class="line">readLock = readWriteLock.readLock()</span><br><span class="line">writeLock = readWriteLock.writeLock()</span><br></pre></td></tr></table></figure>
-<p>两把锁会根据读写关系阻塞</p>
-<h3 id="4-倒计时-CountDownLatch"><a href="#4-倒计时-CountDownLatch" class="headerlink" title="4. 倒计时 CountDownLatch"></a>4. 倒计时 CountDownLatch</h3><p>用于等待有确切数量的进程完成</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public void CountDownLatchDemo()&#123;</span><br><span class="line">    ExecutorService exec = Exectors.newFixedThreadPool(10);</span><br><span class="line">    </span><br><span class="line">    for(int i = 0; i &lt; 10; i++)</span><br><span class="line">        exec.submit(new CheckTask);</span><br><span class="line">    &#125;</span><br><span class="line">    end.await();</span><br><span class="line">    // 阻塞直到10个线程全结束</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class CheckTask implements Runnable&#123;</span><br><span class="line">    static final CountDownLatch end = new CountDownLatch(10);</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void run()&#123;</span><br><span class="line">        // do some check</span><br><span class="line">        end.countDown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="5-循环栅栏-CyclicBarrier"><a href="#5-循环栅栏-CyclicBarrier" class="headerlink" title="5. 循环栅栏 CyclicBarrier"></a>5. 循环栅栏 CyclicBarrier</h3><p><code>CyclicBarrier cyclic = new CyclicBarrier(N, new BarrierRun(...));</code><br>当执行cyclic.await()未达到N次时，一直阻塞，直到第N次后执行BarrierRun线程，且cyclic解锁<br>cyclic可以继续await()，继续触发BarrierRun</p>
-<h2 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h2><h3 id="1-固定大小-newFixedThreadPool-空闲就执行，满了就队列等待"><a href="#1-固定大小-newFixedThreadPool-空闲就执行，满了就队列等待" class="headerlink" title="1. 固定大小 newFixedThreadPool 空闲就执行，满了就队列等待"></a>1. 固定大小 newFixedThreadPool 空闲就执行，满了就队列等待</h3><h3 id="2-单线程池-newSingleThreadPool-大小为1的-newFixedThreadPool"><a href="#2-单线程池-newSingleThreadPool-大小为1的-newFixedThreadPool" class="headerlink" title="2. 单线程池 newSingleThreadPool 大小为1的 newFixedThreadPool"></a>2. 单线程池 newSingleThreadPool 大小为1的 newFixedThreadPool</h3><h3 id="3-大小不固定-newCachedThreadPool-满了会创建新的线程"><a href="#3-大小不固定-newCachedThreadPool-满了会创建新的线程" class="headerlink" title="3. 大小不固定 newCachedThreadPool 满了会创建新的线程"></a>3. 大小不固定 newCachedThreadPool 满了会创建新的线程</h3><h3 id="4-单线程任务计划-newSingleThreadScheduledExecutor-可以延时-周期执行，大小为1"><a href="#4-单线程任务计划-newSingleThreadScheduledExecutor-可以延时-周期执行，大小为1" class="headerlink" title="4. 单线程任务计划 newSingleThreadScheduledExecutor 可以延时/周期执行，大小为1"></a>4. 单线程任务计划 newSingleThreadScheduledExecutor 可以延时/周期执行，大小为1</h3><h3 id="5-多线程任务计划-newScheduledExecutor"><a href="#5-多线程任务计划-newScheduledExecutor" class="headerlink" title="5. 多线程任务计划 newScheduledExecutor"></a>5. 多线程任务计划 newScheduledExecutor</h3><p>生成线程池方法<br><code>ExecutorService es = Executors.newFixedThreadPool(5)</code></p>
-<p>执行线程</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">es.submit(new MyTask());</span><br><span class="line"></span><br><span class="line">public class MyTask implements Runnable&#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void run ()&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="JDK并发容器"><a href="#JDK并发容器" class="headerlink" title="JDK并发容器"></a>JDK并发容器</h2><h3 id="1-ConcurrentHashMap-高效且线程安全的HashMap"><a href="#1-ConcurrentHashMap-高效且线程安全的HashMap" class="headerlink" title="1. ConcurrentHashMap 高效且线程安全的HashMap"></a>1. ConcurrentHashMap 高效且线程安全的HashMap</h3><h3 id="2-CopyOnWriteArrayList-安全的ArrayList。在读多写少场合性能远远好于Vector"><a href="#2-CopyOnWriteArrayList-安全的ArrayList。在读多写少场合性能远远好于Vector" class="headerlink" title="2. CopyOnWriteArrayList 安全的ArrayList。在读多写少场合性能远远好于Vector"></a>2. CopyOnWriteArrayList 安全的ArrayList。在读多写少场合性能远远好于Vector</h3><h3 id="3-ConcurrentLinkedQueue-高效且安全的LinkedList"><a href="#3-ConcurrentLinkedQueue-高效且安全的LinkedList" class="headerlink" title="3. ConcurrentLinkedQueue 高效且安全的LinkedList"></a>3. ConcurrentLinkedQueue 高效且安全的LinkedList</h3><h3 id="4-BlockingQueue-阻塞队列接口，用于数据共享通道"><a href="#4-BlockingQueue-阻塞队列接口，用于数据共享通道" class="headerlink" title="4. BlockingQueue 阻塞队列接口，用于数据共享通道"></a>4. BlockingQueue 阻塞队列接口，用于数据共享通道</h3><h3 id="5-ConcurrentSkipListMap-跳表实现，用于快速查找"><a href="#5-ConcurrentSkipListMap-跳表实现，用于快速查找" class="headerlink" title="5. ConcurrentSkipListMap 跳表实现，用于快速查找"></a>5. ConcurrentSkipListMap 跳表实现，用于快速查找</h3><p>Collections工具可以将任意容器包装为线程安全的容器，例如<br><code>public static Map m = Collections.synchronizedMap(new HashMap());</code></p>
-<a id="more"></a>
+    <title>学习数据分析</title>
+    <url>/2020/08/15/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/%E5%AD%A6%E4%B9%A0%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<p>从专业角度看看数据可视化<br><a id="more"></a></p>
+<h4 id="数据的恰当表达很重要"><a href="#数据的恰当表达很重要" class="headerlink" title="数据的恰当表达很重要"></a>数据的恰当表达很重要</h4><p>合适的表达有助于推导出结论，表达思维</p>
+<p>理解图表自有的内在逻辑</p>
+<ul>
+<li>柱状图<ul>
+<li>直观展示数据变化</li>
+</ul>
+</li>
+<li>关系图</li>
+<li>空间图表<ul>
+<li>按地理位置分布</li>
+</ul>
+</li>
+<li>散点图<ul>
+<li>多个维度交叉查看</li>
+</ul>
+</li>
+</ul>
+<h4 id="数据表达的形式和意义"><a href="#数据表达的形式和意义" class="headerlink" title="数据表达的形式和意义"></a>数据表达的形式和意义</h4><p>分析图表、动态交互、商业智能</p>
+<ul>
+<li>分析图表<ul>
+<li>多维度<ul>
+<li>热力图</li>
+<li>K线图</li>
+<li>散点图+x/y轴直方图表示概率分布</li>
+<li>矩阵形式的单维度表</li>
+<li>树状图</li>
+</ul>
+</li>
+<li>空间图表</li>
+<li>关系图表<ul>
+<li>捋清关系</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>动态交互<ul>
+<li>Echarts<ul>
+<li>显示某个点的值以及横纵坐标</li>
+<li>查看不同时间段内的数据</li>
+<li>选择查看的类目</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>商业智能<ul>
+<li>商务报表。数据分析固化，</li>
+<li>BDP（线上）、Tableau（离线，收费）、微软PowerBI</li>
+</ul>
+</li>
+</ul>
+<p>数据分析课程更重在静/动态图表表达的逻辑，以及怎样帮助我们出结论。</p>
+<h4 id="工具包"><a href="#工具包" class="headerlink" title="工具包"></a>工具包</h4><p>Matplotlib、geoplotlib、Seaborn、Bokeh、Gephi</p>
+<h4 id="题外话："><a href="#题外话：" class="headerlink" title="题外话："></a>题外话：</h4><p>课程主要目的是培养数据的逻辑思维，技能其次。<br>不用规划太长的道路，可以边走边看业务场景和个人发展路径。<br>从数据分析师、建模分析师到数据科学家有很长的路要走。除了做技术，应该上升到更宏观的层次，对个人发展比较好。<br>数据库、数据分析、数据爬虫是三个领域。</p>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>网易数据分析</p>
 ]]></content>
-      <categories>
-        <category>Java</category>
-        <category>高并发</category>
-      </categories>
   </entry>
   <entry>
-    <title>什么时候用volatile？</title>
-    <url>/2020/07/13/Java/%E9%AB%98%E5%B9%B6%E5%8F%91/%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8volatile%EF%BC%9F/</url>
-    <content><![CDATA[<p>Java线程之间变量可见性不是即时同步的，有缓存。添加volatile可以确保其他线程能看到最新的值</p>
+    <title>从零开始学架构-听书笔记</title>
+    <url>/2020/08/09/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E6%9E%B6%E6%9E%84-%E5%90%AC%E4%B9%A6%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<ul>
+<li>理解架构复杂度来源</li>
+<li>架构设计三原则</li>
+</ul>
 <a id="more"></a>
-<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5>]]></content>
+<h2 id="复杂度四大来源"><a href="#复杂度四大来源" class="headerlink" title="复杂度四大来源"></a>复杂度四大来源</h2><ul>
+<li><p>高性能<br>单机复杂度：批处理-&gt;进程-&gt;SMP（现在最流行的对称多处理器架构）<br>集群复杂度：任务分配、任务分解</p>
+</li>
+<li><p>高可用<br>计算高可用、存储高可用</p>
+</li>
+<li><p>可扩展性<br>正确预测变化：分清主次，头脑风暴<br>完美封装变化：剥离变化层和稳定层</p>
+</li>
+<li><p>低成本、安全、规模</p>
+</li>
+</ul>
+<h2 id="架构设计三原则"><a href="#架构设计三原则" class="headerlink" title="架构设计三原则"></a>架构设计三原则</h2><ul>
+<li><p>合适优于先进<br>先进技术可能有缺陷未被发现<br>对不熟悉的技术把控不足</p>
+</li>
+<li><p>简单优于复杂<br>对于集成电路，越复杂可能越好，软件领域却不是这样。因为电路设计好之后基本不会变，而软件就是不断迭代变化，越简单越容易实现和维护。<br>实在不得已要做得复杂时，可以参考集成电路模块化，以模块为单元进行更替。</p>
+</li>
+<li><p>可演化优于一步到位</p>
+</li>
+</ul>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p>极客时间 - 从零开始学架构</p>
+]]></content>
       <categories>
-        <category>Java</category>
-        <category>高并发</category>
+        <category>架构设计</category>
       </categories>
   </entry>
   <entry>
@@ -2295,6 +2274,42 @@ rmvirtualenv test
 <p>运行这段代码，期望输出2000，但是返回1415，原因是Integer属于不变对象。<code>i++</code> 在真实执行时变成了<code>i=Integer.valueOf(i.intValue()+1);</code></p>
 <p>导致每次加锁加到了不同的对象实例上。</p>
 <p>改进方式：<code>synchronized(i)</code>修改为<code>synchronized(instance)</code></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>高并发</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>什么时候用volatile？</title>
+    <url>/2020/07/13/Java/%E9%AB%98%E5%B9%B6%E5%8F%91/%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8volatile%EF%BC%9F/</url>
+    <content><![CDATA[<p>Java线程之间变量可见性不是即时同步的，有缓存。添加volatile可以确保其他线程能看到最新的值</p>
+<a id="more"></a>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>高并发</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>JDK并发包</title>
+    <url>/2019/04/26/Java/%E9%AB%98%E5%B9%B6%E5%8F%91/JDK%E5%B9%B6%E5%8F%91%E5%8C%85/</url>
+    <content><![CDATA[<h3 id="JDK并发包简介"><a href="#JDK并发包简介" class="headerlink" title="JDK并发包简介"></a>JDK并发包简介</h3><p>[TOC]</p>
+<h2 id="同步控制"><a href="#同步控制" class="headerlink" title="同步控制"></a>同步控制</h2><h3 id="1-synchronized扩展：重入锁-ReentrantLock"><a href="#1-synchronized扩展：重入锁-ReentrantLock" class="headerlink" title="1. synchronized扩展：重入锁 ReentrantLock"></a>1. synchronized扩展：重入锁 ReentrantLock</h3><p>必须手动指定加解锁，提高逻辑控制灵活性</p>
+<h4 id="中断响应"><a href="#中断响应" class="headerlink" title="中断响应"></a>中断响应</h4><p>lock.lockInterruptibly()可被Thread.interrupt()中断</p>
+<h4 id="可设置超时"><a href="#可设置超时" class="headerlink" title="可设置超时"></a>可设置超时</h4><p>lock.tryLock(5, TimeUnit.SECONDS) 超时返回false</p>
+<h4 id="公平锁"><a href="#公平锁" class="headerlink" title="公平锁"></a>公平锁</h4><p>new ReentrantLock(true) 可生成公平锁</p>
+<h3 id="2-信号量-Semaphore"><a href="#2-信号量-Semaphore" class="headerlink" title="2. 信号量 Semaphore"></a>2. 信号量 Semaphore</h3><p>控制同时执行的线程数</p>
+<h3 id="3-读写锁-ReadWriteLock"><a href="#3-读写锁-ReadWriteLock" class="headerlink" title="3. 读写锁 ReadWriteLock"></a>3. 读写锁 ReadWriteLock</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">readWriteLock = new ReentrantReadWriteLock()</span><br><span class="line">readLock = readWriteLock.readLock()</span><br><span class="line">writeLock = readWriteLock.writeLock()</span><br></pre></td></tr></table></figure>
+<p>两把锁会根据读写关系阻塞</p>
+<h3 id="4-倒计时-CountDownLatch"><a href="#4-倒计时-CountDownLatch" class="headerlink" title="4. 倒计时 CountDownLatch"></a>4. 倒计时 CountDownLatch</h3><p>用于等待有确切数量的进程完成</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public void CountDownLatchDemo()&#123;</span><br><span class="line">    ExecutorService exec = Exectors.newFixedThreadPool(10);</span><br><span class="line">    </span><br><span class="line">    for(int i = 0; i &lt; 10; i++)</span><br><span class="line">        exec.submit(new CheckTask);</span><br><span class="line">    &#125;</span><br><span class="line">    end.await();</span><br><span class="line">    // 阻塞直到10个线程全结束</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class CheckTask implements Runnable&#123;</span><br><span class="line">    static final CountDownLatch end = new CountDownLatch(10);</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void run()&#123;</span><br><span class="line">        // do some check</span><br><span class="line">        end.countDown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="5-循环栅栏-CyclicBarrier"><a href="#5-循环栅栏-CyclicBarrier" class="headerlink" title="5. 循环栅栏 CyclicBarrier"></a>5. 循环栅栏 CyclicBarrier</h3><p><code>CyclicBarrier cyclic = new CyclicBarrier(N, new BarrierRun(...));</code><br>当执行cyclic.await()未达到N次时，一直阻塞，直到第N次后执行BarrierRun线程，且cyclic解锁<br>cyclic可以继续await()，继续触发BarrierRun</p>
+<h2 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h2><h3 id="1-固定大小-newFixedThreadPool-空闲就执行，满了就队列等待"><a href="#1-固定大小-newFixedThreadPool-空闲就执行，满了就队列等待" class="headerlink" title="1. 固定大小 newFixedThreadPool 空闲就执行，满了就队列等待"></a>1. 固定大小 newFixedThreadPool 空闲就执行，满了就队列等待</h3><h3 id="2-单线程池-newSingleThreadPool-大小为1的-newFixedThreadPool"><a href="#2-单线程池-newSingleThreadPool-大小为1的-newFixedThreadPool" class="headerlink" title="2. 单线程池 newSingleThreadPool 大小为1的 newFixedThreadPool"></a>2. 单线程池 newSingleThreadPool 大小为1的 newFixedThreadPool</h3><h3 id="3-大小不固定-newCachedThreadPool-满了会创建新的线程"><a href="#3-大小不固定-newCachedThreadPool-满了会创建新的线程" class="headerlink" title="3. 大小不固定 newCachedThreadPool 满了会创建新的线程"></a>3. 大小不固定 newCachedThreadPool 满了会创建新的线程</h3><h3 id="4-单线程任务计划-newSingleThreadScheduledExecutor-可以延时-周期执行，大小为1"><a href="#4-单线程任务计划-newSingleThreadScheduledExecutor-可以延时-周期执行，大小为1" class="headerlink" title="4. 单线程任务计划 newSingleThreadScheduledExecutor 可以延时/周期执行，大小为1"></a>4. 单线程任务计划 newSingleThreadScheduledExecutor 可以延时/周期执行，大小为1</h3><h3 id="5-多线程任务计划-newScheduledExecutor"><a href="#5-多线程任务计划-newScheduledExecutor" class="headerlink" title="5. 多线程任务计划 newScheduledExecutor"></a>5. 多线程任务计划 newScheduledExecutor</h3><p>生成线程池方法<br><code>ExecutorService es = Executors.newFixedThreadPool(5)</code></p>
+<p>执行线程</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">es.submit(new MyTask());</span><br><span class="line"></span><br><span class="line">public class MyTask implements Runnable&#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void run ()&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="JDK并发容器"><a href="#JDK并发容器" class="headerlink" title="JDK并发容器"></a>JDK并发容器</h2><h3 id="1-ConcurrentHashMap-高效且线程安全的HashMap"><a href="#1-ConcurrentHashMap-高效且线程安全的HashMap" class="headerlink" title="1. ConcurrentHashMap 高效且线程安全的HashMap"></a>1. ConcurrentHashMap 高效且线程安全的HashMap</h3><h3 id="2-CopyOnWriteArrayList-安全的ArrayList。在读多写少场合性能远远好于Vector"><a href="#2-CopyOnWriteArrayList-安全的ArrayList。在读多写少场合性能远远好于Vector" class="headerlink" title="2. CopyOnWriteArrayList 安全的ArrayList。在读多写少场合性能远远好于Vector"></a>2. CopyOnWriteArrayList 安全的ArrayList。在读多写少场合性能远远好于Vector</h3><h3 id="3-ConcurrentLinkedQueue-高效且安全的LinkedList"><a href="#3-ConcurrentLinkedQueue-高效且安全的LinkedList" class="headerlink" title="3. ConcurrentLinkedQueue 高效且安全的LinkedList"></a>3. ConcurrentLinkedQueue 高效且安全的LinkedList</h3><h3 id="4-BlockingQueue-阻塞队列接口，用于数据共享通道"><a href="#4-BlockingQueue-阻塞队列接口，用于数据共享通道" class="headerlink" title="4. BlockingQueue 阻塞队列接口，用于数据共享通道"></a>4. BlockingQueue 阻塞队列接口，用于数据共享通道</h3><h3 id="5-ConcurrentSkipListMap-跳表实现，用于快速查找"><a href="#5-ConcurrentSkipListMap-跳表实现，用于快速查找" class="headerlink" title="5. ConcurrentSkipListMap 跳表实现，用于快速查找"></a>5. ConcurrentSkipListMap 跳表实现，用于快速查找</h3><p>Collections工具可以将任意容器包装为线程安全的容器，例如<br><code>public static Map m = Collections.synchronizedMap(new HashMap());</code></p>
+<a id="more"></a>
 ]]></content>
       <categories>
         <category>Java</category>

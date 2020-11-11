@@ -349,6 +349,206 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/26/Java/高并发/JDK并发包/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Irishemma">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Beluga">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/04/26/Java/高并发/JDK并发包/" class="post-title-link" itemprop="url">JDK并发包</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-26 15:04:44" itemprop="dateCreated datePublished" datetime="2019-04-26T15:04:44+08:00">2019-04-26</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-07-13 23:23:58" itemprop="dateModified" datetime="2020-07-13T23:23:58+08:00">2020-07-13</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java/高并发/" itemprop="url" rel="index"><span itemprop="name">高并发</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="JDK并发包简介"><a href="#JDK并发包简介" class="headerlink" title="JDK并发包简介"></a>JDK并发包简介</h3><p>[TOC]</p>
+<h2 id="同步控制"><a href="#同步控制" class="headerlink" title="同步控制"></a>同步控制</h2><h3 id="1-synchronized扩展：重入锁-ReentrantLock"><a href="#1-synchronized扩展：重入锁-ReentrantLock" class="headerlink" title="1. synchronized扩展：重入锁 ReentrantLock"></a>1. synchronized扩展：重入锁 ReentrantLock</h3><p>必须手动指定加解锁，提高逻辑控制灵活性</p>
+<h4 id="中断响应"><a href="#中断响应" class="headerlink" title="中断响应"></a>中断响应</h4><p>lock.lockInterruptibly()可被Thread.interrupt()中断</p>
+<h4 id="可设置超时"><a href="#可设置超时" class="headerlink" title="可设置超时"></a>可设置超时</h4><p>lock.tryLock(5, TimeUnit.SECONDS) 超时返回false</p>
+<h4 id="公平锁"><a href="#公平锁" class="headerlink" title="公平锁"></a>公平锁</h4><p>new ReentrantLock(true) 可生成公平锁</p>
+<h3 id="2-信号量-Semaphore"><a href="#2-信号量-Semaphore" class="headerlink" title="2. 信号量 Semaphore"></a>2. 信号量 Semaphore</h3><p>控制同时执行的线程数</p>
+<h3 id="3-读写锁-ReadWriteLock"><a href="#3-读写锁-ReadWriteLock" class="headerlink" title="3. 读写锁 ReadWriteLock"></a>3. 读写锁 ReadWriteLock</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">readWriteLock = new ReentrantReadWriteLock()</span><br><span class="line">readLock = readWriteLock.readLock()</span><br><span class="line">writeLock = readWriteLock.writeLock()</span><br></pre></td></tr></table></figure>
+<p>两把锁会根据读写关系阻塞</p>
+<h3 id="4-倒计时-CountDownLatch"><a href="#4-倒计时-CountDownLatch" class="headerlink" title="4. 倒计时 CountDownLatch"></a>4. 倒计时 CountDownLatch</h3><p>用于等待有确切数量的进程完成</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public void CountDownLatchDemo()&#123;</span><br><span class="line">    ExecutorService exec = Exectors.newFixedThreadPool(10);</span><br><span class="line">    </span><br><span class="line">    for(int i = 0; i &lt; 10; i++)</span><br><span class="line">        exec.submit(new CheckTask);</span><br><span class="line">    &#125;</span><br><span class="line">    end.await();</span><br><span class="line">    // 阻塞直到10个线程全结束</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class CheckTask implements Runnable&#123;</span><br><span class="line">    static final CountDownLatch end = new CountDownLatch(10);</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void run()&#123;</span><br><span class="line">        // do some check</span><br><span class="line">        end.countDown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="5-循环栅栏-CyclicBarrier"><a href="#5-循环栅栏-CyclicBarrier" class="headerlink" title="5. 循环栅栏 CyclicBarrier"></a>5. 循环栅栏 CyclicBarrier</h3><p><code>CyclicBarrier cyclic = new CyclicBarrier(N, new BarrierRun(...));</code><br>当执行cyclic.await()未达到N次时，一直阻塞，直到第N次后执行BarrierRun线程，且cyclic解锁<br>cyclic可以继续await()，继续触发BarrierRun</p>
+<h2 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h2><h3 id="1-固定大小-newFixedThreadPool-空闲就执行，满了就队列等待"><a href="#1-固定大小-newFixedThreadPool-空闲就执行，满了就队列等待" class="headerlink" title="1. 固定大小 newFixedThreadPool 空闲就执行，满了就队列等待"></a>1. 固定大小 newFixedThreadPool 空闲就执行，满了就队列等待</h3><h3 id="2-单线程池-newSingleThreadPool-大小为1的-newFixedThreadPool"><a href="#2-单线程池-newSingleThreadPool-大小为1的-newFixedThreadPool" class="headerlink" title="2. 单线程池 newSingleThreadPool 大小为1的 newFixedThreadPool"></a>2. 单线程池 newSingleThreadPool 大小为1的 newFixedThreadPool</h3><h3 id="3-大小不固定-newCachedThreadPool-满了会创建新的线程"><a href="#3-大小不固定-newCachedThreadPool-满了会创建新的线程" class="headerlink" title="3. 大小不固定 newCachedThreadPool 满了会创建新的线程"></a>3. 大小不固定 newCachedThreadPool 满了会创建新的线程</h3><h3 id="4-单线程任务计划-newSingleThreadScheduledExecutor-可以延时-周期执行，大小为1"><a href="#4-单线程任务计划-newSingleThreadScheduledExecutor-可以延时-周期执行，大小为1" class="headerlink" title="4. 单线程任务计划 newSingleThreadScheduledExecutor 可以延时/周期执行，大小为1"></a>4. 单线程任务计划 newSingleThreadScheduledExecutor 可以延时/周期执行，大小为1</h3><h3 id="5-多线程任务计划-newScheduledExecutor"><a href="#5-多线程任务计划-newScheduledExecutor" class="headerlink" title="5. 多线程任务计划 newScheduledExecutor"></a>5. 多线程任务计划 newScheduledExecutor</h3><p>生成线程池方法<br><code>ExecutorService es = Executors.newFixedThreadPool(5)</code></p>
+<p>执行线程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">es.submit(new MyTask());</span><br><span class="line"></span><br><span class="line">public class MyTask implements Runnable&#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void run ()&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="JDK并发容器"><a href="#JDK并发容器" class="headerlink" title="JDK并发容器"></a>JDK并发容器</h2><h3 id="1-ConcurrentHashMap-高效且线程安全的HashMap"><a href="#1-ConcurrentHashMap-高效且线程安全的HashMap" class="headerlink" title="1. ConcurrentHashMap 高效且线程安全的HashMap"></a>1. ConcurrentHashMap 高效且线程安全的HashMap</h3><h3 id="2-CopyOnWriteArrayList-安全的ArrayList。在读多写少场合性能远远好于Vector"><a href="#2-CopyOnWriteArrayList-安全的ArrayList。在读多写少场合性能远远好于Vector" class="headerlink" title="2. CopyOnWriteArrayList 安全的ArrayList。在读多写少场合性能远远好于Vector"></a>2. CopyOnWriteArrayList 安全的ArrayList。在读多写少场合性能远远好于Vector</h3><h3 id="3-ConcurrentLinkedQueue-高效且安全的LinkedList"><a href="#3-ConcurrentLinkedQueue-高效且安全的LinkedList" class="headerlink" title="3. ConcurrentLinkedQueue 高效且安全的LinkedList"></a>3. ConcurrentLinkedQueue 高效且安全的LinkedList</h3><h3 id="4-BlockingQueue-阻塞队列接口，用于数据共享通道"><a href="#4-BlockingQueue-阻塞队列接口，用于数据共享通道" class="headerlink" title="4. BlockingQueue 阻塞队列接口，用于数据共享通道"></a>4. BlockingQueue 阻塞队列接口，用于数据共享通道</h3><h3 id="5-ConcurrentSkipListMap-跳表实现，用于快速查找"><a href="#5-ConcurrentSkipListMap-跳表实现，用于快速查找" class="headerlink" title="5. ConcurrentSkipListMap 跳表实现，用于快速查找"></a>5. ConcurrentSkipListMap 跳表实现，用于快速查找</h3><p>Collections工具可以将任意容器包装为线程安全的容器，例如<br><code>public static Map m = Collections.synchronizedMap(new HashMap());</code></p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/04/26/Java/高并发/JDK并发包/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/26/Java/高并发/高并发下隐蔽的错误案例/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1999,185 +2199,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/20/Linux/CentOS-7-Shadowsocks-Privoxy-代理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Irishemma">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Beluga">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/04/20/Linux/CentOS-7-Shadowsocks-Privoxy-代理/" class="post-title-link" itemprop="url">CentOS 7 Shadowsocks+Privoxy 代理</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-20 11:38:28" itemprop="dateCreated datePublished" datetime="2019-04-20T11:38:28+08:00">2019-04-20</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-12-20 14:37:14" itemprop="dateModified" datetime="2019-12-20T14:37:14+08:00">2019-12-20</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>“本文介绍的是在 CentOS 上安装 shadowsocks 客户端的过程，最终实现的也就是当前 CentOS 通过其他服务器的 Shadowsocks 服务联网，非在 CentOS 上安装 shadowsocks 服务端的过程，因此你需要一个已经能科学上网的 shadowsocks 服务端。”</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/04/20/Linux/CentOS-7-Shadowsocks-Privoxy-代理/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2224,7 +2245,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">63</span>
+                    <span class="site-state-item-count">64</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2285,7 +2306,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">22</span>
+                      
+                    
+                    <span class="site-state-item-count">23</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>

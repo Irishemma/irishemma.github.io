@@ -103,7 +103,7 @@
 <meta property="og:site_name" content="Beluga">
 <meta property="og:description" content="一些Kafka术语和Kafka协议抓包分析">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-11T07:30:42.041Z">
+<meta property="og:updated_time" content="2020-11-12T06:50:30.955Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kafka学习笔记">
 <meta name="twitter:description" content="一些Kafka术语和Kafka协议抓包分析">
@@ -395,12 +395,24 @@
                 
               
 
-              <time title="创建时间：2020-11-11 15:28:49 / 修改时间：15:30:42" itemprop="dateCreated datePublished" datetime="2020-11-11T15:28:49+08:00">2020-11-11</time>
+              <time title="创建时间：2020-11-11 15:28:49" itemprop="dateCreated datePublished" datetime="2020-11-11T15:28:49+08:00">2020-11-11</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-11-12 14:50:30" itemprop="dateModified" datetime="2020-11-12T14:50:30+08:00">2020-11-12</time>
               
             
           </span>
@@ -456,7 +468,7 @@
 <a id="more"></a>
 <p>HW：High Water。所有Follower都写入才会往前移。例如：一个分区有3个副本，一个leader，2个follower。producer向leader写了10条消息，follower1从leader处拷贝了5条消息，follower2从leader处拷贝了3条消息，那么leader副本的LEO就是10，HW=3；follower1副本的LEO是5。</p>
 <p>acks：生产者认为发送成功需要返回的ISR数量。当acks=all时，需要ISR所有副本都返回，非ISR不管。min.insync.replicas指定了最小的ISR，但不是最小的acks数。例如：一个分区有5个副本，Broker的min.insync.replicas设置为2，生产者设置acks=all。如果ISR有5个，必须要全部同步。</p>
-<p>LEO：Latest Offset。每个Replica自己维护，写到哪算哪。</p>
+<p>LEO：Log End Offset。当前高水位偏移量，也就是最近一个被读取消息的偏移量，同时也是最近一个被提交到集群的偏移量。每个Replica自己维护，写到哪算哪。</p>
 <p>ISR：Insync Replica集合，Controller以replica.lag.time.max.ms的一半为周期（默认5000）维护ISR。Follower Replica在replica.lag.time.max.ms时间内向Leader请求最新（offset）的数据，则Follower会被纳入ISR。</p>
 <p>Kafka副本机制优点：</p>
 <ol>
